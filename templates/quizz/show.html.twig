@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<title>Quizz</title>
+
+{% block body %}
+	<h1>Quizz</h1>
+
+	<table class="table">
+		<tbody>
+			<tr>
+				<th>Question1</th>
+				<td>{{ quizz.question }}</td>
+			</tr>
+			<tr>
+				<th>Question2</th>
+				<td>{{ quizz.bonnereponse1 }}</td>
+			</tr>
+			<tr>
+				<th>Reponse2</th>
+				<td>{{ quizz.bonnereponse2 }}</td>
+			</tr>
+			<tr>
+				<th>Question3</th>
+				<td>{{ quizz.bonnereponse3 }}</td>
+			</tr>
+			<tr>
+				<th>Bonne réponse</th>
+				<td>{{ quizz.bonnereponse }}</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<a href="{{ path('app_quizz_index') }}">Retour</a>
+
+	<a href="{{ path('app_quizz_edit', {'id': quizz.id}) }}">Modifier</a> {{ include('quizz/_delete_form.html.twig') }}
+{% endblock %}
+

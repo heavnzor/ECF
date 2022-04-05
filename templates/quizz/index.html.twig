@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<title>Quizz index</title>
+
+{% block body %}
+    <h1>Quizz index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Question1</th>
+                <th>Reponse1</th>
+                <th>Question2</th>
+                <th>Reponse2</th>
+                <th>Question3</th>
+                <th>Reponse3</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for quizz in quizzs %}
+            <tr>
+                <td>{{ quizz.id }}</td>
+                <td>{{ quizz.question1 }}</td>
+                <td>{{ quizz.reponse1 }}</td>
+                <td>{{ quizz.question2 }}</td>
+                <td>{{ quizz.reponse2 }}</td>
+                <td>{{ quizz.question3 }}</td>
+                <td>{{ quizz.reponse3 }}</td>
+                <td>
+                    <a href="{{ path('app_quizz_show', {'id': quizz.id}) }}">show</a>
+                    <a href="{{ path('app_quizz_edit', {'id': quizz.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_quizz_new') }}">Create new</a>
+{% endblock %}

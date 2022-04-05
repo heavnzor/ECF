@@ -1,0 +1,59 @@
+{% extends 'index.html.twig' %}
+
+
+{% block main %}
+	<h1>Formation</h1>
+
+	<table class="table">
+		<tbody>
+			<tr>
+				<th>Titre</th>
+				<td>{{ formation.titre }}</td>
+			</tr>
+			<tr>
+				<th>Description</th>
+				<td>{{ formation.description }}</td>
+			</tr>
+			<tr>
+				<th>Image</th>
+				<td><img src="{{ asset('build/uploads/photos/')}}{{ formation.image }}" width="150" height="auto" title="{{ formation.titre}} "/></td>
+			</tr>
+			<tr>
+				<th>Sections</th>
+				<td>
+					{% if app.user.isPostulantVerified is defined %}
+						{% if app.user.isPostulantVerified is same as(true) %}
+							<a href="/section/new?formation={{ formation.id }}">Créer une nouvelle section</a>
+						{% endif %}
+					{% endif %}
+				</td>
+				{% for section in sections %}
+					<td>
+						<a href="/section/{{ section.id }}">{{ section.titre }}</a>
+					</td>
+				{% endfor %}
+			</tr>
+
+			{% if app.user.isVerified is defined %}
+				{% if app.user.isVerified is same as(true)%}
+					<tr>
+						<th>Etat de la formation</th>
+						<td>{{ formation.learnState }}</td>
+					</tr>
+				{% endif %}
+			{% endif %}
+		</tbody>
+	</tbody>
+</table>
+
+{% if app.user.isVerified is defined %}
+	{% if app.user.isVerified is same as(true) %}
+		<a href="{{ path('app_formation_index') }}">Suivre</a>
+	{% endif %}
+{% endif %}
+<a href="{{ path('app_formation_index') }}">Retour</a>
+{% if app.user.isPostulantVerified is defined %}
+	{% if app.user.isPostulantVerified is same as(true) %}
+		<a href="{{ path('app_formation_edit', {'id': formation.id}) }}">edit</a> {{ include('formation/_delete_form.html.twig') }}
+	{% endif %}
+{% endif %}{% endblock %}

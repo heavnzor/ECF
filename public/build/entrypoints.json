@@ -1,0 +1,21 @@
+{
+  "entrypoints": {
+    "app": {
+      "js": [
+        "/build/js/jquery-3.6.0.min.js",
+        "/build/runtime.js",
+        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_core-js_modules_es_ob-7db861.js",
+        "/build/app.js",
+        "/build/js/bootstrap.min.js",
+        "build/js/bs-init.js"
+      ],
+      "css": [
+        "/build/css/bootstrap.min.css",
+        "/build/fonts/font-awesome.min.css",
+        "/build/fonts/simple-line-icons.min.css",
+        "https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css",
+        "/build/css/index.css"
+      ]
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{{ form_start(form) }} {{ form_label(form.titre, 'Titre') }}
+<br> {{ form_widget(form.titre) }}<br> {{ form_label(form.description, 'Description') }}<br>{{ form_widget(form.description) }}
+<br>{{ form_label(form.image, 'Image') }}<br>{{ form_widget(form.image) }}<br>
+<input type="hidden" id="formation_auteur" name="formation[auteur]" value="{{ app.user.id }}"/>
+<input type="hidden" id="step" name="step" value="1"/>
+<button class="btn btn-primary" type="submit">Soumettre</button> {{ form_widget(form._token) }}{{ form_end(form, {render_rest: false}) }}
+

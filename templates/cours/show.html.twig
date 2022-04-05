@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<title>Cours</title>
+
+{% block body %}
+    <h1>Cours</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ cours.id }}</td>
+            </tr>
+            <tr>
+                <th>Cours</th>
+                <td>{{ cours.cours }}</td>
+            </tr>
+            <tr>
+                <th>Image</th>
+                <td>{{ cours.image }}</td>
+            </tr>
+            <tr>
+                <th>Pdf</th>
+                <td>{{ cours.pdf }}</td>
+            </tr>
+            <tr>
+                <th>Video</th>
+                <td>{{ cours.video }}</td>
+            </tr>
+            <tr>
+                <th>Finished</th>
+                <td>{{ cours.finished ? 'Yes' : 'No' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_cours_index') }}">back to list</a>
+
+    <a href="{{ path('app_cours_edit', {'id': cour.id}) }}">edit</a>
+
+    {{ include('cours/_delete_form.html.twig') }}
+{% endblock %}

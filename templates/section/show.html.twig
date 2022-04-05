@@ -1,0 +1,29 @@
+{% extends 'index.html.twig' %}
+{% block main %}
+
+	<h1>Section</h1>
+
+	<table class="table">
+		<tbody>
+			<tr>
+				<th>Id</th>
+				<td>{{ section.id }}</td>
+			</tr>
+			<tr>
+				<th>Formation</th>
+				<td>{{ section.formation }}</td>
+			</tr>
+			<tr>
+				<th>Titre</th>
+				<td>{{ section.titre }}</td>
+			</tr>
+
+		</tbody>
+	</table>
+
+	<a href="{{ path('app_section_index') }}">back to list</a>
+
+	<a href="{{ path('app_section_edit', {'id': section.id}) }}">edit</a>
+
+	{{ include('section/_delete_form.html.twig') }}
+{% endblock %}

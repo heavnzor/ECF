@@ -1,0 +1,70 @@
+   @font-face {
+       font-family: "Billabong.ttf";
+       src: url("../fonts/Billabong.ttf");
+   }
+
+   @font-face {
+       font-family: "Yaldevi";
+       src: url("../fonts/Yaldevi-Regular.ttf");
+   }
+
+   body {
+       background-color: black !important;
+       font-family: "Yaldevi";
+   }
+
+   a {
+       color: #59a96a !important;
+       font-weight: bold !important;
+       text-decoration: none !important;
+   }
+
+   a:hover {
+       color: white !important;
+       font-weight: bold !important;
+       text-decoration: underline !important;
+   }
+
+   h1 {
+       font-family: "Yaldevi" !important;
+       text-shadow: -1px 0 #b4e7ce,
+           0 1px #b4e7ce,
+           1px 0 #b4e7ce,
+           0 -1px #b4e7ce;
+       color: white !important;
+   }
+
+   div {
+       color: white;
+   }
+
+   h2,
+   h3 {
+       text-shadow: -1px 0 black,
+           0 1px black,
+           1px 0 black,
+           0 -1px black;
+       font-family: "Billabong" !important;
+       text-decoration: underline !important;
+       text-decoration-thickness: 0.2rem !important;
+       text-decoration-color: #307df6 !important;
+       color: #b4e7ce;
+   }
+
+   h4,
+   h5,
+   h6 {
+       font-family: "Billabong" !important;
+       color: #b4e7ce;
+   }
+
+   .slogan {
+       background-image: url("../images/slogan.png");
+   }
+
+   .hidden{
+       display: none;
+   }
+     .imgFormation {
+         border-radius: 50px;
+     }

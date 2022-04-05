@@ -1,0 +1,11 @@
+{{ form_start(form) }}
+<input type="hidden" id="step" name="step" value="4"/>
+<input type="hidden" id="quizz_section" name="quizz[section]" value="{{ section.id }}"/><h1>Quizz de la section {{ section.titre }}</h1><br><br> {{ form_label(form.question1, 'Question 1') }}
+<br> {{ form_widget(form.question1) }}<br> {{ form_label(form.reponse1, 'Réponse 1') }}<br>{{ form_widget(form.reponse1) }}
+<br>{{ form_label(form.reponse2, 'Réponse 2') }}<br>{{ form_widget(form.reponse2) }}
+<br>{{ form_label(form.reponse3, 'Réponse 3') }}<br>{{ form_widget(form.reponse3) }}<br><br>
+
+<br>{{ form_label(form.bonnereponse, 'Bonne réponse') }}<br>{{ form_widget(form.bonnereponse) }}<br><br>
+
+<button class="btn btn-primary" type="submit">Soumettre</button> {{ form_widget(form._token) }}{{ form_end(form, {render_rest: false}) }}
+
