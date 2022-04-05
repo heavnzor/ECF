@@ -28,7 +28,7 @@ class DashboardController extends AbstractDashboardController
         // Option 1. Make your dashboard redirect to the same page for all users
         return $this->redirect($adminUrlGenerator->setController(UserCrudController::class)->generateUrl());
     }
-    /*
+    
     public function configureMenuItems(): iterable
     {
         return [
@@ -36,5 +36,5 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud('Users', 'fa fa-user', User::class),
         ];
     }
-    */
+    
 }

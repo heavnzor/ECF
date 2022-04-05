@@ -57,7 +57,7 @@ class UserCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        $roles = ['ROLE_ADMIN', 'ROLE_INSTRUCTEUR', 'ROLE_USER'];
+        $roles = ['ROLE_SUPER_ADMIN', 'ROLE_INSTRUCTEUR', 'ROLE_USER'];
         return [
             IdField::new('id'),
             TextField::new('email'),
@@ -76,11 +76,6 @@ class UserCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-    
-
-        // in PHP 7.4 and newer you can use arrow functions
-        // ->displayIf(fn ($entity) => $entity->isPaid())
-
         return $actions
             // ...
             ->addBatchAction(Action::new('approve', "Approuver l'instructeur")
