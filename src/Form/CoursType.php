@@ -17,7 +17,6 @@ class CoursType extends AbstractType
             ->add('image')
             ->add('pdf')
             ->add('video')
-            ->add('finished')
             ->add('section')
         ;
     }
