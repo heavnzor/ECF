@@ -22,22 +22,23 @@
             <tr>
                 <td>{{ cour.id }}</td>
                 <td>{{ cour.cours }}</td>
-                <td>{{ cour.image }}</td>
-                <td>{{ cour.pdf }}</td>
-                <td>{{ cour.video }}</td>
-                <td>{{ cour.finished ? 'Yes' : 'No' }}</td>
+                <td><img class='imgFormation' src="{{ asset('build/uploads/photo/')}}{{ cour.image }}"></td>
+                <td><a href="{{ asset('build/uploads/photo/') }}"{{ cour.pdf }} target="_blank"></td>
+                <td><iframe width="560" height="315" src="{{ cour.video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></td>
+                <td>{{ cour.finished ? 'Cours terminé' }}</td>
                 <td>
                     <a href="{{ path('app_cours_show', {'id': cour.id}) }}">show</a>
                     <a href="{{ path('app_cours_edit', {'id': cour.id}) }}">edit</a>
+                                        <a href="{{ path('app_cours_edit', {'id': cour.id}) }}">edit</a>
+
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="7">no records found</td>
+                <td colspan="7">Aucun cours trouvé</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_cours_new') }}">Create new</a>
 {% endblock %}

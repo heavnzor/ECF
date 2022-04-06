@@ -10,10 +10,12 @@
 		<meta http-equiv="cache-control" content="no-cache"/>
 		<meta name="keywords" content="web3, web écolo, certification waldganger, meilleur web, meilleur monde, développement informatique vert, bilan environnemental de votre site web"/>
 		<title>Waldganger : Le vrai web3 | Développement informatique écologique</title>
-		{% block stylesheets %} {{ encore_entry_link_tags('app') }}
+		{% block stylesheets %}
+			{{ encore_entry_link_tags('app') }}
 		{% endblock %}
 
-		{% block javascripts %} {{ encore_entry_script_tags('app') }}
+		{% block javascripts %}
+			{{ encore_entry_script_tags('app') }}
 		{% endblock %}
 	</head>
 	<body>
@@ -60,7 +62,7 @@
 													<a class="dropdown-item" href="/formation/new?step=0">Nouvelle formation</a>
 												</li>
 												<li>
-													<a class="dropdown-item" href="mailto:webmaster@waldganger.net?subject=Explication : Supprimer une formation - Instructeur : {{ app.user.prenom }} {{ app.user.nom }}" onClick="window.alert('Envoyez nous un mail afin de nous en expliquer les raisons avant de la modifier/supprimer, car celle-ci est probablement déjà suivi par des apprenants')">Modifier/Supprimer</a>
+													<a class="dropdown-item" href="mailto:webmaster@waldganger.net?subject=Explication : Supprimer une formation - Instructeur : {{ app.user.prenom }} {{ app.user.nom }}" onclick="window.alert('Envoyez nous un mail afin de nous en expliquer les raisons avant de la modifier/supprimer, car celle-ci est probablement déjà suivi par des apprenants')">Modifier/Supprimer</a>
 												</li>
 											</ul>
 										</li>
@@ -122,10 +124,11 @@
 									</li>
 								{% endif %}
 								{% if is_granted('ROLE_INSTRUCTEUR') %}
-								{% else %}
-								<li class="nav-item">
-									<a class="nav-link" href="/registration/postulant">Devenir formateur</a>
-								</li>{% endif %}
+									{% else %}
+										<li class="nav-item">
+											<a class="nav-link" href="/registration/postulant">Devenir formateur</a>
+										</li>
+								{% endif %}
 								{% if app.user is defined %}
 									{% if app.user.roles is defined %}
 										<li class="nav-item">
@@ -160,7 +163,8 @@
 					<div class="row">
 						<div class="col-xl-9 mx-auto position-relative d-flex justify-content-center">
 							<h1 class="mb-5">
-								<strong> {{ slogan }}
+								<strong>
+									{{ slogan }}
 								</strong>
 							</h1>
 						</div>
@@ -169,16 +173,18 @@
 				</div>
 			</header>
 			{% for success in app.flashes('success') %}
-				<div class="alert alert-success"> {{ success }}
+				<div class="alert alert-success">
+					{{ success }}
 				</div>
 			{% endfor %}
 			{% for error in app.flashes('error') %}
-				<div class="alert alert-error"> {{ error }}
+				<div class="alert alert-error">
+					{{ error }}
 				</div>
 			{% endfor %}
-			<div class='container-fluid border border-light justify-content-center mx-auto px-auto my-auto'>
-				{% block main %}
-					<div class="container-fluid">
+			<div class='container-fluid border border-light  '>
+				<div class='container  justify-content-center mx-auto px-auto my-auto '>
+					{% block main %}
 						<section class="text-center bg-black features-icons">
 							<div class="row">
 								<div class="col-lg-4">
@@ -227,86 +233,86 @@
 										</p>
 									</div>
 								</div>
-							</section>
-						</div>
+							</div>
+						</section>
 					{% endblock %}
 				</div>
-				<section class="text-center text-white call-to-action" style="background:url(&quot;{{ asset('build/img/bg-masthead2.png') }}&quot;) no-repeat center center;background-size:cover;">
-					<div class="overlay"></div>
-					<div class="container-fluid d-flex justify-content-center mx-auto">
-						<div class="row">
-							<div class="col-xl-9 mx-auto position-relative">
-								<h2 class="mb-4">Intéressé par notre démarche ? Inscrivez vous à la newsletter !</h2>
-							</div>
-							<div class="col-md-6 col-lg-6 col-xl-6 mx-auto position-relative">
-								<form>
-									<div class="row">
-										<div class="col d-flex justify-content-center mx-1">
-											<input class="form-control form-control-lg" type="email" placeholder="Votre email..."></div>
-										<div class="col-12 mt-4 mx-auto ">
-											<button class="btn btn-primary btn-lg" type="submit">S'enregistrer</button>
-										</div>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-				</section>
-				<footer class="bg-black footer border border-light">
-					<div class="container">
-						<div class="row">
-							<div class="col-lg-6 text-center text-lg-start my-auto h-100">
-								<ul class="list-inline mb-2">
-									<li class="list-inline-item">
-										<a href="#">About</a>
-									</li>
-									<li class="list-inline-item">
-										<span>⋅</span>
-									</li>
-									<li class="list-inline-item">
-										<a href="#">Contact</a>
-									</li>
-									<li class="list-inline-item">
-										<span>⋅</span>
-									</li>
-									<li class="list-inline-item">
-										<a href="#">Terms of &nbsp;Use</a>
-									</li>
-									<li class="list-inline-item">
-										<span>⋅</span>
-									</li>
-									<li class="list-inline-item">
-										<a href="#">Privacy Policy</a>
-									</li>
-								</ul>
-								<p class="text-muted small mb-4 mb-lg-0">
-									© WALDGANGER.NET by heavnz0r - 2022. All Rights Reserved.</p>
-							</div>
-							<div class="col-lg-6 text-center text-lg-end my-auto h-100">
-								<ul class="list-inline mb-0">
-									<li class="list-inline-item">
-										<a href="#">
-											<img class='icons' src='{{ asset("build/images/icons8-twitter.png")}}'>
-										</a>
-									</li>
-
-									<li class="list-inline-item">
-										<a href="#">
-											<img class='icons' src='{{ asset("build/images/icons8-facebook.png")}}'>
-										</a>
-									</li>
-
-									<li class="list-inline-item">
-										<a href="#">
-											<img class='icons' src='{{ asset("build/images/icons8-instagram_old.png")}}'>
-										</a>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				</footer>
 			</div>
+			<section class="text-center text-white call-to-action" style="background:url(&quot;{{ asset('build/img/bg-masthead2.png') }}&quot;) no-repeat center center;background-size:cover;">
+				<div class="overlay"></div>
+				<div class="container-fluid d-flex justify-content-center mx-auto">
+					<div class="row">
+						<div class="col-xl-9 mx-auto position-relative">
+							<h2 class="mb-4">Intéressé par notre démarche ? Inscrivez vous à la newsletter !</h2>
+						</div>
+						<div class="col-md-6 col-lg-6 col-xl-6 mx-auto position-relative">
+							<form>
+								<div class="row">
+									<div class="col d-flex justify-content-center mx-1">
+										<input class="form-control form-control-lg" type="email" placeholder="Votre email..."></div>
+									<div class="col-12 mt-4 mx-auto ">
+										<button class="btn btn-primary btn-lg" type="submit">S'enregistrer</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</section>
+			<footer class="bg-black footer border border-light">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-6 text-center text-lg-start my-auto h-100">
+							<ul class="list-inline mb-2">
+								<li class="list-inline-item">
+									<a href="#">About</a>
+								</li>
+								<li class="list-inline-item">
+									<span>⋅</span>
+								</li>
+								<li class="list-inline-item">
+									<a href="#">Contact</a>
+								</li>
+								<li class="list-inline-item">
+									<span>⋅</span>
+								</li>
+								<li class="list-inline-item">
+									<a href="#">Terms of &nbsp;Use</a>
+								</li>
+								<li class="list-inline-item">
+									<span>⋅</span>
+								</li>
+								<li class="list-inline-item">
+									<a href="#">Privacy Policy</a>
+								</li>
+							</ul>
+							<p class="text-muted small mb-4 mb-lg-0">
+								© WALDGANGER.NET by heavnz0r - 2022. All Rights Reserved.</p>
+						</div>
+						<div class="col-lg-6 text-center text-lg-end my-auto h-100">
+							<ul class="list-inline mb-0">
+								<li class="list-inline-item">
+									<a href="#">
+										<img class='icons' src='{{ asset("build/images/icons8-twitter.png")}}'>
+									</a>
+								</li>
+
+								<li class="list-inline-item">
+									<a href="#">
+										<img class='icons' src='{{ asset("build/images/icons8-facebook.png")}}'>
+									</a>
+								</li>
+
+								<li class="list-inline-item">
+									<a href="#">
+										<img class='icons' src='{{ asset("build/images/icons8-instagram_old.png")}}'>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</footer>
 		{% endblock %}
 	</body>
 </html>

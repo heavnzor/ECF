@@ -1,7 +1,6 @@
-<script>
 function myFunction() {
   // Declare variables
-  var input, filter, ul, div, img, a, i, txtValue;
+  var input, filter, f, div, img, a, i, txtValue;
   input = document.getElementById('myInput');
   filter = input.value.toUpperCase();
   f = document.getElementById("myF");
@@ -18,4 +17,3 @@ function myFunction() {
     }
   }
 }
-</script>

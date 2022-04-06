@@ -115,35 +115,30 @@ class IndexController extends AbstractController
                 break;
             case '1':
                 $formation = new Formation();
+                $user = $this->getUser();
                 $form = $this->createForm(FormationType::class, $formation);
                 $form->handleRequest($request);
-
                 if ($form->isSubmitted() && $form->isValid()) {
-                    $photo = $form->get('image')->getData();
+                    $imageFile = $form->get('image')->getData();
                     $formationTitre = $form->get('titre')->getData();
                     $formation->setTitre(ucfirst(strtolower($formationTitre)));
-                    if ($photo) {
-                        $originalFilename = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
+                    if ($imageFile) {
+                        $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
                         // this is needed to safely include the file name as part of the URL
                         $safeFilename = $slugger->slug($originalFilename);
-                        $newFilename = $safeFilename . '-' . uniqid() . '.' . $photo->getExtension();
+                        $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
 
                         // Move the file to the directory where brochures are stored
                         try {
-                            $photo->move(
+                            $imageFile->move(
                                 $this->getParameter('photo_directory'),
                                 $newFilename
                             );
                         } catch (FileException $e) {
-                            throw new \RuntimeException($e->getMessage);
-                        }
-                        $photoFile = $form->get('image')->getData();
-                        if ($photoFile) {
-                            $photoFileName = $fileUploader->upload($photoFile);
-                            $formation->setImage($photoFileName);
+                            // .. handle exception if something happens during file upload
                         }
 
-                        // updates the 'photoname' property to store the PDF file name
+                        // updates the 'brochureFilename' property to store the PDF file name
                         // instead of its contents
                         $formation->setImage($newFilename);
                     }
@@ -673,7 +668,7 @@ class IndexController extends AbstractController
     }
 
     #[Route('/verify/email', name: 'app_verify_email')]
-    public function verifyUserEmail(Request $request, TranslatorInterface $translator, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
+    public function verifyUserEmail(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
         $id = $request->get('id');
 
@@ -691,7 +686,7 @@ class IndexController extends AbstractController
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $user);
         } catch (VerifyEmailExceptionInterface $exception) {
-            $this->addFlash('verify_email_error', $translator->trans($exception->getReason(), [], 'VerifyEmailBundle'));
+            $this->addFlash('verify_email_error', $exception->getReason(), [], 'VerifyEmailBundle');
 
             return $this->redirectToRoute('app_register');
         }
@@ -710,13 +705,13 @@ class IndexController extends AbstractController
      * Display & process form to request a password reset.
      */
     #[Route('', name: 'app_forgot_password_request')]
-    public function request(Request $request, MailerInterface $mailer,  $imgAndSlogan, TranslatorInterface $translator): Response
+    public function request(Request $request, MailerInterface $mailer,  $imgAndSlogan): Response
     {
         $form = $this->createForm(ResetPasswordRequestFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            return $this->processSendingPasswordResetEmail($form->get('email')->getData(), $mailer, $translator);
+            return $this->processSendingPasswordResetEmail($form->get('email')->getData(), $mailer);
         }
 
         return $this->render('reset_password/request.html.twig', [
@@ -752,7 +747,7 @@ class IndexController extends AbstractController
      * Validates and process the reset URL that the user clicked in their email.
      */
     #[Route('/reset/{token}', name: 'app_reset_password')]
-    public function reset(Request $request, imgAndSlogan $imgAndSlogan, UserPasswordHasherInterface $userPasswordHasher, TranslatorInterface $translator, string $token = null): Response
+    public function reset(Request $request, imgAndSlogan $imgAndSlogan, UserPasswordHasherInterface $userPasswordHasher, string $token = null): Response
     {
         if ($token) {
             // We store the token in session and remove it from the URL, to avoid the URL being
@@ -772,8 +767,8 @@ class IndexController extends AbstractController
         } catch (ResetPasswordExceptionInterface $e) {
             $this->addFlash('reset_password_error', sprintf(
                 '%s - %s',
-                $translator->trans(ResetPasswordExceptionInterface::MESSAGE_PROBLEM_VALIDATE, [], 'ResetPasswordBundle'),
-                $translator->trans($e->getReason(), [], 'ResetPasswordBundle')
+                ResetPasswordExceptionInterface::MESSAGE_PROBLEM_VALIDATE, [], 'ResetPasswordBundle',
+            $e->getReason(), [], 'ResetPasswordBundle'
             ));
 
             return $this->redirectToRoute('app_forgot_password_request');

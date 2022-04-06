@@ -24,12 +24,11 @@ class Formation
     #[ORM\Column(type: 'text')]
     private $description;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(type: 'string', length: 255)]
     private $image;
 
     #[ORM\OneToMany(mappedBy: 'formation', targetEntity: Section::class, orphanRemoval: true)]
     private $section;
-
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'formationsAuteur')]
     private $auteur;
