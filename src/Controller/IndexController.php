@@ -121,6 +121,7 @@ class IndexController extends AbstractController
                 if ($form->isSubmitted() && $form->isValid()) {
                     $photo = $form->get('image')->getData();
                     $formationTitre = $form->get('titre')->getData();
+                    $formation->setTitre(ucfirst(strtolower($formationTitre)));
                     if ($photo) {
                         $originalFilename = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
                         // this is needed to safely include the file name as part of the URL
@@ -172,6 +173,8 @@ class IndexController extends AbstractController
                 $form = $this->createForm(SectionType::class, $section);
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
+                    $sectionTitre = $form->get('titre')->getData();
+                    $section->setTitre(ucfirst(strtolower($sectionTitre)));
                     $sectionRepository->add($section);
                     $cours = new Cours();
                     $form = $this->createForm(CoursType::class, $cours);
@@ -245,12 +248,12 @@ class IndexController extends AbstractController
                         // instead of its contents
                         $cours->setPdf($newFilename);
                     }
-
+                    $coursTitre = $form->get('titre')->getData();
+                    $cours->setTitre(ucfirst(strtolower($coursTitre)));
                     $coursRepository->add($cours);
                     $section = $form->get('section')->getData();
                     $quizz = new Quizz();
                     $form = $this->createForm(QuizzType::class, $quizz);
-
                     return $this->render('cours/quizz.html.twig', [
                         'img' => $imgAndSlogan->getImg(),
                         'slogan' => $imgAndSlogan->getSlogan(),
@@ -270,6 +273,8 @@ class IndexController extends AbstractController
                 $form->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid()) {
+                    $quizzQuestion = $form->get('question')->getData();
+                    $quizz->setQuestion(ucfirst(strtolower($quizzQuestion)));
                     $quizzRepository->add($quizz);
                     $cours = new Quizz();
                     $form = $this->createForm(CoursType::class, $cours);
@@ -289,9 +294,6 @@ class IndexController extends AbstractController
     public function showFormation(Formation $formation, imgAndSlogan $imgAndSlogan): Response
     {
         $user = new User();
-
-
-
         return $this->render('formation/show.html.twig', [
             'formation' => $formation,
             'sections' => $formation->getSection(),

@@ -18,19 +18,19 @@
 	</head>
 	<body>
 		{% block body %}
-			<div class="container">
+			<div class="container-fluid border border-light">
 				<nav class="navbar navbar-expand-lg navbar-light bg-black">
-					<a class="navbar-brand" href="/">
+					<a class="navbar-brand ps-4" href="/">
 						<img src="{{ asset('build/images/logo.png') }}" height="110em" width="auto" alt="ecoIT : Un meilleur web, un meilleur monde." title="ecoIT : Un meilleur web, un meilleur monde."></a>
-					<div class="container-fluid">
-						<button style="position: absolute; left: 87%; top: 30%;" class="navbar-toggler" title="Menu" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+					<div class="container">
+						<button class="navbar-toggler" title="Menu" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
 							<span class="navbar-toggler-icon"></span>
 						</button>
 						<div class="collapse navbar-collapse" id="navbarText">
 							<br>
 							<ul class="navbar-nav">
 								<li class="nav-item dropdown">
-									<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+									<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 										Waldganger
 									</a>
 									<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -52,16 +52,15 @@
 											<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 												Formations
 											</a>
-
 											<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
 												<li>
 													<a class="dropdown-item" href="/formation">Catalogue</a>
 												</li>
 												<li>
-													<a class="dropdown-item" href="#">Nouvelle formation</a>
+													<a class="dropdown-item" href="/formation/new?step=0">Nouvelle formation</a>
 												</li>
 												<li>
-													<a class="dropdown-item" href="mailto:webmaster@waldganger.net?subject=Explication : Supprimer une formation - Instructeur : {{ app.user.prenom }} {{ app.user.nom }}">Modifier/Supprimer</a>
+													<a class="dropdown-item" href="mailto:webmaster@waldganger.net?subject=Explication : Supprimer une formation - Instructeur : {{ app.user.prenom }} {{ app.user.nom }}" onClick="window.alert('Envoyez nous un mail afin de nous en expliquer les raisons avant de la modifier/supprimer, car celle-ci est probablement déjà suivi par des apprenants')">Modifier/Supprimer</a>
 												</li>
 											</ul>
 										</li>
@@ -72,14 +71,14 @@
 
 											<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
 												<li>
-													<a class="dropdown-item" href="#">Catalogue</a>
+													<a class="dropdown-item" href="/section">Catalogue</a>
 												</li>
 
 												<li>
-													<a class="dropdown-item" href="#">Nouvelle section</a>
+													<a class="dropdown-item" href="/section/new">Nouvelle section</a>
 												</li>
 												<li>
-													<a class="dropdown-item" href="#">Modifier/supprimer</a>
+													<a class="dropdown-item" href="/section">Modifier/supprimer</a>
 												</li>
 											</ul>
 										</li>
@@ -90,13 +89,13 @@
 
 											<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
 												<li>
-													<a class="dropdown-item" href="#">Catalogue</a>
+													<a class="dropdown-item" href="/cours">Catalogue</a>
 												</li>
 												<li>
-													<a class="dropdown-item" href="#">Nouveau cours</a>
+													<a class="dropdown-item" href="/cours/new">Nouveau cours</a>
 												</li>
 												<li>
-													<a class="dropdown-item" href="#">Modifier/supprimer</a>
+													<a class="dropdown-item" href="/cours">Modifier/supprimer</a>
 												</li>
 											</ul>
 										</li>
@@ -106,13 +105,13 @@
 											</a>
 											<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
 												<li>
-													<a class="dropdown-item" href="#">Catalogue</a>
+													<a class="dropdown-item" href="/quizz">Catalogue</a>
 												</li>
 												<li>
-													<a class="dropdown-item" href="#">Nouveau quizz</a>
+													<a class="dropdown-item" href="/quizz/new">Nouveau quizz</a>
 												</li>
 												<li>
-													<a class="dropdown-item" href="#">Modifier/supprimer</a>
+													<a class="dropdown-item" href="/quizz">Modifier/supprimer</a>
 												</li>
 											</ul>
 										</li>
@@ -157,9 +156,9 @@
 			</div>
 			<header class="text-center text-white masthead" style="background:url(&quot;{{ asset(img) }}&quot;)no-repeat center center;background-size:cover;">
 				<div class="overlay"></div>
-				<div class="container">
+				<div class="container ">
 					<div class="row">
-						<div class="col-xl-9 mx-auto position-relative">
+						<div class="col-xl-9 mx-auto position-relative d-flex justify-content-center">
 							<h1 class="mb-5">
 								<strong> {{ slogan }}
 								</strong>
@@ -177,7 +176,7 @@
 				<div class="alert alert-error"> {{ error }}
 				</div>
 			{% endfor %}
-			<div class='container'>
+			<div class='container-fluid border border-light'>
 				{% block main %}
 					<div class="container">
 						<section class="text-center bg-black features-icons">
@@ -253,7 +252,7 @@
 						</div>
 					</div>
 				</section>
-				<footer class="bg-black footer">
+				<footer class="bg-black footer border border-light">
 					<div class="container">
 						<div class="row">
 							<div class="col-lg-6 text-center text-lg-start my-auto h-100">
