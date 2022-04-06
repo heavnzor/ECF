@@ -158,7 +158,7 @@ class IndexController extends AbstractController
                         'user' => $user,
                         'section' => $section,
                         'form' => $form->createView(),
-                        'formation' => $formationRepository->findOneByFormationId($formation->getId()),
+                        'formations' => $formationRepository->findAllOrderByAuteurId($user->getId()),
                     ]);
                 }
 
@@ -179,7 +179,6 @@ class IndexController extends AbstractController
                         'img' => $imgAndSlogan->getImg(),
                         'slogan' => $imgAndSlogan->getSlogan(),
                         'user' => $user,
-                        'section' => $section,
                         'form' => $form->createView(),
                     ]);
                 }

@@ -49,20 +49,27 @@ class SectionRepository extends ServiceEntityRepository
     //  * @return Section[] Returns an array of Section objects
     //  */
 
-    public function findByExampleField($value)
+    public function findAllByAuteur()
     {
         return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
+            ->orderBy('s.id', 'DESC')
             ->setMaxResults(10)
             ->getQuery()
             ->getResult()
         ;
+        
+    }
+    public function findAllOrderByAuteurId($value)
+    {
+        return $this->createQueryBuilder('f')
+            ->setParameter('val', $value)
+            ->orderBy('f.auteur', 'DESC')
+            ->setMaxResults(100)
+            ->getQuery()
+            ->getResult();
     }
 
-
-    /*
+    
     public function findOneBySomeField($value): ?Section
     {
         return $this->createQueryBuilder('s')
@@ -72,5 +79,5 @@ class SectionRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
-    */
+
 }

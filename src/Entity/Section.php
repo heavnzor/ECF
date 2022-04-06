@@ -28,9 +28,13 @@ class Section
     #[ORM\OneToOne(mappedBy: 'section', targetEntity: Quizz::class, cascade: ['persist', 'remove'])]
     private $quizz;
 
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'sections')]
+    private $auteur;
+
     public function __construct()
     {
         $this->cours = new ArrayCollection();
+        $this->auteur = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -120,6 +124,30 @@ class Section
         }
 
         $this->quizz = $quizz;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getAuteur(): Collection
+    {
+        return $this->auteur;
+    }
+
+    public function addAuteur(User $auteur): self
+    {
+        if (!$this->auteur->contains($auteur)) {
+            $this->auteur[] = $auteur;
+        }
+
+        return $this;
+    }
+
+    public function removeAuteur(User $auteur): self
+    {
+        $this->auteur->removeElement($auteur);
 
         return $this;
     }

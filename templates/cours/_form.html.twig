@@ -1,6 +1,23 @@
+{% if is_granted('ROLE_INSTRUCTEUR') %}
 {{ form_start(form) }}
-<input type="hidden" id="cours_section" name="cours[section]" value="{{ section.id }}"/><br><br> {{ form_label(form.titre, 'Titre du cours :') }}<br> {{ form_widget(form.titre) }}<br><br> {{ form_label(form.cours, 'Contenu du cours :') }}<br> {{ form_widget(form.cours) }}<br><br> {{ form_label(form.image, 'Image (si nécessaire) :') }}<br> {{ form_widget(form.image) }}<br><br> {{ form_label(form.pdf, 'Fichier PDF (si nécessaire) :') }}<br> {{ form_widget(form.pdf) }}<br><br> {{ form_label(form.video, 'URL de la vidéo Youtube (obligatoire) :') }}<br> {{ form_widget(form.video) }}<br><br>
+<br><br>Vos sections :
+<select class="form-select" aria-label="Sections">
+	{% for section in sections %}
+	<option value="{{ section.id }}">
+		{{ section.titre }}
+	</option>
+{% endfor %}</select>{{ form_label(form.titre, 'Titre du cours :') }}<br>
+
+{{ form_widget(form.titre) }}<br><br>
+{{ form_label(form.cours, 'Contenu du cours :') }}<br>
+{{ form_widget(form.cours) }}<br><br>
+{{ form_label(form.image, 'Image (si nécessaire) :') }}<br>
+{{ form_widget(form.image) }}<br><br>
+{{ form_label(form.pdf, 'Fichier PDF (si nécessaire) :') }}<br>
+{{ form_widget(form.pdf) }}<br><br>
+{{ form_label(form.video, 'URL de la vidéo Youtube (obligatoire) :') }}<br>
+{{ form_widget(form.video) }}<br><br>
 <input type="hidden" id="step" name="step" value="3"/>
-
-<button class="btn btn-primary" type="submit">Soumettre</button> {{ form_widget(form._token) }}{{ form_end(form, {render_rest: false}) }}
-
+<button class="btn btn-primary" type="submit">Soumettre</button>
+{{ form_widget(form._token) }}{{ form_end(form, {render_rest: false}) }}
+{% endif %}

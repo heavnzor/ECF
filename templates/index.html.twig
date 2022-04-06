@@ -172,19 +172,20 @@
 					</div>
 				</div>
 			</header>
-			{% for success in app.flashes('success') %}
-				<div class="alert alert-success">
-					{{ success }}
-				</div>
-			{% endfor %}
-			{% for error in app.flashes('error') %}
-				<div class="alert alert-error">
-					{{ error }}
-				</div>
-			{% endfor %}
+
 			<div class='container-fluid border border-light  '>
-				<div class='container  justify-content-center mx-auto px-auto my-auto '>
+				<div class='container text-center  justify-content-center mx-auto px-auto my-auto '>
 					{% block main %}
+						{% for success in app.flashes('success') %}
+							<div class="alert alert-success">
+								{{ success }}
+							</div>
+						{% endfor %}
+						{% for error in app.flashes('error') %}
+							<div class="alert alert-error">
+								{{ error }}
+							</div>
+						{% endfor %}
 						<section class="text-center bg-black features-icons">
 							<div class="row">
 								<div class="col-lg-4">
