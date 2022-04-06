@@ -62,9 +62,17 @@
        background-image: url("../images/slogan.png");
    }
 
-   .hidden{
+   .hidden {
        display: none;
    }
-     .imgFormation {
-         border-radius: 50px;
-     }
+
+   .imgFormation {
+       width: 200px;
+       height: auto;
+   }
+
+   .icons{
+       width: 30px;
+       height: auto;
+       margin-right: 3rem;
+   }

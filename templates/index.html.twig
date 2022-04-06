@@ -16,12 +16,9 @@
 		{% block javascripts %} {{ encore_entry_script_tags('app') }}
 		{% endblock %}
 	</head>
-
 	<body>
 		{% block body %}
 			<div class="container">
-
-
 				<nav class="navbar navbar-expand-lg navbar-light bg-black">
 					<a class="navbar-brand" href="/">
 						<img src="{{ asset('build/images/logo.png') }}" height="110em" width="auto" alt="ecoIT : Un meilleur web, un meilleur monde." title="ecoIT : Un meilleur web, un meilleur monde."></a>
@@ -30,34 +27,114 @@
 							<span class="navbar-toggler-icon"></span>
 						</button>
 						<div class="collapse navbar-collapse" id="navbarText">
-							<strong style="text-align: center;">Les marcheurs forestiers 3.0</strong>
 							<br>
-							{% if is_granted('ROLE_INSTRUCTEUR') %} {{ app.user.prenom }}
-							{% elseif is_granted('ROLE_SUPER_ADMIN') %} {{ app.user.pseudo }}
-							{% elseif is_granted('ROLE_USER') %} {{ app.user.pseudo }}
-							{% endif %}
-							<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-								<li class="nav-item">
-									<a class="nav-link active" aria-current="page" href="#">L'organisation</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" href="/formation/">Formations</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" href="#">Certification</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" href="#">Dons</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" href="/registration/postulant">Postulez en tant qu'instructeur</a>
-								</li>
-								<li class="nav-item">
-									{% if app.user is defined %}
-										{% if app.user.roles is defined %}
-											<a class="nav-link" href="/logout">Déconnexion</a>
-									{% else %}
+							<ul class="navbar-nav">
+								<li class="nav-item dropdown">
+									<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+										Waldganger
+									</a>
+									<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+										<li>
+											<a class="dropdown-item" href="#">L'organisation</a>
 										</li>
+
+										<li>
+											<a class="dropdown-item" href="#">Certification</a>
+										</li>
+										<li>
+											<a class="dropdown-item" href="#">Dons</a>
+										</li>
+									</ul>
+								</li>
+								{% if is_granted('ROLE_INSTRUCTEUR') %}
+									<ul class="navbar-nav">
+										<li class="nav-item dropdown">
+											<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+												Formations
+											</a>
+
+											<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+												<li>
+													<a class="dropdown-item" href="/formation">Catalogue</a>
+												</li>
+												<li>
+													<a class="dropdown-item" href="#">Nouvelle formation</a>
+												</li>
+												<li>
+													<a class="dropdown-item" href="mailto:webmaster@waldganger.net?subject=Explication : Supprimer une formation - Instructeur : {{ app.user.prenom }} {{ app.user.nom }}">Modifier/Supprimer</a>
+												</li>
+											</ul>
+										</li>
+										<li class="nav-item dropdown">
+											<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+												Sections
+											</a>
+
+											<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+												<li>
+													<a class="dropdown-item" href="#">Catalogue</a>
+												</li>
+
+												<li>
+													<a class="dropdown-item" href="#">Nouvelle section</a>
+												</li>
+												<li>
+													<a class="dropdown-item" href="#">Modifier/supprimer</a>
+												</li>
+											</ul>
+										</li>
+										<li class="nav-item dropdown">
+											<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+												Cours
+											</a>
+
+											<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+												<li>
+													<a class="dropdown-item" href="#">Catalogue</a>
+												</li>
+												<li>
+													<a class="dropdown-item" href="#">Nouveau cours</a>
+												</li>
+												<li>
+													<a class="dropdown-item" href="#">Modifier/supprimer</a>
+												</li>
+											</ul>
+										</li>
+										<li class="nav-item dropdown">
+											<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+												Quizz
+											</a>
+											<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+												<li>
+													<a class="dropdown-item" href="#">Catalogue</a>
+												</li>
+												<li>
+													<a class="dropdown-item" href="#">Nouveau quizz</a>
+												</li>
+												<li>
+													<a class="dropdown-item" href="#">Modifier/supprimer</a>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								{% else %}
+									<li class="nav-item">
+										<a class="nav-link" href="/formation/">Formations</a>
+									</li>
+								{% endif %}
+								{% if is_granted('ROLE_INSTRUCTEUR') %}
+								{% else %}
+								<li class="nav-item">
+									<a class="nav-link" href="/registration/postulant">Devenir formateur</a>
+								</li>{% endif %}
+								{% if app.user is defined %}
+									{% if app.user.roles is defined %}
+										<li class="nav-item">
+
+											<a class="nav-link" href="/logout">Déconnexion</a>
+
+										</li>
+									{% else %}
 										<li class="nav-item dropdown">
 											<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 												Espace membres
@@ -92,168 +169,145 @@
 					</div>
 				</div>
 			</header>
-			<section class="text-center bg-black features-icons">
-				<div class="container">
-
-					{% for success in app.flashes('success') %}
-						<div class="alert alert-success"> {{ success }}
-						</div>
-					{% endfor %}
-					{% for error in app.flashes('error') %}
-						<div class="alert alert-error"> {{ error }}
-						</div>
-					{% endfor %}
-					<div class="row">
-						{% block main %}
-							<div class="col-lg-4">
-								<div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
-									<div class="d-flex features-icons-icon">
-										<i class="icon-screen-desktop m-auto text-primary" data-bss-hover-animate="pulse"></i>
-									</div>
-									<h3>Développer un thème écologique</h3>
-									<p class="lead mb-0">YanJadot vous apprend les scripts efficaces et codes couleurs pour réduire votre impact carbone ! Cette formation vous permettra de développer la conscience tranquille.</p>
-									<br>
-									<button class="btn btn-primary btn-lg" type="submit">En savoir plus</button>
-								</div>
-							</div>
-							<div class="col-lg-4">
-								<div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
-									<div class="d-flex features-icons-icon">
-										<i class="icon-layers m-auto text-primary" data-bss-hover-animate="pulse"></i>
-									</div>
-									<h3>Les hébergeurs verts</h3>
-									<p class="lead mb-0">Une formation courte accessible à tous, dans cette formation Kim Dotcom vous présente les meilleurs hébergeurs verts d'internet et pour toutes les bourses !</p>
-									<br>
-									<button class="btn btn-primary btn-lg" type="submit">En savoir plus</button>
-								</div>
-							</div>
-							<div class="col-lg-4">
-								<div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
-									<div class="d-flex features-icons-icon">
-										<i class="icon-check m-auto text-primary" data-bss-hover-animate="pulse"></i>
-									</div>
-									<h3>Réaliser un bilan environnemental</h3>
-									<p class="lead mb-0">Condor s'intéresse ici à la réalisation du bilan environnemental d'un site web. Cette formation est un must si vous voulez être sûr d'avoir
-										<strong>
-											la certification Waldganger&trade;
-										</strong>
-									</p>
-									<br>
-									<button class="btn btn-primary btn-lg" type="submit">En savoir plus</button>
-								</div>
-							</div>
-						{% endblock %}
-					</div>
+			{% for success in app.flashes('success') %}
+				<div class="alert alert-success"> {{ success }}
 				</div>
-			</section>
-			<section class="text-center bg-black testimonials">
-				<div class="container">
-					<h2 class="mb-5">Nos partenaires</h2>
-					<div class="row">
-						<div class="col-lg-4">
-							<div class="mx-auto testimonial-item mb-5 mb-lg-0">
-								<img class="rounded-circle img-fluid mb-3" src="{{ asset('build/images/greenpeace.jpg') }}"></div>
-							<p>
-								<span style="font-size: larger;">
-									<a href="https://www.greenpeace.org/" target='_blank'>Greenpeace : ONG</a>
-								</span>
-							</p>
-						</div>
-						<div class="col-lg-4">
-							<div class="mx-auto testimonial-item mb-5 mb-lg-0">
-								<img class="rounded-circle img-fluid mb-3" src="{{ asset('build/images/studi.jpg') }}"></div>
-							<p>
-								<span style="font-size: larger;">
-									<a href="https://studi.fr" target="_blank">Studi : La grande école 100% en ligne, 100% humaine</a>
-								</span>
-							</p>
-						</div>
-						<div class="col-lg-4">
-							<div class="mx-auto testimonial-item mb-5 mb-lg-0">
-								<img class="rounded-circle img-fluid mb-3" src="{{ asset('build/images/cnrs.png') }}"></div>
-							<p>
-								<span style="font-size: larger;">
-									<a href="https://www.cnrs.fr/fr/page-daccueil" target='_blank'>Centre national de la recherche scientifique</a>
-								</span>
-							</p>
-						</div>
-					</div>
+			{% endfor %}
+			{% for error in app.flashes('error') %}
+				<div class="alert alert-error"> {{ error }}
 				</div>
-			</section>
-			<section class="text-center text-white call-to-action" style="background:url(&quot;{{ asset('build/img/bg-masthead2.png') }}&quot;) no-repeat center center;background-size:cover;">
-				<div class="overlay"></div>
-				<div class="container">
-					<div class="row">
-						<div class="col-xl-9 mx-auto position-relative">
-							<h2 class="mb-4">Intéressé par notre démarche ? Inscrivez vous à la newsletter !</h2>
-						</div>
-						<div class="col-md-10 col-lg-8 col-xl-7 mx-auto position-relative">
-							<form>
+			{% endfor %}
+			<div class='container'>
+				{% block main %}
+					<div class="container">
+						<section class="text-center bg-black features-icons">
+							<div class="row">
+								<div class="col-lg-4">
+									<div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+										<div class="d-flex features-icons-icon">
+											<i class="icon-screen-desktop m-auto text-primary" data-bss-hover-animate="pulse"></i>
+										</div>
+										<h3>Développer un thème écologique</h3>
+										<p class="lead mb-0">YanJadot vous apprend les scripts efficaces et codes couleurs pour réduire votre impact carbone ! Cette formation vous permettra de développer la conscience tranquille.</p>
+										<br>
+										<button class="btn btn-primary btn-lg" type="submit">En savoir plus</button>
+									</div>
+								</div>
+							</div>
+						</section>
+						<hr>
+						<section class="text-center bg-black testimonials">
+							<div class="container">
+								<h2 class="mb-5">Nos partenaires</h2>
 								<div class="row">
-									<div class="col-12 col-md-9 mb-2 mb-md-0">
-										<input class="form-control form-control-lg" type="email" placeholder="Votre email..."></div>
-									<div class="col-12 col-md-3">
-										<button class="btn btn-primary btn-lg" type="submit">S'enregistrer</button>
+									<div class="col-lg-4">
+										<div class="mx-auto testimonial-item mb-5 mb-lg-0">
+											<img class="rounded-circle img-fluid mb-3" src="{{ asset('build/images/greenpeace.jpg') }}"></div>
+										<p>
+											<span style="font-size: larger;">
+												<a href="https://www.greenpeace.org/" target='_blank'>Greenpeace : ONG</a>
+											</span>
+										</p>
+									</div>
+									<div class="col-lg-4">
+										<div class="mx-auto testimonial-item mb-5 mb-lg-0">
+											<img class="rounded-circle img-fluid mb-3" src="{{ asset('build/images/studi.jpg') }}"></div>
+										<p>
+											<span style="font-size: larger;">
+												<a href="https://studi.fr" target="_blank">Studi : La grande école 100% en ligne, 100% humaine</a>
+											</span>
+										</p>
+									</div>
+									<div class="col-lg-4">
+										<div class="mx-auto testimonial-item mb-5 mb-lg-0">
+											<img class="rounded-circle img-fluid mb-3" src="{{ asset('build/images/cnrs.png') }}"></div>
+										<p>
+											<span style="font-size: larger;">
+												<a href="https://www.cnrs.fr/fr/page-daccueil" target='_blank'>Centre national de la recherche scientifique</a>
+											</span>
+										</p>
 									</div>
 								</div>
-							</form>
+							</section>
+						</div>
+					{% endblock %}
+				</div>
+				<section class="text-center text-white call-to-action" style="background:url(&quot;{{ asset('build/img/bg-masthead2.png') }}&quot;) no-repeat center center;background-size:cover;">
+					<div class="overlay"></div>
+					<div class="container">
+						<div class="row">
+							<div class="col-xl-9 mx-auto position-relative">
+								<h2 class="mb-4">Intéressé par notre démarche ? Inscrivez vous à la newsletter !</h2>
+							</div>
+							<div class="col-md-10 col-lg-8 col-xl-7 mx-auto position-relative">
+								<form>
+									<div class="row">
+										<div class="col-12 col-md-9 mb-2 mb-md-0">
+											<input class="form-control form-control-lg" type="email" placeholder="Votre email..."></div>
+										<div class="col-12 col-md-3">
+											<button class="btn btn-primary btn-lg" type="submit">S'enregistrer</button>
+										</div>
+									</div>
+								</form>
+							</div>
 						</div>
 					</div>
-				</div>
-			</section>
-			<footer class="bg-black footer">
-				<div class="container">
-					<div class="row">
-						<div class="col-lg-6 text-center text-lg-start my-auto h-100">
-							<ul class="list-inline mb-2">
-								<li class="list-inline-item">
-									<a href="#">About</a>
-								</li>
-								<li class="list-inline-item">
-									<span>⋅</span>
-								</li>
-								<li class="list-inline-item">
-									<a href="#">Contact</a>
-								</li>
-								<li class="list-inline-item">
-									<span>⋅</span>
-								</li>
-								<li class="list-inline-item">
-									<a href="#">Terms of &nbsp;Use</a>
-								</li>
-								<li class="list-inline-item">
-									<span>⋅</span>
-								</li>
-								<li class="list-inline-item">
-									<a href="#">Privacy Policy</a>
-								</li>
-							</ul>
-							<p class="text-muted small mb-4 mb-lg-0">
-								© WALDGANGER.NET by heavnz0r - 2022. All Rights Reserved.</p>
-						</div>
-						<div class="col-lg-6 text-center text-lg-end my-auto h-100">
-							<ul class="list-inline mb-0">
-								<li class="list-inline-item">
-									<a href="#">
-										<i class="fa fa-facebook fa-2x fa-fw"></i>
-									</a>
-								</li>
-								<li class="list-inline-item">
-									<a href="#">
-										<i class="fa fa-twitter fa-2x fa-fw"></i>
-									</a>
-								</li>
-								<li class="list-inline-item">
-									<a href="#">
-										<i class="fa fa-instagram fa-2x fa-fw"></i>
-									</a>
-								</li>
-							</ul>
+				</section>
+				<footer class="bg-black footer">
+					<div class="container">
+						<div class="row">
+							<div class="col-lg-6 text-center text-lg-start my-auto h-100">
+								<ul class="list-inline mb-2">
+									<li class="list-inline-item">
+										<a href="#">About</a>
+									</li>
+									<li class="list-inline-item">
+										<span>⋅</span>
+									</li>
+									<li class="list-inline-item">
+										<a href="#">Contact</a>
+									</li>
+									<li class="list-inline-item">
+										<span>⋅</span>
+									</li>
+									<li class="list-inline-item">
+										<a href="#">Terms of &nbsp;Use</a>
+									</li>
+									<li class="list-inline-item">
+										<span>⋅</span>
+									</li>
+									<li class="list-inline-item">
+										<a href="#">Privacy Policy</a>
+									</li>
+								</ul>
+								<p class="text-muted small mb-4 mb-lg-0">
+									© WALDGANGER.NET by heavnz0r - 2022. All Rights Reserved.</p>
+							</div>
+							<div class="col-lg-6 text-center text-lg-end my-auto h-100">
+								<ul class="list-inline mb-0">
+									<li class="list-inline-item">
+										<a href="#">
+											<img class='icons' src='{{ asset("build/images/icons8-twitter.png")}}'>
+										</a>
+									</li>
+
+									<li class="list-inline-item">
+										<a href="#">
+											<img class='icons' src='{{ asset("build/images/icons8-facebook.png")}}'>
+										</a>
+									</li>
+
+									<li class="list-inline-item">
+										<a href="#">
+											<img class='icons' src='{{ asset("build/images/icons8-instagram_old.png")}}'>
+										</a>
+									</li>
+								</ul>
+							</div>
 						</div>
 					</div>
-				</div>
-			</footer>
+				</footer>
+			</div>
 		{% endblock %}
 	</body>
 </html>
-

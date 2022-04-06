@@ -59,7 +59,7 @@ class IndexController extends AbstractController
     }
 
     #[Route('/', name: 'app_index', methods: ['GET'])]
-    public function index(imgAndSlogan $imgAndSlogan): Response
+    public function index(imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository): Response
     {
         if ($this->getUser()) {
             $user = $this->getUser();
@@ -68,7 +68,7 @@ class IndexController extends AbstractController
         }
         return $this->render('index.html.twig', [
             'controller_name' => 'IndexController',
-
+             'formations' => $formationRepository->findBy([], ['id' => 'DESC'], 3),
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user
