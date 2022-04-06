@@ -42,6 +42,10 @@ class Cours
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $isFinished;
 
+    #[ORM\ManyToOne(targetEntity: Formation::class, inversedBy: 'cours')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $formation;
+
   
 
     public function __construct()
@@ -170,6 +174,18 @@ class Cours
     public function setIsFinished(?bool $isFinished): self
     {
         $this->isFinished = $isFinished;
+
+        return $this;
+    }
+
+    public function getFormation(): ?Formation
+    {
+        return $this->formation;
+    }
+
+    public function setFormation(?Formation $formation): self
+    {
+        $this->formation = $formation;
 
         return $this;
     }

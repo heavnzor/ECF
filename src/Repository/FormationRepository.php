@@ -84,7 +84,7 @@ class FormationRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('f')
             ->setParameter('val', $value)
-            ->orderBy('f.auteur', 'DESC')
+            ->orderBy('f.user', 'DESC')
             ->setMaxResults(100)
             ->getQuery()
             ->getResult();

@@ -57,23 +57,25 @@ class SectionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
-        
+
     }
     public function findAllOrderByAuteurId($value)
     {
         return $this->createQueryBuilder('f')
             ->setParameter('val', $value)
-            ->orderBy('f.auteur', 'DESC')
+            ->orderBy('f.user', 'DESC')
             ->setMaxResults(100)
             ->getQuery()
             ->getResult();
     }
 
+ 
+
     
-    public function findOneBySomeField($value): ?Section
+    public function findOneBySectionId($value): ?Section
     {
         return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
+            ->andWhere('s.formation = :val')
             ->setParameter('val', $value)
             ->getQuery()
             ->getOneOrNullResult()

@@ -165,11 +165,14 @@ class IndexController extends AbstractController
                 // no break
             case '2':
                 $section = new Section();
+                $user = $this->getUser();
                 $form = $this->createForm(SectionType::class, $section);
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
                     $sectionTitre = $form->get('titre')->getData();
                     $section->setTitre(ucfirst(strtolower($sectionTitre)));
+                    $user->addSection($section);
+                    $section->addAuteur($user);
                     $sectionRepository->add($section);
                     $cours = new Cours();
                     $form = $this->createForm(CoursType::class, $cours);
@@ -179,6 +182,8 @@ class IndexController extends AbstractController
                         'img' => $imgAndSlogan->getImg(),
                         'slogan' => $imgAndSlogan->getSlogan(),
                         'user' => $user,
+                        'formation' => $sectionRepository->findOneBySectionId($section->getId()),
+                        'sections' => $user->getSections(),
                         'form' => $form->createView(),
                     ]);
                 }
@@ -186,33 +191,32 @@ class IndexController extends AbstractController
                 // no break
             case '3':
                 $cours = new Cours();
+                $user = $this->getUser();
                 $form = $this->createForm(CoursType::class, $cours);
                 $form->handleRequest($request);
-
                 if ($form->isSubmitted() && $form->isValid()) {
-                    $photo = $form->get('image')->getData();
-                    if ($photo) {
-                        $originalFilename = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
+                    $imageFile = $form->get('image')->getData();
+                    $section = $form->get('section')->getData();
+                    $formation = $cours->getSection($section);
+                    $formation = $section->getFormation($section);
+                    $cours->setFormation($formation);
+                    if ($imageFile) {
+                        $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
                         // this is needed to safely include the file name as part of the URL
                         $safeFilename = $slugger->slug($originalFilename);
-                        $newFilename = $safeFilename . '-' . uniqid() . '.' . $photo->getExtension();
+                        $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
 
                         // Move the file to the directory where brochures are stored
                         try {
-                            $photo->move(
+                            $imageFile->move(
                                 $this->getParameter('photo_directory'),
                                 $newFilename
                             );
                         } catch (FileException $e) {
-                            throw new \RuntimeException($e->getMessage);
-                        }
-                        $photoFile = $form->get('image')->getData();
-                        if ($photoFile) {
-                            $photoFileName = $fileUploader->upload($photoFile);
-                            $cours->setImage($photoFileName);
+                            // .. handle exception if something happens during file upload
                         }
 
-                        // updates the 'photoname' property to store the PDF file name
+                        // updates the 'brochureFilename' property to store the PDF file name
                         // instead of its contents
                         $cours->setImage($newFilename);
                     }
@@ -221,7 +225,7 @@ class IndexController extends AbstractController
                         $originalFilename = pathinfo($pdf->getClientOriginalName(), PATHINFO_FILENAME);
                         // this is needed to safely include the file name as part of the URL
                         $safeFilename = $slugger->slug($originalFilename);
-                        $newFilename = $safeFilename . '-' . uniqid() . '.' . $pdf->getExtension();
+                        $newFilename = $safeFilename . '-' . uniqid() . '.' . $pdf->guessExtension();
 
                         // Move the file to the directory where brochures are stored
                         try {
@@ -230,29 +234,29 @@ class IndexController extends AbstractController
                                 $newFilename
                             );
                         } catch (FileException $e) {
-                            throw new \RuntimeException($e->getMessage);
-                        }
-                        $pdfFile = $form->get('pdf')->getData();
-                        if ($pdfFile) {
-                            $pdfFileName = $fileUploader->upload($pdfFile);
-                            $cours->setImage($pdfFileName);
+                            // .. handle exception if something happens during file upload
                         }
 
+                        // updates the 'brochureFilename' property to store the PDF file name
+                        // instead of its contents
+                    
                         // updates the 'photoname' property to store the PDF file name
                         // instead of its contents
                         $cours->setPdf($newFilename);
                     }
                     $coursTitre = $form->get('titre')->getData();
                     $cours->setTitre(ucfirst(strtolower($coursTitre)));
+                    $cours = $form->getData();
+                    $user->addCour($cours);
                     $coursRepository->add($cours);
                     $section = $form->get('section')->getData();
                     $quizz = new Quizz();
                     $form = $this->createForm(QuizzType::class, $quizz);
-                    return $this->render('cours/quizz.html.twig', [
+                    return $this->render('quizz/new.html.twig', [
                         'img' => $imgAndSlogan->getImg(),
                         'slogan' => $imgAndSlogan->getSlogan(),
                         'user' => $user,
-                        'section' => $section,
+                        'sections' => $user->getSections(),
                         'form' => $form->createView(),
                     ]);
                 }
@@ -269,17 +273,13 @@ class IndexController extends AbstractController
                 if ($form->isSubmitted() && $form->isValid()) {
                     $quizzQuestion = $form->get('question')->getData();
                     $quizz->setQuestion(ucfirst(strtolower($quizzQuestion)));
+                    $quizz = $form->getData();
                     $quizzRepository->add($quizz);
-                    $cours = new Quizz();
-                    $form = $this->createForm(CoursType::class, $cours);
-                    $section = $quizzRepository->findOneByQuizzId($quizz->getId());
-                    return $this->render('quizz/new.html.twig', [
+                    return $this->render('index.html.twig', [
                         $this->addFlash('success', "Quizz créé !"),
                         'img' => $imgAndSlogan->getImg(),
                         'slogan' => $imgAndSlogan->getSlogan(),
                         'user' => $user,
-                        'section' => $section,
-                        'form' => $form->createView(),
                     ]);
                 }
         }

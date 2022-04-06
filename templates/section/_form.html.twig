@@ -3,7 +3,7 @@
 	{{ form_label(form.titre) }}<br>
 	{{ form_widget(form.titre) }}<br>
 	<br><br>Vos formations : 
-	<select class="form-select" aria-label="Formations">
+<select class="form-select" name="form[formation]" aria-label="Formations">
     {% for formation in formations %}
 		<option value="{{ formation.id }}">
 			{{ formation.titre }}

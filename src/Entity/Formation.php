@@ -39,11 +39,15 @@ class Formation
     #[ORM\Column(type: 'integer', nullable: true)]
     private $learnState;
 
+    #[ORM\OneToMany(mappedBy: 'formation', targetEntity: Cours::class)]
+    private $cours;
+
   
     public function __construct()
     {
         $this->section = new ArrayCollection();
         $this->apprenants = new ArrayCollection();
+        $this->cours = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -182,6 +186,36 @@ class Formation
     public function setLearnState(?int $learnState): self
     {
         $this->learnState = $learnState;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Cours>
+     */
+    public function getCours(): Collection
+    {
+        return $this->cours;
+    }
+
+    public function addCour(Cours $cour): self
+    {
+        if (!$this->cours->contains($cour)) {
+            $this->cours[] = $cour;
+            $cour->setFormation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCour(Cours $cour): self
+    {
+        if ($this->cours->removeElement($cour)) {
+            // set the owning side to null (unless already changed)
+            if ($cour->getFormation() === $this) {
+                $cour->setFormation(null);
+            }
+        }
 
         return $this;
     }
