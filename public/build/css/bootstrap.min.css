@@ -647,7 +647,6 @@ progress {
     background-color: #fff;
     border: 1px solid #dee2e6;
     border-radius: .25rem;
-    max-width: 200px !important;
     height: auto
 }
 
@@ -680,9 +679,15 @@ progress {
     margin-right: auto;
     margin-left: auto
 }
-
+@media(min-width: 376px) {
+.imgFormation{
+       max-width: 120px !important;
+    }
+}
 @media(min-width: 576px) {
-
+    .imgFormation{
+       max-width: 150px !important;
+    }
     .container-sm,
     .container {
         max-width: 540px
@@ -690,7 +695,9 @@ progress {
 }
 
 @media(min-width: 768px) {
-
+    .imgFormation{
+       max-width: 180px !important;
+    }
     .container-md,
     .container-sm,
     .container {
@@ -699,7 +706,9 @@ progress {
 }
 
 @media(min-width: 992px) {
-
+    .imgFormation{
+       max-width: 220px !important;
+    }
     .container-lg,
     .container-md,
     .container-sm,
@@ -709,7 +718,9 @@ progress {
 }
 
 @media(min-width: 1200px) {
-
+    .imgFormation{
+       max-width: 250px !important;
+    }
     .container-xl,
     .container-lg,
     .container-md,
@@ -720,7 +731,9 @@ progress {
 }
 
 @media(min-width: 1400px) {
-
+.imgFormation{
+       max-width: 300px !important;
+    }
     .container-xxl,
     .container-xl,
     .container-lg,

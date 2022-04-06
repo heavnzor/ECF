@@ -32,13 +32,15 @@ class Cours
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private $video;
 
-
     #[ORM\ManyToOne(targetEntity: Section::class, inversedBy: 'cours')]
     #[ORM\JoinColumn(nullable: false)]
     private $section;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'cours')]
     private $users;
+
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private $isFinished;
 
   
 
@@ -156,6 +158,18 @@ class Cours
     public function setTitre(string $titre): self
     {
         $this->titre = $titre;
+
+        return $this;
+    }
+
+    public function getIsFinished(): ?bool
+    {
+        return $this->isFinished;
+    }
+
+    public function setIsFinished(?bool $isFinished): self
+    {
+        $this->isFinished = $isFinished;
 
         return $this;
     }

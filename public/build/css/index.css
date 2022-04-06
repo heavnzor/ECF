@@ -67,9 +67,10 @@
    }
 
    .imgFormation {
-       width: 200px;
-       height: auto;
-       padding: .25rem;
+    height: auto;
+    width: auto ;
+    max-width: 300px;
+    padding: .25rem;
     background-color: #fff;
     border: 1px solid #dee2e6;
     border-radius: .25rem;
@@ -80,3 +81,12 @@
        height: auto;
        margin-right: 3rem;
    }
+
+ 
+#myUL a div {
+  display: block; /* Make it into a block element to fill the whole list */
+}
+
+#myUL a div:hover:not(.header) {
+  background-color: white; /* Add a hover effect to all links, except for headers */
+}

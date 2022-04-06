@@ -50,7 +50,7 @@ class UserCrudController extends AbstractCrudController
             }
         }
 
-       
+
 
         return $this->redirect($batchActionDto->getReferrerUrl());
     }
@@ -64,6 +64,7 @@ class UserCrudController extends AbstractCrudController
             TextField::new('pseudo'),
             TextField::new('nom'),
             TextField::new('prenom'),
+            TextField::new('photo'),
             TextareaField::new('description'),
             BooleanField::new('isPostulant'),
             BooleanField::new('isPostulantVerified'),
@@ -79,12 +80,11 @@ class UserCrudController extends AbstractCrudController
         return $actions
             // ...
             ->addBatchAction(Action::new('approve', "Approuver l'instructeur")
-            ->linkToCrudAction('approveUsers')
-            ->addCssClass('btn btn-primary')
-            ->setIcon('fa fa-user-check'))
+                ->linkToCrudAction('approveUsers')
+                ->addCssClass('btn btn-primary')
+                ->setIcon('fa fa-user-check'))
             ->add(Crud::PAGE_INDEX, ACTION::DETAIL)
             ->add(Crud::PAGE_EDIT, Action::SAVE_AND_ADD_ANOTHER)
             ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, Action::EDIT, Action::DELETE]);
-
     }
 }

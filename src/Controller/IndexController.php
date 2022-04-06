@@ -455,7 +455,6 @@ class IndexController extends AbstractController
             'cours' => $cours,
             'form' => $form,
             'section' => $sections,
-
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user
@@ -880,18 +879,15 @@ class IndexController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $sectionRepository->add($section);
-            $quizz = new Quizz();
-            $form = $this->createForm(QuizzType::class, $quizz);
             $formation = $section->getId();
-            return $this->render('quizz/new.html.twig', [
+            return $this->render('section/index.html.twig', [
                 'img' => $imgAndSlogan->getImg(),
                 'slogan' => $imgAndSlogan->getSlogan(),
                 'user' => $user,
-                'quizz' => $quizz,
                 'section' => $section,
-                'form' => $form->createView(),
+                'formation' => $formation
             ]);
-        }/*
+        }
         return $this->renderForm('section/new.html.twig', [
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
@@ -900,7 +896,7 @@ class IndexController extends AbstractController
             'form' => $form,
             'user' => $user
         ]);
-        */
+        
     }
 
     #[Route('/section/{id}', name: 'app_section_show', methods: ['GET'])]
@@ -973,15 +969,12 @@ class IndexController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $quizzRepository->add($quizz);
-            $cours = new Cours();
-            $form = $this->createForm(CoursType::class, $cours);
-            $section = $quizzRepository->findOneByQuizzId($quizz->getId());
-            return $this->render('cours/new.html.twig', [
+            return $this->render('section/index.html.twig', [
                 'img' => $imgAndSlogan->getImg(),
                 'slogan' => $imgAndSlogan->getSlogan(),
                 'user' => $user,
                 'section' => $quizzRepository->findOneByQuizzId($quizz->getId()),
-                'form' => $form->createView(),
+
             ]);
         }
 

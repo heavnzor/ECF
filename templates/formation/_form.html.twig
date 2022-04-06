@@ -1,7 +1,10 @@
-{{ form_start(form) }} {{ form_label(form.titre, 'Titre') }}
-<br> {{ form_widget(form.titre) }}<br> {{ form_label(form.description, 'Description') }}<br>{{ form_widget(form.description) }}
-<br>{{ form_label(form.image, 'Image') }}<br>{{ form_widget(form.image) }}<br>
+{% if is_granted('ROLE_INSTRUCTEUR') %}
+<form name="form" method="post" ><div class="d-flex flex-column my-5 mx-auto justify-content-evenly"><h1>Création d'une nouvelle formation</h1><br>
+ {{ form_label(form.titre, 'Titre') }}<br>
+<br> {{ form_widget(form.titre) }}<br> {{ form_label(form.description, 'Description') }}<br>{{ form_widget(form.description) }}<br>
+<br>{{form_label(form.image, 'Image') }}<br><br>{{ form_widget(form.image) }}<br><br>
 <input type="hidden" id="formation_auteur" name="formation[auteur]" value="{{ app.user.id }}"/>
 <input type="hidden" id="step" name="step" value="1"/>
-<button class="btn btn-primary" type="submit">Soumettre</button> {{ form_widget(form._token) }}{{ form_end(form, {render_rest: false}) }}
+<button class="btn btn-primary mt-2" type="submit">Soumettre</button> {{ form_widget(form._token) }}</div>{{ form_end(form, {render_rest: false}) }}
+{% endif %}
 
