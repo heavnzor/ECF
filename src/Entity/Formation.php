@@ -30,7 +30,7 @@ class Formation
     #[ORM\OneToMany(mappedBy: 'formation', targetEntity: Section::class, orphanRemoval: true)]
     private $section;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'formationsAuteur')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'formationsAuteur', cascade: ['persist', 'remove'])]
     private $auteur;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'formationsApprenants')]

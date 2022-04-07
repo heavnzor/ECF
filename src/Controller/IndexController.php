@@ -68,7 +68,7 @@ class IndexController extends AbstractController
         }
         return $this->render('index.html.twig', [
             'controller_name' => 'IndexController',
-             'formations' => $formationRepository->findBy([], ['id' => 'DESC'], 3),
+            'formations' => $formationRepository->findBy([], ['id' => 'DESC'], 3),
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user
@@ -239,7 +239,7 @@ class IndexController extends AbstractController
 
                         // updates the 'brochureFilename' property to store the PDF file name
                         // instead of its contents
-                    
+
                         // updates the 'photoname' property to store the PDF file name
                         // instead of its contents
                         $cours->setPdf($newFilename);
@@ -585,7 +585,7 @@ class IndexController extends AbstractController
                     ->from(new Address('webmaster@waldganger.net', 'Waldganger'))
                     ->to($form->get('email')->getData())
                     ->subject('Accusé de réception de votre postulation')
-                    ->htmlTemplate('registration/confirmation_email_postulation.html.twig')
+                    ->htmlTemplate('registration/confirmation_email_postulant.html.twig')
             );
             return $this->redirectToRoute('app_index', [
                 $this->addFlash('success', 'Confirmation de votre postulation'),
@@ -608,31 +608,41 @@ class IndexController extends AbstractController
 
 
     #[Route('registration/register', name: 'app_register')]
-    public function register(Request $request, imgAndSlogan $imgAndSlogan, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function register(Request $request, imgAndSlogan $imgAndSlogan, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
 
-        if ($this->getUser() !== null) {
-            $user = $this->getUser();
-        } else {
-            $user = new User();
-        }
+        $user = new User();
 
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('password')->getData()
-                )
-            );
-            $user->setRoles(array('ROLE_USER'));
-            $user->setEmail($form->get('email')->getData());
-            $user->setPseudo($form->get('pseudo')->getData());
-            $entityManager->persist($user);
-            $entityManager->flush();
+            // encode the plain passwor
+
+            $email = $form->get('email')->getData();
+            if ($userRepository->findOneBy(array('email' => $email)) !== null) {
+                $user = $userRepository->findOneBy(array('email' => $email));
+                $user->setPseudo($form->get('pseudo')->getData());
+                $user->setPassword(
+                    $userPasswordHasher->hashPassword(
+                        $user,
+                        $form->get('password')->getData()
+                    )
+                );
+                $entityManager->flush();
+            } else {
+                $user->setPassword(
+                    $userPasswordHasher->hashPassword(
+                        $user,
+                        $form->get('password')->getData()
+                    )
+                );
+                $user->setRoles(array('ROLE_USER'));
+                $user->setEmail($form->get('email')->getData());
+                $user->setPseudo($form->get('pseudo')->getData());
+                $entityManager->persist($user);
+                $entityManager->flush();
+            }
 
             // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation(
@@ -766,8 +776,12 @@ class IndexController extends AbstractController
         } catch (ResetPasswordExceptionInterface $e) {
             $this->addFlash('reset_password_error', sprintf(
                 '%s - %s',
-                ResetPasswordExceptionInterface::MESSAGE_PROBLEM_VALIDATE, [], 'ResetPasswordBundle',
-            $e->getReason(), [], 'ResetPasswordBundle'
+                ResetPasswordExceptionInterface::MESSAGE_PROBLEM_VALIDATE,
+                [],
+                'ResetPasswordBundle',
+                $e->getReason(),
+                [],
+                'ResetPasswordBundle'
             ));
 
             return $this->redirectToRoute('app_forgot_password_request');
@@ -890,7 +904,6 @@ class IndexController extends AbstractController
             'form' => $form,
             'user' => $user
         ]);
-        
     }
 
     #[Route('/section/{id}', name: 'app_section_show', methods: ['GET'])]
