@@ -118,8 +118,6 @@ class Cours
     }
 
 
-
-
     public function setSection(?Section $section): self
     {
         $this->section = $section;

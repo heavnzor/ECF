@@ -63,6 +63,7 @@ class CoursType extends AbstractType
         ])
             ->add('video')
             ->add('section')
+            ->add('isFinished')
         ;
     }
 

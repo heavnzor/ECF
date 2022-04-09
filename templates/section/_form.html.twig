@@ -2,13 +2,25 @@
 	{{ form_start(form) }}
 	{{ form_label(form.titre) }}<br>
 	{{ form_widget(form.titre) }}<br>
-	<br><br>Vos formations : 
-<select class="form-select" name="form[formation]" aria-label="Formations">
-    {% for formation in formations %}
-		<option value="{{ formation.id }}">
-			{{ formation.titre }}
-		</option>
-		{% endfor %}
+	<br><br>Vos formations :
+	<select class="form-select" name="section[formation]" aria-label="Formations">
+		{% if formation is defined %}
+			<option value="{{ formation.id }}">
+				{{ formation.titre }}
+			</option>
+		{% elseif formations is defined %}
+			{% for formation in formations %}
+				<option value="{{ formation.id }}">
+					{{ formation.titre }}
+				</option>
+			{% endfor %}
+		{% else %}
+			{% for formation in app.user.formationsAuteur %}
+				<option value="{{ formation.id }}">
+					{{ formation.titre }}
+				</option>
+			{% endfor %}
+		{% endif %}
 	</select>
 
 	<br><br>

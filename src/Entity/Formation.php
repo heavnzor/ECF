@@ -37,7 +37,7 @@ class Formation
     private $apprenants;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    private $learnState;
+    private $learnState; // learnState = 0/null = formation non commencé / learnState = 1 = formation terminée / learnState = 2 = formation en cours 
 
     #[ORM\OneToMany(mappedBy: 'formation', targetEntity: Cours::class)]
     private $cours;

@@ -1,44 +1,45 @@
-<!DOCTYPE html>
+{% extends 'index.html.twig' %}
+{% block main %}
+	<h1>Catalogue des cours</h1>
 
-<title>Cours index</title>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Cours</th>
+				<th>Image</th>
+				<th>Pdf</th>
+				<th>Video</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for cour in cours %}
+				<tr>
+					<td>{{ cour.id }}</td>
+					<td>{{ cour.cours }}</td>
+					{% if cour.image is not same as(null) %}
+						<td><img class='imgFormation' src="{{ asset('build/uploads/photo/')}}{{ cour.image }}"></td>
+					{% endif %}
+					<td>
+						<a href="{{ asset('build/uploads/photo/') }}" {{ cour.pdf }} target="_blank"></td>
+					</td>
+					<td>
+						<iframe width="560" height="315" src="https://www.youtube.com/embed/{{ cour.video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+					</td>
+					<td>
+						<a href="{{ path('app_cours_show', {'id': cour.id}) }}">Voir</a>
+						<a href="{{ path('app_cours_edit', {'id': cour.id}) }}">Modifier/supprimer</a>
 
-{% block body %}
-    <h1>Cours index</h1>
+					</td>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Cours</th>
-                <th>Image</th>
-                <th>Pdf</th>
-                <th>Video</th>
-                <th>Finished</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for cour in cours %}
-            <tr>
-                <td>{{ cour.id }}</td>
-                <td>{{ cour.cours }}</td>
-                <td><img class='imgFormation' src="{{ asset('build/uploads/photo/')}}{{ cour.image }}"></td>
-                <td><a href="{{ asset('build/uploads/photo/') }}"{{ cour.pdf }} target="_blank"></td>
-                <td><iframe width="560" height="315" src="{{ cour.video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></td>
-                <td>{{ cour.finished ? 'Cours terminé' }}</td>
-                <td>
-                    <a href="{{ path('app_cours_show', {'id': cour.id}) }}">show</a>
-                    <a href="{{ path('app_cours_edit', {'id': cour.id}) }}">edit</a>
-                                        <a href="{{ path('app_cours_edit', {'id': cour.id}) }}">edit</a>
-
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="7">Aucun cours trouvé</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="7">Aucun cours trouvé</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 
 {% endblock %}

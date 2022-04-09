@@ -1,14 +1,15 @@
 {{ form_start(form) }}
+<h1>Création d'un nouveau Quizz</h1><br><br>
+
 <input type="hidden" id="step" name="step" value="4"/>
 Vos sections :
-<select class="form-select" name="form[section]" aria-label="Sections">
+<select class="form-select" name="quizz[section]" aria-label="Sections">
 	{% for section in sections %}
 		<option value="{{ section.id }}">
 			{{ section.titre }}
 		</option>
 	{% endfor %}
 </select>
-<h1>Création d'un nouveau Quizz</h1><br><br>
 
 {{ form_label(form.question, 'Question') }}
 <br>

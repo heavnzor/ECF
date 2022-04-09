@@ -1,19 +1,67 @@
-function myFunction() {
-  // Declare variables
-  var input, filter, f, div, img, a, i, txtValue;
-  input = document.getElementById('myInput');
-  filter = input.value.toUpperCase();
-  f = document.getElementById("myF");
-  div = getElementById('form');
 
-  // Loop through all list items, and hide those who don't match the search query
-  for (i = 0; i < div.length; i++) {
-    f = div[i].getElementsByTagName("p")[0];
-    txtValue = a.textContent || a.innerText;
-    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-      div[i].style.display = "";
+  function searchText(){
+  document.getElementById ('searchInput').addEventListener ('keyup', event => {
+    let username = event.target.value.toLowerCase ();
+    let allNamesDOMCollection = document.getElementsByClassName ('card');
+
+    for (let i = 0; i < allNamesDOMCollection.length; i++) {
+      const currentName = allNamesDOMCollection[i].textContent.toLowerCase ();
+      if (currentName.includes (username)) {
+        allNamesDOMCollection[i].style.display = 'block';
+      } else {
+        allNamesDOMCollection[i].style.display = 'none';
+      }
+    }
+  });
+  }
+    function getAll(){
+
+  document.getElementByName ('btnradio').addEventListener ('onclick', event => {
+  let username = event.target.value.toLowerCase ();
+  let allNamesDOMCollection = document.getElementsByClassName ('card');
+
+  for (let i = 0; i < allNamesDOMCollection.length; i++) {
+    const currentName = allNamesDOMCollection[i].textContent.toLowerCase ();
+    if (currentName.includes (username)) {
+      allNamesDOMCollection[i].style.display = 'block';
     } else {
-      div[i].style.display = "none";
+      allNamesDOMCollection[i].style.display = 'none';
     }
   }
-}
+});
+    }
+      function getEnCours(){
+
+  document.getElementByName ('btnradio1').addEventListener ('onclick', event => {
+  let username = event.target.value.toLowerCase ();
+  let allNamesDOMCollection = document.getElementsByClassName ('enCours');
+
+  for (let i = 0; i < allNamesDOMCollection.length; i++) {
+    const currentName = allNamesDOMCollection[i].textContent.toLowerCase ();
+    if (currentName.includes (username)) {
+      allNamesDOMCollection[i].style.display = 'block';
+    } else {
+      allNamesDOMCollection[i].style.display = 'none';
+    }
+  }
+});
+
+      }
+        function getFinished(){
+
+  document.getElementByName ('btnradio2').addEventListener ('onclick', event => {
+  let username = event.target.value.toLowerCase ();
+  let allNamesDOMCollection = document.getElementsByClassName ('finished');
+
+  for (let i = 0; i < allNamesDOMCollection.length; i++) {
+    const currentName = allNamesDOMCollection[i].textContent.toLowerCase ();
+    if (currentName.includes (username)) {
+      allNamesDOMCollection[i].style.display = 'block';
+    } else {
+      allNamesDOMCollection[i].style.display = 'none';
+    }
+  }
+});
+        }
+
+

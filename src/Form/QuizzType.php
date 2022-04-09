@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class QuizzType extends AbstractType
 {
@@ -17,6 +18,7 @@ class QuizzType extends AbstractType
             ->add('reponse1')
             ->add('reponse2')
             ->add('reponse3')
+            ->add('section')
             ->add( 'bonnereponse', ChoiceType::class, [
             'choices'  => [
                 'Réponse 1' => 'reponse1',

@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class FileUploader
 {
@@ -26,6 +27,7 @@ $fileName = $safeFilename.'-'.uniqid().'.'.$file->getExtension();
 try {
 $file->move($this->getTargetDirectory(), $fileName);
 } catch (FileException $e) {
+    return new Response($e->getMessage());
 // ... handle exception if something happens during file upload
 }
 

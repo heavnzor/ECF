@@ -1,39 +1,33 @@
 {% extends 'index.html.twig' %}
 {% block main %}
-	<div class="container text-center my-auto px-auto">
-		<nav class="navbar navbar-expand-lg navbar-light bg-black">
-			<div class="container mx-auto d-flex flex-wrap justify-content-center">
-				<form class="d-flex flex-wrap flex-wrap justify-content-center mx-auto">
-					<input class="form-control my-auto text-center" id="myInput" onkeyup="myFunction()" type="search" placeholder="Rechercher une formation" aria-label="Search">
-					<input type="radio" class="btn-check px-4 my-1" name="btnradio" onclick="filterSelection('all')" id="btnradio1" autocomplete="off" checked>
-					<label class="btn btn-outline-primary mx-2 pt-1 my-2" for="btnradio1">Toutes les formations</label>
-					{% if is_granted('ROLE_USER') %}
-						<input type="radio" class="btn-check px-4 my-1" name="btnradio" filterSelection('learning')" id="btnradio2" autocomplete="off">
-						<label class="btn btn-outline-info mx-2 pt-1 my-2" for="btnradio2">Formations en cours</label>
-						<input type="radio" class="btn-check px-4 my-1" name="btnradio" filterSelection('finished')" id="btnradio3" autocomplete="off">
-						<label class="btn btn-outline-success mx-2 pt-1 my-2" for="btnradio3">Formations terminés</label>
-					{% endif %}
-				</form>
-			</div>
-		</nav>
-		<hr>
-	</div>
-	<div class="card-group mx-auto justify-content-evenly" id='form'>
-		{% for formation in formations %}
-				<div id="myF" class="card p-3">
-				<a  href="{{ path('app_formation_show', {'id': formation.id}) }}">
-					<div class="card-body text-center">
-						<img src="{{ asset('build/uploads/photos/')}}{{ formation.image }}" class="img-thumbnail imgFormation" alt="{{ formation.titre}}">
-						<h2 class="card-title ">{{ formation.titre}}</h2>
-						<p class="card-text">{{ formation.description }}</p>
-					</div>
-					</a>
-				</div>
-		{% endfor %}
-	</div>
-	{% if formations is same as(null) %}
-		<tr>
-			<td colspan="6">Aucune formation pour le moment</td>
-		</tr>
+	{% if (p is defined and p == 0) or p is same as(null) %}
+		{% include 'navusers.html.twig' %}
 	{% endif %}
+	{% if p is defined and p == 1 %}
+		{% if is_granted('ROLE_INSTRUCTEUR') %}
+			{% include 'navformateurs.html.twig' %}
+		{% endif %}
+	{% endif %}
+	{% for formation in formations %}
+		<div class="card p-3">
+			<div class="card-body text-center">
+				<img src="{{ asset('build/uploads/photos/')}}{{formation.image}}" class=" imgFormation" alt=" {{ formation.titre}} ">
+				<h2 class="fs-1">{{ formation.titre}}</h2>
+				<p class="card-text fs-5">{{ formation.description }}</p>
+				{% if is_granted('ROLE_USER') and formation.learnState == 0 %}
+					<a href="{{ path('app_formation_show', {'id': formation.id}) }}">
+						<button class="btn btn-primary ">Suivre</button>
+					</a>
+				{% elseif is_granted('ROLE_USER') and formation.learnState == 1 %}
+					<a href="{{ path('app_formation_show', {'id': formation.id}) }}">
+						<button class="btn btn-primary ">Continuer</button>
+					</a>
+				{% elseif is_granted('ROLE_USER') and formation.learnState == 2 %}
+					<a href="{{ path('app_formation_show', {'id': formation.id}) }}">
+						<button class="btn btn-primary ">Formation terminé</button>
+					</a>
+				{% endif %}
+			</div>
+		</div>
+	{% endfor %}
 {% endblock %}

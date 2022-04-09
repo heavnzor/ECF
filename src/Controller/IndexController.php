@@ -62,9 +62,9 @@ class IndexController extends AbstractController
     public function index(imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository): Response
     {
         if ($this->getUser()) {
-            $user = $this->getUser();
+            $this->getUser() ? $user = $this->getUser() : $user = new User();
         } else {
-            $user = new User();
+            $this->getUser() ? $user = $this->getUser() : $user = new User();
         }
         return $this->render('index.html.twig', [
             'controller_name' => 'IndexController',
@@ -77,32 +77,51 @@ class IndexController extends AbstractController
 
     #[Route('/formation', name: 'app_formation_index', methods: ['GET'])]
 
-    public function indexFormation(FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan): Response
+    public function indexFormation(Request $request, FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan, UserRepository $userRepository): Response
     {
-        $user = new User();
-        if ($user->getId() !== null && $user->getIsPostulantVerified() == true) {
-            $formations = $formationRepository->findAllByAuteurId();
+        $_GET['p'] ? $p = $_GET['p'] : $p = null;
+        $this->getUser() ? $user = $this->getUser() : $user = new User();
+        if ($this->isGranted('ROLE_INSTRUCTEUR') && $p == 1) {
+            $formations = $formationRepository->findAllOrderByAuteurId();
+        } elseif ($this->isGranted('ROLE_USER') && $p == 0) {
+            $formations = $formationRepository->findAllOrderByLearnState(); // learnState = 2 = formation en cours
         } else {
             $formations = $formationRepository->findAll();
         }
+        $formationsApp = $user->getFormationsApprenants();
+        $formationNb = 0;
+        foreach ($formationsApp as $formation) {
+            if ($formation->getLearnState() == 1) {
+                $formationNb++;
+            }
+        }
+        $cours = $user->getCours();
+        $coursNb = 0;
+        foreach ($cours as $cour) {
+            if ($cour->getIsFinished() == 1) {
+                $coursNb++;
+            }
+        }
+        $progress = ($coursNb * $formationNb) / 100;
+
         return $this->render('formation/index.html.twig', [
             'formations' => $formations,
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
-            'user' => $user
+            'user' => $user,
+            'p' => $p,
+            'progress' => $progress
         ]);
     }
 
     #[Route('/formation/new', name: 'app_formation_new', methods: ['GET', 'POST'])]
-    public function newFormation(Request $request, CoursRepository $coursRepository, UserInterface $user, QuizzRepository $quizzRepository, SectionRepository $sectionRepository, imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository, FileUploader $fileUploader, SluggerInterface $slugger): Response
+    public function newFormation(Request $request, UserRepository $userRepository, CoursRepository $coursRepository, QuizzRepository $quizzRepository, SectionRepository $sectionRepository, imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository, FileUploader $fileUploader, SluggerInterface $slugger): Response
     {
-        if ($_GET['step'] == 0 && isset($_POST['step'])) {
-            $step = $_POST['step'];
-        } else {
-            $step = $_GET['step'];
-        }
+        isset($_POST['step']) ? $step = $_POST['step'] : $step = 0;
+
         switch ($step) {
             case '0':
+                $this->getUser() ? $user = $this->getUser() : $user = new User();
                 $formation = new Formation();
                 $form = $this->createForm(FormationType::class, $formation);
                 return $this->render('formation/new.html.twig', [
@@ -112,14 +131,17 @@ class IndexController extends AbstractController
                     'slogan' => $imgAndSlogan->getSlogan(),
                     'user' => $user,
                 ]);
-                break;
+
+
+
             case '1':
                 $formation = new Formation();
-                $user = $this->getUser();
+                $this->getUser() ? $user = $this->getUser() : $user = new User();
                 $form = $this->createForm(FormationType::class, $formation);
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
                     $imageFile = $form->get('image')->getData();
+                    $formation = $form->getData();
                     $formationTitre = $form->get('titre')->getData();
                     $formation->setTitre(ucfirst(strtolower($formationTitre)));
                     if ($imageFile) {
@@ -142,7 +164,7 @@ class IndexController extends AbstractController
                         // instead of its contents
                         $formation->setImage($newFilename);
                     }
-                    if ($user->getIsPostulantVerified() == false && $user->IsVerified() == true) {
+                    if ($this->isGranted('ROLE_INSTRUCTEUR') && $this->isGranted('ROLE_SUPER_ADMIN')) {
                         $formationRepository->add($formation);
                         $user->addFormationsApprenant($formation);
                     } else {
@@ -158,22 +180,28 @@ class IndexController extends AbstractController
                         'user' => $user,
                         'section' => $section,
                         'form' => $form->createView(),
-                        'formations' => $formationRepository->findAllOrderByAuteurId($user->getId()),
+                        'formations' => $user->getFormationsAuteur(),
                     ]);
                 }
 
                 // no break
             case '2':
                 $section = new Section();
-                $user = $this->getUser();
+                $this->getUser() ? $user = $this->getUser() : $user = new User();
                 $form = $this->createForm(SectionType::class, $section);
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
-                    $sectionTitre = $form->get('titre')->getData();
-                    $section->setTitre(ucfirst(strtolower($sectionTitre)));
-                    $user->addSection($section);
-                    $section->addAuteur($user);
-                    $sectionRepository->add($section);
+                    $formation = $form->get('formation')->getData();
+                    $section = $form->getData();
+                    $section->setFormation($form->get('formation')->getData());
+                    $section->setTitre(ucfirst(strtolower($form->get('titre')->getData())));
+                    if ($this->denyAccessUnlessGranted('ROLE_INSTRUCTEUR') && $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN')) {
+                        $user->addSection($section);
+                        $sectionRepository->add($section);
+                    } else {
+                        $user->addSection($section);
+                        $sectionRepository->add($section);
+                    }
                     $cours = new Cours();
                     $form = $this->createForm(CoursType::class, $cours);
                     $formation = $section->getId();
@@ -191,7 +219,7 @@ class IndexController extends AbstractController
                 // no break
             case '3':
                 $cours = new Cours();
-                $user = $this->getUser();
+                $this->getUser() ? $user = $this->getUser() : $user = new User();
                 $form = $this->createForm(CoursType::class, $cours);
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
@@ -247,6 +275,9 @@ class IndexController extends AbstractController
                     $coursTitre = $form->get('titre')->getData();
                     $cours->setTitre(ucfirst(strtolower($coursTitre)));
                     $cours = $form->getData();
+                    $video = $form->get('video')->getData();
+                    $video = preg_match("/(?<=\d\/|\.be\/|v[=\/])([\w\-]{11,})|^([\w\-]{11})$/im", $video, $match);
+                    $cours->setVideo($match[0]);
                     $user->addCour($cours);
                     $coursRepository->add($cours);
                     $section = $form->get('section')->getData();
@@ -260,10 +291,6 @@ class IndexController extends AbstractController
                         'form' => $form->createView(),
                     ]);
                 }
-
-
-
-
                 // no break
             case '4':
                 $quizz = new Quizz();
@@ -273,7 +300,7 @@ class IndexController extends AbstractController
                 if ($form->isSubmitted() && $form->isValid()) {
                     $quizzQuestion = $form->get('question')->getData();
                     $quizz->setQuestion(ucfirst(strtolower($quizzQuestion)));
-                    $quizz = $form->getData();
+                    $quizz->setSection($sectionRepository->findOneBy(['id' => $form->get('section')->getData()]));
                     $quizzRepository->add($quizz);
                     return $this->render('index.html.twig', [
                         $this->addFlash('success', "Quizz créé !"),
@@ -283,14 +310,15 @@ class IndexController extends AbstractController
                     ]);
                 }
         }
+        return $this->redirectToRoute('app_index');
     }
     #[Route('/formation/{id}', name: 'app_formation_show', methods: ['GET'])]
-    public function showFormation(Formation $formation, imgAndSlogan $imgAndSlogan): Response
+    public function showFormation(FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan, Int $id): Response
     {
-        $user = new User();
+        $this->getUser() ? $user = $this->getUser() : $user = new User();
         return $this->render('formation/show.html.twig', [
-            'formation' => $formation,
-            'sections' => $formation->getSection(),
+            'formation' => $formationRepository->find($id),
+            'sections' => $formationRepository->find($id)->getSection(),
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user
@@ -298,11 +326,11 @@ class IndexController extends AbstractController
     }
 
     #[Route('formation/{id}/edit', name: 'app_formation_edit', methods: ['GET', 'POST'])]
-    public function editFormation(Request $request, UserInterface $user, SluggerInterface $slugger, FileUploader $fileUploader, Formation $formation, FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan): Response
+    public function editFormation(Request $request, SluggerInterface $slugger, FileUploader $fileUploader, Formation $formation, FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan): Response
     {
         $form = $this->createForm(FormationType::class, $formation);
         $form->handleRequest($request);
-
+        $this->getUser() ? $user = $this->getUser() : $user = new User();
         if ($form->isSubmitted() && $form->isValid()) {
             $photo = $form->get('image')->getData();
             if ($photo) {
@@ -350,7 +378,7 @@ class IndexController extends AbstractController
     }
 
     #[Route('/formation/{id}', name: 'app_formation_delete', methods: ['POST'])]
-    public function deleteFormation(Request $request, UserInterface $user, Formation $formation, FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan): Response
+    public function deleteFormation(Request $request,  Formation $formation, FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan): Response
     {
         if ($this->isCsrfTokenValid('delete' . $formation->getId(), $request->request->get('_token'))) {
             $formationRepository->remove($formation);
@@ -360,7 +388,7 @@ class IndexController extends AbstractController
 
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
-            'user' => $user
+            'user' => $this->getUser(),
         ], Response::HTTP_SEE_OTHER);
     }
     #[Route('cours/', name: 'app_cours_index', methods: ['GET'])]
@@ -384,29 +412,28 @@ class IndexController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $photo = $form->get('image')->getData();
-            if ($photo) {
-                $originalFilename = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
+            $imageFile = $form->get('image')->getData();
+            $section = $form->get('section')->getData();
+            $formation = $cours->getSection($section);
+            $formation = $section->getFormation($section);
+            $cours->setFormation($formation);
+            if ($imageFile) {
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
                 // this is needed to safely include the file name as part of the URL
                 $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename . '-' . uniqid() . '.' . $photo->getExtension();
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
 
                 // Move the file to the directory where brochures are stored
                 try {
-                    $photo->move(
+                    $imageFile->move(
                         $this->getParameter('photo_directory'),
                         $newFilename
                     );
                 } catch (FileException $e) {
-                    throw new \RuntimeException($e->getMessage);
-                }
-                $photoFile = $form->get('image')->getData();
-                if ($photoFile) {
-                    $photoFileName = $fileUploader->upload($photoFile);
-                    $cours->setImage($photoFileName);
+                    // .. handle exception if something happens during file upload
                 }
 
-                // updates the 'photoname' property to store the PDF file name
+                // updates the 'brochureFilename' property to store the PDF file name
                 // instead of its contents
                 $cours->setImage($newFilename);
             }
@@ -415,7 +442,7 @@ class IndexController extends AbstractController
                 $originalFilename = pathinfo($pdf->getClientOriginalName(), PATHINFO_FILENAME);
                 // this is needed to safely include the file name as part of the URL
                 $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename . '-' . uniqid() . '.' . $pdf->getExtension();
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $pdf->guessExtension();
 
                 // Move the file to the directory where brochures are stored
                 try {
@@ -424,21 +451,25 @@ class IndexController extends AbstractController
                         $newFilename
                     );
                 } catch (FileException $e) {
-                    throw new \RuntimeException($e->getMessage);
+                    // .. handle exception if something happens during file upload
                 }
-                $pdfFile = $form->get('pdf')->getData();
-                if ($pdfFile) {
-                    $pdfFileName = $fileUploader->upload($pdfFile);
-                    $cours->setImage($pdfFileName);
-                }
+
+                // updates the 'brochureFilename' property to store the PDF file name
+                // instead of its contents
 
                 // updates the 'photoname' property to store the PDF file name
                 // instead of its contents
                 $cours->setPdf($newFilename);
             }
+            $coursTitre = $form->get('titre')->getData();
+            $cours->setTitre(ucfirst(strtolower($coursTitre)));
+            $cours = $form->getData();
+            $video = $form->get('video')->getData();
+            $video = preg_match("/(?<=\d\/|\.be\/|v[=\/])([\w\-]{11,})|^([\w\-]{11})$/im", $video, $match);
+            $cours->setVideo($match[0]);
+            $user->addCour($cours);
             $coursRepository->add($cours);
             return $this->redirectToRoute('app_cours_index', [
-
                 'img' => $imgAndSlogan->getImg(),
                 'slogan' => $imgAndSlogan->getSlogan(),
                 'user' => $user
@@ -448,7 +479,7 @@ class IndexController extends AbstractController
         return $this->renderForm('cours/new.html.twig', [
             'cours' => $cours,
             'form' => $form,
-            'section' => $sections,
+            'sections' => $sections,
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user
@@ -458,7 +489,7 @@ class IndexController extends AbstractController
     #[Route('cours/{id}', name: 'app_cours_show', methods: ['GET'])]
     public function showCours(Cours $cours, imgAndSlogan $imgAndSlogan): Response
     {
-        $user = new User();
+        $this->getUser() ? $user = $this->getUser() : $user = new User();
         return $this->render('cours/show.html.twig', [
             'cours' => $cours,
 
@@ -469,16 +500,18 @@ class IndexController extends AbstractController
     }
 
     #[Route('cours/{id}/edit', name: 'app_cours_edit', methods: ['GET', 'POST'])]
-    public function editCours(Request $request, Cours $cours, CoursRepository $coursRepository, imgAndSlogan $imgAndSlogan): Response
+    public function editCours(Request $request, UserInterface $user, Cours $cours, CoursRepository $coursRepository, imgAndSlogan $imgAndSlogan, Int $id): Response
     {
-        $user = new User();
         $form = $this->createForm(CoursType::class, $cours);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $video = $form->get('video')->getData();
+            $video = preg_match("/(?<=\d\/|\.be\/|v[=\/])([\w\-]{11,})|^([\w\-]{11})$/im", $video, $match);
+            $cours->setVideo($match[0]);
             $coursRepository->add($cours);
             return $this->redirectToRoute('app_cours_index', [
-
+                'user' => $user,
                 'img' => $imgAndSlogan->getImg(),
                 'slogan' => $imgAndSlogan->getSlogan(),
                 'user' => $user
@@ -486,9 +519,9 @@ class IndexController extends AbstractController
         }
 
         return $this->renderForm('cours/edit.html.twig', [
-            'cours' => $cours,
+            'cour' => $cours,
             'form' => $form,
-            'section' => $cours->getSection(),
+            'sections' => $user->getSections(),
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user
@@ -537,7 +570,7 @@ class IndexController extends AbstractController
 
         // POSTULATION INSTRUCTEUR  
 
-        $user = new User();
+        $this->getUser() ? $user = $this->getUser() : $user = new User();
 
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
@@ -571,11 +604,9 @@ class IndexController extends AbstractController
                 }
                 $user->setPhoto($newFilename);
             }
-
+            $user->setRoles(array('ROLE_USER'));
             $user->setEmail($form->get('email')->getData());
-            $user->setPassword($form->get('password')->getData());
             $user->setIsPostulant(true);
-            $user->setIsPostulantVerified(false);
             $entityManager->persist($user);
             $entityManager->flush();
             $this->emailVerifier->sendEmailConfirmation(
@@ -588,15 +619,13 @@ class IndexController extends AbstractController
                     ->htmlTemplate('registration/confirmation_email_postulant.html.twig')
             );
             return $this->redirectToRoute('app_index', [
-                $this->addFlash('success', 'Confirmation de votre postulation'),
+                $this->addFlash('success', 'Confirmation de votre postulation, un email vous a été envoyé : vérifiez vos spams. '),
                 'img' => $imgAndSlogan->getImg(),
                 'slogan' => $imgAndSlogan->getSlogan()
             ]);
         }
-
-        $user = new User();
+        $this->getUser() ? $user = $this->getUser() : $user = new User();
         $form = $this->createForm(UserType::class, $user);
-
         return $this->render('user/new.html.twig', [
             'registrationForm' => $form->createView(),
             'img' => $imgAndSlogan->getImg(),
@@ -611,38 +640,25 @@ class IndexController extends AbstractController
     public function register(Request $request, imgAndSlogan $imgAndSlogan, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
 
-        $user = new User();
+        $this->getUser() ? $user = $this->getUser() : $user = new User();
 
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain passwor
+            // encode the plain password
+            $user->setPassword(
+                $userPasswordHasher->hashPassword(
+                    $user,
+                    $form->get('password')->getData()
+                )
+            );
+            $user->setRoles(array('ROLE_USER'));
+            $user->setEmail($form->get('email')->getData());
+            $user->setPseudo($form->get('pseudo')->getData());
+            $entityManager->persist($user);
+            $entityManager->flush();
 
-            $email = $form->get('email')->getData();
-            if ($userRepository->findOneBy(array('email' => $email)) !== null) {
-                $user = $userRepository->findOneBy(array('email' => $email));
-                $user->setPseudo($form->get('pseudo')->getData());
-                $user->setPassword(
-                    $userPasswordHasher->hashPassword(
-                        $user,
-                        $form->get('password')->getData()
-                    )
-                );
-                $entityManager->flush();
-            } else {
-                $user->setPassword(
-                    $userPasswordHasher->hashPassword(
-                        $user,
-                        $form->get('password')->getData()
-                    )
-                );
-                $user->setRoles(array('ROLE_USER'));
-                $user->setEmail($form->get('email')->getData());
-                $user->setPseudo($form->get('pseudo')->getData());
-                $entityManager->persist($user);
-                $entityManager->flush();
-            }
 
             // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation(
@@ -660,12 +676,12 @@ class IndexController extends AbstractController
                 'slogan' => $imgAndSlogan->getSlogan(),
                 'img' => $imgAndSlogan->getImg(),
                 'user' => $user,
-                $this->addFlash('success', 'Vous êtes désormais inscrit. Veuillez désormais confirmez votre adresse e-mail pour pouvoir vous connecter.'),
+                $this->addFlash('success', "Vous êtes désormais inscrit. Veuillez désormais confirmez votre adresse e-mail pour pouvoir vous connecter : vérifiez vos spams si vous ne recevez pas l'email."),
                 'role' => $user->getRoles()
             ]);
         }
 
-        $user = new User();
+        $this->getUser() ? $user = $this->getUser() : $user = new User();
         $form = $this->createForm(UserType::class, $user);
         return $this->render('user/new.html.twig', [
             'registrationForm' => $form->createView(),
@@ -702,7 +718,7 @@ class IndexController extends AbstractController
         $user->setIsVerified(true);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_login');
+        return $this->redirectToRoute('app_login', [$this->addFlash('success', "Merci d'avoir confirmé votre adresse e-mail, vous pouvez désormais vous connecter.")]);
     }
     use ResetPasswordControllerTrait;
 
@@ -883,10 +899,17 @@ class IndexController extends AbstractController
     {
 
         $section = new Section();
+        $this->getUser() ? $user = $this->getUser() : $user = new User();
         $form = $this->createForm(SectionType::class, $section);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $sectionRepository->add($section);
+            if ($this->denyAccessUnlessGranted('ROLE_INSTRUCTEUR') && $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN')) {
+                $user->addSection($section);
+                $sectionRepository->add($section);
+            } else {
+                $user->addSection($section);
+                $sectionRepository->add($section);
+            }
             $formation = $section->getId();
             return $this->render('section/index.html.twig', [
                 'img' => $imgAndSlogan->getImg(),
@@ -900,7 +923,7 @@ class IndexController extends AbstractController
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'section' => $section,
-            'formation' => $formationRepository->findOneByUserId($user->getId()),
+            'formations' => $formationRepository->findAllFormationsOrderById($user->getId()),
             'form' => $form,
             'user' => $user
         ]);
@@ -909,7 +932,7 @@ class IndexController extends AbstractController
     #[Route('/section/{id}', name: 'app_section_show', methods: ['GET'])]
     public function showSection(Section $section, imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository, Request $request): Response
     {
-        $user = new User();
+        $this->getUser() ? $user = $this->getUser() : $user = new User();
         return $this->render('section/show.html.twig', [
             'section' =>  $section,
             'img' => $imgAndSlogan->getImg(),

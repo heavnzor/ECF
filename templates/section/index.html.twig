@@ -1,28 +1,27 @@
-<!DOCTYPE html>
-
-<title>Section index</title>
-
-{% block body %}
-	<h1>Section index</h1>
+{% extends 'index.html.twig' %}
+{% block main %}
+	<h1>Sections</h1>
 
 	<table class="table">
 		<thead>
 			<tr>
-				<th>Id</th>
 				<th>Section</th>
 				<th>Formation</th>
-				<th>Action</th>
+				{% if is_granted('ROLE_INSTRUCTEUR') %}
+					<th>Action</th>
+				{% endif %}
 			</tr>
 		</thead>
 		<tbody>
-			{% for section in sections %}
+			{% for section in app.user.sections %}
 				<tr>
-					<td>{{ section.id }}</td>
 					<td>{{ section.titre }}</td>
 					<td>{{ section.formation }}</td>
 					<td>
-						<a href="{{ path('app_section_show', {'id': section.id}) }}">show</a>
-						<a href="{{ path('app_section_edit', {'id': section.id}) }}">edit</a>
+						{% if is_granted('ROLE_INSTRUCTEUR') %}
+							<a href="{{ path('app_section_show', {'id': section.id}) }}">show</a>
+							<a href="{{ path('app_section_edit', {'id': section.id}) }}">edit</a>
+						{% endif %}
 					</td>
 				</tr>
 			{% else %}
@@ -33,5 +32,5 @@
 		</tbody>
 	</table>
 
-	<a href="{{ path('app_section_new') }}">Create new</a>
+	<a href="{{ path('app_section_new') }}">Créer une nouvelle section</a>
 {% endblock %}

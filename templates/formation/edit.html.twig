@@ -1,9 +1,6 @@
-<!DOCTYPE html>
+{% extends 'index.html.twig' %}
 
-<title>Edit Formation</title>
-
-{% block body %}
-    <h1>Edit Formation</h1>
+{% block main %}
 
     {{ include('formation/_form.html.twig', {'button_label': 'Update'}) }}
 

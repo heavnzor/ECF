@@ -69,11 +69,21 @@
    .imgFormation {
     height: auto;
     width: auto ;
-    max-width: 300px;
+    max-width: 250px !important;
     padding: .25rem;
     background-color: #fff;
-    border: 1px solid #dee2e6;
+    border: 1px solid #fff;
     border-radius: .25rem;
+   }
+
+   .imgCours {
+       height: auto;
+       width: auto;
+       max-width: 150px !important;
+       padding: .25rem;
+       background-color: #fff;
+       border: 1px solid #fff;
+       border-radius: .25rem;
    }
 
    .icons{
@@ -82,11 +92,4 @@
        margin-right: 3rem;
    }
 
- 
-#myUL a div {
-  display: block; /* Make it into a block element to fill the whole list */
-}
 
-#myUL a div:hover:not(.header) {
-  background-color: white; /* Add a hover effect to all links, except for headers */
-}
