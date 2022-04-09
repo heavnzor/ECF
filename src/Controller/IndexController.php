@@ -61,11 +61,7 @@ class IndexController extends AbstractController
     #[Route('/', name: 'app_index', methods: ['GET'])]
     public function index(imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository): Response
     {
-        if ($this->getUser()) {
-            $this->getUser() ? $user = $this->getUser() : $user = new User();
-        } else {
-            $this->getUser() ? $user = $this->getUser() : $user = new User();
-        }
+        $user = $this->getUser();
         return $this->render('index.html.twig', [
             'controller_name' => 'IndexController',
             'formations' => $formationRepository->findBy([], ['id' => 'DESC'], 3),
@@ -79,8 +75,8 @@ class IndexController extends AbstractController
 
     public function indexFormation(Request $request, FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan, UserRepository $userRepository): Response
     {
-        $_GET['p'] ? $p = $_GET['p'] : $p = null;
-        $this->getUser() ? $user = $this->getUser() : $user = new User();
+        isset($_GET['p']) ? $p = $_GET['p'] : $p = null;
+        $user = $this->getUser();
         if ($this->isGranted('ROLE_INSTRUCTEUR') && $p == 1) {
             $formations = $formationRepository->findAllOrderByAuteurId();
         } elseif ($this->isGranted('ROLE_USER') && $p == 0) {
@@ -117,11 +113,15 @@ class IndexController extends AbstractController
     #[Route('/formation/new', name: 'app_formation_new', methods: ['GET', 'POST'])]
     public function newFormation(Request $request, UserRepository $userRepository, CoursRepository $coursRepository, QuizzRepository $quizzRepository, SectionRepository $sectionRepository, imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository, FileUploader $fileUploader, SluggerInterface $slugger): Response
     {
-        isset($_POST['step']) ? $step = $_POST['step'] : $step = 0;
-
+        $user = $this->getUser();
+        if (!isset($_POST['step'])) {
+            $step = '0';
+        } else {
+            $step = $_POST['step'];
+        }
         switch ($step) {
             case '0':
-                $this->getUser() ? $user = $this->getUser() : $user = new User();
+                $user = $this->getUser();
                 $formation = new Formation();
                 $form = $this->createForm(FormationType::class, $formation);
                 return $this->render('formation/new.html.twig', [
@@ -131,12 +131,9 @@ class IndexController extends AbstractController
                     'slogan' => $imgAndSlogan->getSlogan(),
                     'user' => $user,
                 ]);
-
-
-
+                break;
             case '1':
                 $formation = new Formation();
-                $this->getUser() ? $user = $this->getUser() : $user = new User();
                 $form = $this->createForm(FormationType::class, $formation);
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
@@ -164,7 +161,7 @@ class IndexController extends AbstractController
                         // instead of its contents
                         $formation->setImage($newFilename);
                     }
-                    if ($this->isGranted('ROLE_INSTRUCTEUR') && $this->isGranted('ROLE_SUPER_ADMIN')) {
+                    if ($this->isGranted('ROLE_INSTRUCTEUR')) {
                         $formationRepository->add($formation);
                         $user->addFormationsApprenant($formation);
                     } else {
@@ -183,11 +180,9 @@ class IndexController extends AbstractController
                         'formations' => $user->getFormationsAuteur(),
                     ]);
                 }
-
-                // no break
             case '2':
                 $section = new Section();
-                $this->getUser() ? $user = $this->getUser() : $user = new User();
+                $user = $this->getUser();
                 $form = $this->createForm(SectionType::class, $section);
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
@@ -195,7 +190,7 @@ class IndexController extends AbstractController
                     $section = $form->getData();
                     $section->setFormation($form->get('formation')->getData());
                     $section->setTitre(ucfirst(strtolower($form->get('titre')->getData())));
-                    if ($this->denyAccessUnlessGranted('ROLE_INSTRUCTEUR') && $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN')) {
+                    if ($this->denyAccessUnlessGranted('ROLE_INSTRUCTEUR')) {
                         $user->addSection($section);
                         $sectionRepository->add($section);
                     } else {
@@ -215,11 +210,9 @@ class IndexController extends AbstractController
                         'form' => $form->createView(),
                     ]);
                 }
-
-                // no break
             case '3':
                 $cours = new Cours();
-                $this->getUser() ? $user = $this->getUser() : $user = new User();
+                $user = $this->getUser();
                 $form = $this->createForm(CoursType::class, $cours);
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
@@ -291,7 +284,6 @@ class IndexController extends AbstractController
                         'form' => $form->createView(),
                     ]);
                 }
-                // no break
             case '4':
                 $quizz = new Quizz();
                 $form = $this->createForm(QuizzType::class, $quizz);
@@ -302,7 +294,7 @@ class IndexController extends AbstractController
                     $quizz->setQuestion(ucfirst(strtolower($quizzQuestion)));
                     $quizz->setSection($sectionRepository->findOneBy(['id' => $form->get('section')->getData()]));
                     $quizzRepository->add($quizz);
-                    return $this->render('index.html.twig', [
+                    return $this->render('formation/index.html.twig', [
                         $this->addFlash('success', "Quizz créé !"),
                         'img' => $imgAndSlogan->getImg(),
                         'slogan' => $imgAndSlogan->getSlogan(),
@@ -310,12 +302,13 @@ class IndexController extends AbstractController
                     ]);
                 }
         }
-        return $this->redirectToRoute('app_index');
+        return $this->redirectToRoute('app_formation_new');
     }
+
     #[Route('/formation/{id}', name: 'app_formation_show', methods: ['GET'])]
     public function showFormation(FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan, Int $id): Response
     {
-        $this->getUser() ? $user = $this->getUser() : $user = new User();
+        $user = $this->getUser();
         return $this->render('formation/show.html.twig', [
             'formation' => $formationRepository->find($id),
             'sections' => $formationRepository->find($id)->getSection(),
@@ -330,7 +323,7 @@ class IndexController extends AbstractController
     {
         $form = $this->createForm(FormationType::class, $formation);
         $form->handleRequest($request);
-        $this->getUser() ? $user = $this->getUser() : $user = new User();
+        $user = $this->getUser();
         if ($form->isSubmitted() && $form->isValid()) {
             $photo = $form->get('image')->getData();
             if ($photo) {
@@ -489,7 +482,7 @@ class IndexController extends AbstractController
     #[Route('cours/{id}', name: 'app_cours_show', methods: ['GET'])]
     public function showCours(Cours $cours, imgAndSlogan $imgAndSlogan): Response
     {
-        $this->getUser() ? $user = $this->getUser() : $user = new User();
+        $user = $this->getUser();
         return $this->render('cours/show.html.twig', [
             'cours' => $cours,
 
@@ -570,7 +563,7 @@ class IndexController extends AbstractController
 
         // POSTULATION INSTRUCTEUR  
 
-        $this->getUser() ? $user = $this->getUser() : $user = new User();
+        $user = $this->getUser();
 
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
@@ -624,7 +617,7 @@ class IndexController extends AbstractController
                 'slogan' => $imgAndSlogan->getSlogan()
             ]);
         }
-        $this->getUser() ? $user = $this->getUser() : $user = new User();
+        $user = new User();
         $form = $this->createForm(UserType::class, $user);
         return $this->render('user/new.html.twig', [
             'registrationForm' => $form->createView(),
@@ -640,7 +633,7 @@ class IndexController extends AbstractController
     public function register(Request $request, imgAndSlogan $imgAndSlogan, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
 
-        $this->getUser() ? $user = $this->getUser() : $user = new User();
+        $this->getUser() ? $user = $this->getUser() : $user =  new User();
 
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
@@ -681,7 +674,7 @@ class IndexController extends AbstractController
             ]);
         }
 
-        $this->getUser() ? $user = $this->getUser() : $user = new User();
+        $user = new User();
         $form = $this->createForm(UserType::class, $user);
         return $this->render('user/new.html.twig', [
             'registrationForm' => $form->createView(),
@@ -718,7 +711,7 @@ class IndexController extends AbstractController
         $user->setIsVerified(true);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_login', [$this->addFlash('success', "Merci d'avoir confirmé votre adresse e-mail, vous pouvez désormais vous connecter.")]);
+        return $this->redirectToRoute('app_login', [$this->addFlash('success', "Bienvenue chez les marcheurs forestiers 3.0.")]);
     }
     use ResetPasswordControllerTrait;
 
@@ -899,11 +892,11 @@ class IndexController extends AbstractController
     {
 
         $section = new Section();
-        $this->getUser() ? $user = $this->getUser() : $user = new User();
+        $user = $this->getUser();
         $form = $this->createForm(SectionType::class, $section);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($this->denyAccessUnlessGranted('ROLE_INSTRUCTEUR') && $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN')) {
+            if ($this->denyAccessUnlessGranted('ROLE_INSTRUCTEUR')) {
                 $user->addSection($section);
                 $sectionRepository->add($section);
             } else {
@@ -932,7 +925,7 @@ class IndexController extends AbstractController
     #[Route('/section/{id}', name: 'app_section_show', methods: ['GET'])]
     public function showSection(Section $section, imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository, Request $request): Response
     {
-        $this->getUser() ? $user = $this->getUser() : $user = new User();
+        $user = $this->getUser();
         return $this->render('section/show.html.twig', [
             'section' =>  $section,
             'img' => $imgAndSlogan->getImg(),

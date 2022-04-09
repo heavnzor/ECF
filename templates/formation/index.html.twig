@@ -9,7 +9,15 @@
 		{% endif %}
 	{% endif %}
 	{% for formation in formations %}
-		<div class="card p-3">
+		{% if is_granted('ROLE_USER') and formation.learnState == 1 %}
+			{% set name = "finished" %}
+			
+		{% elseif is_granted('ROLE_USER') and formation.learnState == 2 %}
+			{% set name = "enCours" %}
+		{% else %}
+			{% set name = "unStarted" %}
+		{% endif %}
+		<div class="card p-3 {{name}} ">
 			<div class="card-body text-center">
 				<img src="{{ asset('build/uploads/photos/')}}{{formation.image}}" class=" imgFormation" alt=" {{ formation.titre}} ">
 				<h2 class="fs-1">{{ formation.titre}}</h2>
@@ -18,11 +26,11 @@
 					<a href="{{ path('app_formation_show', {'id': formation.id}) }}">
 						<button class="btn btn-primary ">Suivre</button>
 					</a>
-				{% elseif is_granted('ROLE_USER') and formation.learnState == 1 %}
+				{% elseif is_granted('ROLE_USER') and formation.learnState == 2 %}
 					<a href="{{ path('app_formation_show', {'id': formation.id}) }}">
 						<button class="btn btn-primary ">Continuer</button>
 					</a>
-				{% elseif is_granted('ROLE_USER') and formation.learnState == 2 %}
+				{% elseif is_granted('ROLE_USER') and formation.learnState == 1 %}
 					<a href="{{ path('app_formation_show', {'id': formation.id}) }}">
 						<button class="btn btn-primary ">Formation terminé</button>
 					</a>

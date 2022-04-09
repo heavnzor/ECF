@@ -1,19 +1,14 @@
 <div class="container text-center my-auto px-auto">
 	<nav class="navbar navbar-expand-lg navbar-light bg-black">
 		<div class="container mx-auto d-flex flex-wrap justify-content-center">
-			<form class="d-flex flex-wrap flex-wrap justify-content-center mx-auto">
+			<form class="d-flex flex-wrap justify-content-center mx-auto">
 				<input id="searchInput" type="search" class="form-control my-auto text-center" placeholder="Rechercher une formation" aria-label="Chercher une formation">
-				<input type="radio" class="btn-check px-4 my-1  mx-2" name="btnradio" autocomplete="off" checked>
-				<label class="btn btn-outline-primary mx-2 pt-1 my-2" for="btnradio">Toutes les formations</label>
+				<label id="btnradio" class="btn btn-outline-primary mx-2 pt-1 my-2">Toutes les formations</label>
 				{% if is_granted('ROLE_USER') %}
-					<input type="radio" class="btn-check px-4 my-1 mx-2" name="btnradio1" autocomplete="off">
-					<label class="btn btn-outline-info mx-2 pt-1 my-2" for="btnradio1">Formations en cours</label>
-					<input type="radio" class="btn-check mx-2 px-4 my-1" name="btnradio2" autocomplete="off">
-					<label class="btn btn-outline-success mx-2 pt-1 my-2" for="btnradio2">Formations terminées</label>
+					<label id="btnradio1" class=" btn btn-outline-info mx-2 pt-1 my-2">Formations en cours</label>
+					<label id="btnradio2" class="btn btn-outline-success mx-2 pt-1 my-2">Formations terminées</label>
 				{% endif %}
 			</form>
-
-
 		</div>
 	</nav>
 	{% if is_granted('ROLE_USER') %}
