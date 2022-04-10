@@ -113,7 +113,7 @@ class IndexController extends AbstractController
     }
 
     #[Route('/formation/new', name: 'app_formation_new', methods: ['GET', 'POST'])]
-    public function newFormation(Request $request, UserRepository $userRepository, CoursRepository $coursRepository, QuizzRepository $quizzRepository, SectionRepository $sectionRepository, imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository, FileUploader $fileUploader, SluggerInterface $slugger): Response
+    public function newFormation(Request $request, UserInterface $user, UserRepository $userRepository, CoursRepository $coursRepository, QuizzRepository $quizzRepository, SectionRepository $sectionRepository, imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository, FileUploader $fileUploader, SluggerInterface $slugger): Response
     {
         $this->getUser() ? $user = $this->getUser() : $user = new User();
         if (!isset($_POST['step']) && $this->isGranted('ROLE_INSTRUCTEUR')) {
@@ -268,7 +268,7 @@ class IndexController extends AbstractController
                         $video = $form->get('video')->getData();
                         $video = preg_match("/(?<=\d\/|\.be\/|v[=\/])([\w\-]{11,})|^([\w\-]{11})$/im", $video, $match);
                         $cours->setVideo($match[0]);
-                        $user->addCour($cours);
+                        $user->addCours($cours);
                         $coursRepository->add($cours);
                         $section = $form->get('section')->getData();
                         $quizz = new Quizz();
@@ -300,8 +300,6 @@ class IndexController extends AbstractController
                     }
             }
         }
-
-
     }
 
     #[Route('/formation/{id}', name: 'app_formation_show', methods: ['GET'])]
@@ -350,7 +348,7 @@ class IndexController extends AbstractController
                 // instead of its contents
                 $formation->setImage($newFilename);
             }
-            
+
             $formation->addUser($user);
             $user->addFormation($formation);
 
@@ -462,7 +460,7 @@ class IndexController extends AbstractController
             $video = $form->get('video')->getData();
             $video = preg_match("/(?<=\d\/|\.be\/|v[=\/])([\w\-]{11,})|^([\w\-]{11})$/im", $video, $match);
             $cours->setVideo($match[0]);
-            $user->addCour($cours);
+            $user->addCours($cours);
             $coursRepository->add($cours);
             return $this->redirectToRoute('app_cours_index', [
                 'img' => $imgAndSlogan->getImg(),
@@ -559,23 +557,24 @@ class IndexController extends AbstractController
 
 
     #[Route('/registration/postulant', name: 'app_postulant')]
-    public function registerPostulant(Request $request, UserRepository $userRepository, imgAndSlogan $imgAndSlogan, UserPasswordHasherInterface $userPasswordHasher, FileUploader $fileUploader, SluggerInterface $slugger, EntityManagerInterface $entityManager): Response
+    public function registerPostulant(Request $request, UserInterface $user, UserRepository $userRepository, imgAndSlogan $imgAndSlogan, UserPasswordHasherInterface $userPasswordHasher, FileUploader $fileUploader, SluggerInterface $slugger, EntityManagerInterface $entityManager): Response
     {
 
 
         // POSTULATION INSTRUCTEUR  
 
-        $this->getUser() ? $user = $this->getUser() : $user = new User();
-
+        $user = $this->getUser();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('password')->getData()
-                )
-            );         // encode the plain password
+            if (!$user->getPassword()) {
+                $user->setPassword(
+                    $userPasswordHasher->hashPassword(
+                        $user,
+                        $form->get('password')->getData()
+                    )
+                );
+            }       // encode the plain password only if it s a new registration
             $img = $form->get('photo')->getData();
             if ($img) {
                 $originalFilename = pathinfo($img->getClientOriginalName(), PATHINFO_FILENAME);
@@ -599,10 +598,12 @@ class IndexController extends AbstractController
                 }
                 $user->setPhoto($newFilename);
             }
-            $user->setRoles(array('ROLE_USER'));
-            $user->setEmail($form->get('email')->getData());
             $user->setIsPostulant(true);
-            $entityManager->persist($user);
+            $user->setRoles(array('ROLE_USER'));
+            if (!$user->getEmail()) {
+                $user->setEmail($form->get('email')->getData());
+                $entityManager->persist($user);
+            }
             $entityManager->flush();
             $this->emailVerifier->sendEmailConfirmation(
                 'app_verify_email',
@@ -634,9 +635,7 @@ class IndexController extends AbstractController
     #[Route('registration/register', name: 'app_register')]
     public function register(Request $request, imgAndSlogan $imgAndSlogan, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
-
-        $this->getUser() ? $user = $this->getUser() : $user =  new User();
-
+        $user = $this->getUser();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 

@@ -61,11 +61,11 @@
   {% elseif is_granted('ROLE_USER') and postulant is same as(true) %}
     {{ form_start(registrationForm) }}
     <input type="hidden"
-      name="registrationForm[email]"
-      value="app.user.email" />
+      name="user[email]"
+      value="{{app.user.email}}" />
     <input type="hidden"
-      name="registrationForm[password]"
-      value="app.user.password" />
+      name="user[password]"
+      value="{{app.user.password}}" />
     {{ form_label(registrationForm.nom, 'Nom') }}<br />
     {{ form_widget(registrationForm.nom) }}<br />
     {{ form_label(registrationForm.prenom, 'Prénom') }}<br />

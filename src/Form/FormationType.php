@@ -49,8 +49,7 @@ class FormationType extends AbstractType
                     'En Cours' => 2,
                 ],
             ])
-            ->add('auteur')
-            ->add('apprenants');
+            ->add('user');
     }
 
     public function configureOptions(OptionsResolver $resolver): void

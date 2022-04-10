@@ -35,7 +35,7 @@ class UserCrudController extends AbstractCrudController
             // set this option if you prefer the sidebar (which contains the main menu)
             // to be displayed as a narrow column instead of the default expanded design
             ->renderSidebarMinimized()
-            ->setSearchFields(['id', 'nom', 'prenom', 'description', 'isPostulant', 'isPostulant']);
+            ->setSearchFields(['id', 'nom', 'prenom', 'description', 'isPostulant']);
     }
     public function approveUsers(BatchActionDto $batchActionDto, UserRepository $userRepository)
     {
@@ -45,7 +45,6 @@ class UserCrudController extends AbstractCrudController
             if ($user->getIsPostulant() !== null && $user->getPrenom() !== null && $user->getNom() !== null && $user->getDescription() !== null && $user->getPhoto() !== null) {
                 $user->setIsPostulant(true);
                 $user->setRoles(array('ROLE_INSTRUCTEUR'));
-                $user->setIsPostulantVerified(true);
                 $entityManager->flush();
             }
         }
@@ -67,7 +66,6 @@ class UserCrudController extends AbstractCrudController
             TextField::new('photo'),
             TextareaField::new('description'),
             BooleanField::new('isPostulant'),
-            BooleanField::new('isPostulantVerified'),
             ChoiceField::new('roles')
                 ->setChoices(array_combine($roles, $roles))
                 ->allowMultipleChoices()
