@@ -23,7 +23,7 @@
 
 	{% if is_granted('ROLE_INSTRUCTEUR') %}
 		<a href="{{ path('app_section_edit', {'id': section.id}) }}">Modifier</a>
-	{% endif %}<br><br>
+		<br><br>
 
-	{{ include('section/_delete_form.html.twig') }}
+	{% endif %}
 {% endblock %}

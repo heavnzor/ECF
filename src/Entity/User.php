@@ -30,8 +30,6 @@ class User implements  UserInterface, PasswordAuthenticatedUserInterface
     private $description;
     #[ORM\Column(type: 'string', nullable: true)]
     private $photo;
-    #[ORM\Column(type: 'float', nullable: true)]
-    private $progress;
     #[ORM\Column(type: 'json', nullable: true)]
     private $roles = [];
     #[ORM\Column(type: 'string', nullable: false)]
@@ -52,6 +50,15 @@ class User implements  UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Formation::class, mappedBy: 'user')]
     private $formations;
 
+    #[ORM\OneToMany(mappedBy: 'auteur', targetEntity: Formation::class)]
+    private $formationsAuteur;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Progress::class)]
+    private $progress;
+
+
+
+
 
 
     public function __construct()
@@ -60,6 +67,8 @@ class User implements  UserInterface, PasswordAuthenticatedUserInterface
         $this->sections = new ArrayCollection();
         $this->formation = new ArrayCollection();
         $this->formations = new ArrayCollection();
+        $this->formationsAuteur = new ArrayCollection();
+        $this->progress = new ArrayCollection();
     }
 
 
@@ -238,25 +247,7 @@ class User implements  UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * Get the value of progress
-     */
-    public function getProgress()
-    {
-        return $this->progress;
-    }
 
-    /**
-     * Set the value of progress
-     *
-     * @return  self
-     */
-    public function setProgress($progress)
-    {
-        $this->progress = $progress;
-
-        return $this;
-    }
 
     public function isVerified(): bool
     {
@@ -418,4 +409,66 @@ class User implements  UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Formation>
+     */
+    public function getFormationsAuteur(): Collection
+    {
+        return $this->formationsAuteur;
+    }
+
+    public function addFormationsAuteur(Formation $formationsAuteur): self
+    {
+        if (!$this->formationsAuteur->contains($formationsAuteur)) {
+            $this->formationsAuteur[] = $formationsAuteur;
+            $formationsAuteur->setAuteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFormationsAuteur(Formation $formationsAuteur): self
+    {
+        if ($this->formationsAuteur->removeElement($formationsAuteur)) {
+            // set the owning side to null (unless already changed)
+            if ($formationsAuteur->getAuteur() === $this) {
+                $formationsAuteur->setAuteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Progress>
+     */
+    public function getProgress(): Collection
+    {
+        return $this->progress;
+    }
+
+    public function addProgress(Progress $progress): self
+    {
+        if (!$this->progress->contains($progress)) {
+            $this->progress[] = $progress;
+            $progress->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProgress(Progress $progress): self
+    {
+        if ($this->progress->removeElement($progress)) {
+            // set the owning side to null (unless already changed)
+            if ($progress->getUser() === $this) {
+                $progress->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    
 }

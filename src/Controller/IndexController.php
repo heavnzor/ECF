@@ -9,19 +9,21 @@ use App\Form\UserType;
 use App\Entity\Section;
 use App\Form\CoursType;
 use App\Form\QuizzType;
+use App\Entity\Progress;
 use App\Entity\Formation;
 use App\Form\SectionType;
 use App\Form\FormationType;
 use App\Services\FileUploader;
 use App\Security\EmailVerifier;
 use App\Controller\imgAndSlogan;
-use App\Form\RegistrationFormType;
+use App\Form\ProgressType;
 use App\Repository\UserRepository;
 use App\Repository\CoursRepository;
 use App\Repository\QuizzRepository;
 use Symfony\Component\Mime\Address;
 use App\Form\ChangePasswordFormType;
 use App\Repository\SectionRepository;
+use App\Repository\ProgressRepository;
 use App\Repository\FormationRepository;
 use Doctrine\DBAL\Driver\PDO\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -90,8 +92,8 @@ class IndexController extends AbstractController
             }
             $cours = $user->getCours();
             $coursNb = 0;
-            foreach ($cours as $cour) {
-                if ($cour->getIsFinished() == 1) {
+            foreach ($cours as $lesson) {
+                if ($lesson->getIsFinished() == 1) {
                     $coursNb++;
                 }
             }
@@ -101,14 +103,12 @@ class IndexController extends AbstractController
             $formations = $formationRepository->findAllFormationsOrderById();
         }
 
-        isset($progress) ? $progress = $progress : $progress = 0;
         return $this->render('formation/index.html.twig', [
             'formations' => $formations,
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user,
             'p' => $p,
-            'progress' => $progress
         ]);
     }
 
@@ -120,192 +120,203 @@ class IndexController extends AbstractController
             $step = '0';
         } elseif (isset($_POST['step']) && $this->isGranted('ROLE_INSTRUCTEUR')) {
             $step = $_POST['step'];
-            switch ($step) {
-                case '0':
-                    $formation = new Formation();
-                    $form = $this->createForm(FormationType::class, $formation);
-                    return $this->render('formation/new.html.twig', [
-                        'formation' => $formation,
-                        'form' => $form->createView(),
+        }
+        switch ($step) {
+            case '0':
+                $formation = new Formation();
+                $form = $this->createForm(FormationType::class, $formation);
+                return $this->render('formation/new.html.twig', [
+                    'formation' => $formation,
+                    'form' => $form->createView(),
+                    'img' => $imgAndSlogan->getImg(),
+                    'slogan' => $imgAndSlogan->getSlogan(),
+                    'user' => $user,
+                ]);
+                break;
+            case '1':
+                $formation = new Formation();
+                $form = $this->createForm(FormationType::class, $formation);
+                $form->handleRequest($request);
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $formation = $form->getData();
+                    $imageFile = $form->get('image')->getData();
+                    $formationTitre = $form->get('titre')->getData();
+                    $formation->setLearnState(0);
+                    $formation->setTitre(ucfirst(strtolower($formationTitre)));
+                    if ($imageFile) {
+                        $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                        // this is needed to safely include the file name as part of the URL
+                        $safeFilename = $slugger->slug($originalFilename);
+                        $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+
+                        try {
+                            $imageFile->move(
+                                $this->getParameter('photo_directory'),
+                                $newFilename
+                            );
+                        } catch (FileException $e) {
+                            // .. handle exception if something happens during file upload
+                        }
+
+                        // updates the 'brochureFilename' property to store the PDF file name
+                        // instead of its contents
+                        $formation->setImage($newFilename);
+                    }
+
+                    $formation->addUser($user);
+                    $user->addFormationsAuteur($formation);
+                    $formationRepository->add($formation);
+
+
+
+
+                    $section = new Section();
+                    $form = $this->createForm(SectionType::class, $section);
+                    return $this->render('section/new.html.twig', [
+                        $this->addFlash('success', "Formation créée !"),
                         'img' => $imgAndSlogan->getImg(),
                         'slogan' => $imgAndSlogan->getSlogan(),
                         'user' => $user,
+                        'section' => $section,
+                        'form' => $form->createView(),
+                        'formations' => $user->getFormations(),
                     ]);
-                    break;
-                case '1':
-                    $formation = new Formation();
-                    $form = $this->createForm(FormationType::class, $formation);
-                    $form->handleRequest($request);
-                    if ($form->isSubmitted() && $form->isValid()) {
-                        $formation = $form->getData();
-                        $imageFile = $form->get('image')->getData();
-                        $formationTitre = $form->get('titre')->getData();
-                        $formation->setLearnState(1);
-                        $formation->setTitre(ucfirst(strtolower($formationTitre)));
-                        if ($imageFile) {
-                            $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                            // this is needed to safely include the file name as part of the URL
-                            $safeFilename = $slugger->slug($originalFilename);
-                            $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                }
 
-                            try {
-                                $imageFile->move(
-                                    $this->getParameter('photo_directory'),
-                                    $newFilename
-                                );
-                            } catch (FileException $e) {
-                                // .. handle exception if something happens during file upload
-                            }
+            case '2':
+                $section = new Section();
+                $form = $this->createForm(SectionType::class, $section);
+                $form->handleRequest($request);
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $formation = $form->get('formation')->getData();
+                    $section = $form->getData();
+                    $section->setFormation($form->get('formation')->getData());
+                    $section->setTitre(ucfirst(strtolower($form->get('titre')->getData())));
+                    $user->addSection($section);
+                    $sectionRepository->add($section);
 
-                            // updates the 'brochureFilename' property to store the PDF file name
-                            // instead of its contents
-                            $formation->setImage($newFilename);
-                        }
-
-                        $user->addFormation($formation);
-                        $formation->AddUser($user);
-
-                        $section = new Section();
-                        $form = $this->createForm(SectionType::class, $section);
-                        return $this->render('section/new.html.twig', [
-                            $this->addFlash('success', "Formation créée !"),
-                            'img' => $imgAndSlogan->getImg(),
-                            'slogan' => $imgAndSlogan->getSlogan(),
-                            'user' => $user,
-                            'section' => $section,
-                            'form' => $form->createView(),
-                            'formations' => $user->getFormations(),
-                        ]);
-                    }
-
-                case '2':
-                    $section = new Section();
-                    $form = $this->createForm(SectionType::class, $section);
-                    $form->handleRequest($request);
-                    if ($form->isSubmitted() && $form->isValid()) {
-                        $formation = $form->get('formation')->getData();
-                        $section = $form->getData();
-                        $section->setFormation($form->get('formation')->getData());
-                        $section->setTitre(ucfirst(strtolower($form->get('titre')->getData())));
-                        if ($this->denyAccessUnlessGranted('ROLE_INSTRUCTEUR')) {
-                            $user->addSection($section);
-                            $sectionRepository->add($section);
-                        } else {
-                            $user->addSection($section);
-                            $sectionRepository->add($section);
-                        }
-                        $cours = new Cours();
-                        $form = $this->createForm(CoursType::class, $cours);
-                        $formation = $section->getId();
-                        return $this->render('cours/new.html.twig', [
-                            $this->addFlash('success', "Section créée !"),
-                            'img' => $imgAndSlogan->getImg(),
-                            'slogan' => $imgAndSlogan->getSlogan(),
-                            'user' => $user,
-                            'formation' => $sectionRepository->findOneBySectionId($section->getId()),
-                            'sections' => $user->getSections(),
-                            'form' => $form->createView(),
-                        ]);
-                    }
-                case '3':
                     $cours = new Cours();
-                    $this->getUser() ? $user = $this->getUser() : $user = new User();
                     $form = $this->createForm(CoursType::class, $cours);
-                    $form->handleRequest($request);
-                    if ($form->isSubmitted() && $form->isValid()) {
-                        $imageFile = $form->get('image')->getData();
-                        $section = $form->get('section')->getData();
-                        $formation = $cours->getSection($section);
-                        $formation = $section->getFormation($section);
-                        $cours->setFormation($formation);
-                        if ($imageFile) {
-                            $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                            // this is needed to safely include the file name as part of the URL
-                            $safeFilename = $slugger->slug($originalFilename);
-                            $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                    $formation = $section->getId();
+                    return $this->render('cours/new.html.twig', [
+                        $this->addFlash('success', "Section créée !"),
+                        'img' => $imgAndSlogan->getImg(),
+                        'slogan' => $imgAndSlogan->getSlogan(),
+                        'user' => $user,
+                        'formation' => $sectionRepository->findOneBySectionId($section->getId()),
+                        'sections' => $user->getSections(),
+                        'form' => $form->createView(),
+                    ]);
+                }
+            case '3':
+                $cours = new Cours();
+                $this->getUser() ? $user = $this->getUser() : $user = new User();
+                $form = $this->createForm(CoursType::class, $cours);
+                $form->handleRequest($request);
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $imageFile = $form->get('image')->getData();
+                    $section = $form->get('section')->getData();
+                    $formation = $cours->getSection($section);
+                    $formation = $section->getFormation($section);
+                    $cours->setFormation($formation);
+                    if ($imageFile) {
+                        $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                        // this is needed to safely include the file name as part of the URL
+                        $safeFilename = $slugger->slug($originalFilename);
+                        $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
 
-                            // Move the file to the directory where brochures are stored
-                            try {
-                                $imageFile->move(
-                                    $this->getParameter('photo_directory'),
-                                    $newFilename
-                                );
-                            } catch (FileException $e) {
-                                // .. handle exception if something happens during file upload
-                            }
-
-                            // updates the 'brochureFilename' property to store the PDF file name
-                            // instead of its contents
-                            $cours->setImage($newFilename);
+                        // Move the file to the directory where brochures are stored
+                        try {
+                            $imageFile->move(
+                                $this->getParameter('photo_directory'),
+                                $newFilename
+                            );
+                        } catch (FileException $e) {
+                            // .. handle exception if something happens during file upload
                         }
-                        $pdf = $form->get('pdf')->getData();
-                        if ($pdf) {
-                            $originalFilename = pathinfo($pdf->getClientOriginalName(), PATHINFO_FILENAME);
-                            // this is needed to safely include the file name as part of the URL
-                            $safeFilename = $slugger->slug($originalFilename);
-                            $newFilename = $safeFilename . '-' . uniqid() . '.' . $pdf->guessExtension();
 
-                            // Move the file to the directory where brochures are stored
-                            try {
-                                $pdf->move(
-                                    $this->getParameter('photo_directory'),
-                                    $newFilename
-                                );
-                            } catch (FileException $e) {
-                                // .. handle exception if something happens during file upload
-                            }
-
-                            // updates the 'brochureFilename' property to store the PDF file name
-                            // instead of its contents
-
-                            // updates the 'photoname' property to store the PDF file name
-                            // instead of its contents
-                            $cours->setPdf($newFilename);
-                        }
-                        $coursTitre = $form->get('titre')->getData();
-                        $cours->setTitre(ucfirst(strtolower($coursTitre)));
-                        $cours = $form->getData();
-                        $video = $form->get('video')->getData();
-                        $video = preg_match("/(?<=\d\/|\.be\/|v[=\/])([\w\-]{11,})|^([\w\-]{11})$/im", $video, $match);
-                        $cours->setVideo($match[0]);
-                        $user->addCours($cours);
-                        $coursRepository->add($cours);
-                        $section = $form->get('section')->getData();
-                        $quizz = new Quizz();
-                        $form = $this->createForm(QuizzType::class, $quizz);
-                        return $this->render('quizz/new.html.twig', [
-                            'img' => $imgAndSlogan->getImg(),
-                            'slogan' => $imgAndSlogan->getSlogan(),
-                            'user' => $user,
-                            'sections' => $user->getSections(),
-                            'form' => $form->createView(),
-                        ]);
+                        // updates the 'brochureFilename' property to store the PDF file name
+                        // instead of its contents
+                        $cours->setImage($newFilename);
                     }
-                case '4':
+                    $pdf = $form->get('pdf')->getData();
+                    if ($pdf) {
+                        $originalFilename = pathinfo($pdf->getClientOriginalName(), PATHINFO_FILENAME);
+                        // this is needed to safely include the file name as part of the URL
+                        $safeFilename = $slugger->slug($originalFilename);
+                        $newFilename = $safeFilename . '-' . uniqid() . '.' . $pdf->guessExtension();
+
+                        // Move the file to the directory where brochures are stored
+                        try {
+                            $pdf->move(
+                                $this->getParameter('photo_directory'),
+                                $newFilename
+                            );
+                        } catch (FileException $e) {
+                            // .. handle exception if something happens during file upload
+                        }
+
+                        // updates the 'brochureFilename' property to store the PDF file name
+                        // instead of its contents
+
+                        // updates the 'photoname' property to store the PDF file name
+                        // instead of its contents
+                        $cours->setPdf($newFilename);
+                    }
+                    $coursTitre = $form->get('titre')->getData();
+                    $cours->setTitre(ucfirst(strtolower($coursTitre)));
+                    $cours = $form->getData();
+                    $video = $form->get('video')->getData();
+                    $video = preg_match("/(?<=\d\/|\.be\/|v[=\/])([\w\-]{11,})|^([\w\-]{11})$/im", $video, $match);
+                    $cours->setVideo($match[0]);
+                    $user->addCours($cours);
+                    $coursRepository->add($cours);
+                    $section = $form->get('section')->getData();
                     $quizz = new Quizz();
                     $form = $this->createForm(QuizzType::class, $quizz);
-                    $form->handleRequest($request);
+                    return $this->render('quizz/new.html.twig', [
+                        'img' => $imgAndSlogan->getImg(),
+                        'slogan' => $imgAndSlogan->getSlogan(),
+                        'user' => $user,
+                        'sections' => $user->getSections(),
+                        'form' => $form->createView(),
+                    ]);
+                }
+            case '4':
+                $quizz = new Quizz();
+                $form = $this->createForm(QuizzType::class, $quizz);
+                $form->handleRequest($request);
 
-                    if ($form->isSubmitted() && $form->isValid()) {
-                        $quizzQuestion = $form->get('question')->getData();
-                        $quizz->setQuestion(ucfirst(strtolower($quizzQuestion)));
-                        $quizz->setSection($sectionRepository->findOneBy(['id' => $form->get('section')->getData()]));
-                        $quizzRepository->add($quizz);
-                        return $this->render('formation/index.html.twig', [
-                            $this->addFlash('success', "Quizz créé !"),
-                            'img' => $imgAndSlogan->getImg(),
-                            'slogan' => $imgAndSlogan->getSlogan(),
-                            'user' => $user,
-                        ]);
-                    }
-            }
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $quizzQuestion = $form->get('question')->getData();
+                    $quizz->setQuestion(ucfirst(strtolower($quizzQuestion)));
+                    $quizz->setSection($sectionRepository->findOneBy(['id' => $form->get('section')->getData()]));
+                    $quizzRepository->add($quizz);
+                    return $this->render('formation/index.html.twig', [
+                        $this->addFlash('success', "Quizz créé !"),
+                        'img' => $imgAndSlogan->getImg(),
+                        'slogan' => $imgAndSlogan->getSlogan(),
+                        'user' => $user,
+                        'formations' => $formationRepository->findAll()
+                    ]);
+                }
         }
     }
 
+
     #[Route('/formation/{id}', name: 'app_formation_show', methods: ['GET'])]
-    public function showFormation(FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan, Int $id): Response
+    public function showFormation(ManagerRegistry $doctrine, FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan, Int $id): Response
     {
         $this->getUser() ? $user = $this->getUser() : $user = new User();
+        $formation = $formationRepository->find($id);
+        $formationToClone = new Formation();
+        $formationToClone = $formation;
+        $formationToClone->addUser($user);
+        $user->addFormation($formationToClone);
+        $formationRepository->add($formationToClone);
+      
+
+
         return $this->render('formation/show.html.twig', [
             'formation' => $formationRepository->find($id),
             'sections' => $formationRepository->find($id)->getSection(),
@@ -557,24 +568,29 @@ class IndexController extends AbstractController
 
 
     #[Route('/registration/postulant', name: 'app_postulant')]
-    public function registerPostulant(Request $request, UserInterface $user, UserRepository $userRepository, imgAndSlogan $imgAndSlogan, UserPasswordHasherInterface $userPasswordHasher, FileUploader $fileUploader, SluggerInterface $slugger, EntityManagerInterface $entityManager): Response
+    public function registerPostulant(Request $request, UserRepository $userRepository, imgAndSlogan $imgAndSlogan, UserPasswordHasherInterface $userPasswordHasher, FileUploader $fileUploader, SluggerInterface $slugger, EntityManagerInterface $entityManager): Response
     {
 
 
         // POSTULATION INSTRUCTEUR  
 
-        $user = $this->getUser();
+        $this->getUser() ? $user = $this->getUser() : $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!$user->getPassword()) {
+
+            $potentialUser =  $userRepository->findOneBy(['email' => $form->get('email')->getData()]);
+            if ($potentialUser == null) {
                 $user->setPassword(
                     $userPasswordHasher->hashPassword(
                         $user,
                         $form->get('password')->getData()
                     )
                 );
-            }       // encode the plain password only if it s a new registration
+            } else {
+                $user->setPassword($form->get('password')->getData());
+            }
+            // encode the plain password only if it s a new registration
             $img = $form->get('photo')->getData();
             if ($img) {
                 $originalFilename = pathinfo($img->getClientOriginalName(), PATHINFO_FILENAME);
@@ -600,9 +616,13 @@ class IndexController extends AbstractController
             }
             $user->setIsPostulant(true);
             $user->setRoles(array('ROLE_USER'));
-            if (!$user->getEmail()) {
+            if ($potentialUser == null) {
                 $user->setEmail($form->get('email')->getData());
                 $entityManager->persist($user);
+            } else {
+                $pseudo = $potentialUser->getPseudo();
+                $user->setPseudo($pseudo);
+                $user->setEmail($form->get('email')->getData());
             }
             $entityManager->flush();
             $this->emailVerifier->sendEmailConfirmation(
@@ -635,10 +655,10 @@ class IndexController extends AbstractController
     #[Route('registration/register', name: 'app_register')]
     public function register(Request $request, imgAndSlogan $imgAndSlogan, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
-        $user = $this->getUser();
+        $this->getUser() ? $user = $this->getUser() : $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
-
+        
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password
             $user->setPassword(
@@ -1132,5 +1152,69 @@ class IndexController extends AbstractController
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan()
         ], Response::HTTP_SEE_OTHER);
+    }
+    #[Route('/progress', name: 'app_progress_index', methods: ['GET'])]
+    public function indexProgress(ProgressRepository $progressRepository): Response
+    {
+        return $this->render('progress/index.html.twig', [
+            'progress' => $progressRepository->findAll(),
+        ]);
+    }
+
+    #[Route('/progress/new/{id}', name: 'app_progress_new', methods: ['GET', 'POST'])]
+    public function newProgress(Request $request, FormationRepository $formationRepository, ProgressRepository $progressRepository, Int $id): Response
+    {
+        $this->getUser() ? $user = $this->getUser() : $user = new User();
+        $formation = $formationRepository->find($id);
+        $progress = new Progress();
+        $progress->setFormation($formation);
+        $progress->setUser($user);
+        $user->addProgress($progress);
+        $form = $this->createForm(ProgressType::class, $progress);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $progressRepository->add($progress);
+            return $this->redirectToRoute('app_progress_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('progress/new.html.twig', [
+            'progress' => $progress,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/progress/{id}', name: 'app_progress_show', methods: ['GET'])]
+    public function showProgress(Progress $progress): Response
+    {
+        return $this->render('progress/show.html.twig', [
+            'progress' => $progress,
+        ]);
+    }
+
+    #[Route('/progress/{id}/edit', name: 'app_progress_edit', methods: ['GET', 'POST'])]
+    public function editProgress(Request $request, Progress $progress, ProgressRepository $progressRepository): Response
+    {
+        $form = $this->createForm(ProgressType::class, $progress);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $progressRepository->add($progress);
+            return $this->redirectToRoute('app_progress_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('progress/edit.html.twig', [
+            'progress' => $progress,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/progress/{id}', name: 'app_progress_delete', methods: ['POST'])]
+    public function deleteProgress(Request $request, Progress $progress, ProgressRepository $progressRepository): Response
+    {
+        if ($this->isCsrfTokenValid('delete' . $progress->getId(), $request->request->get('_token'))) {
+            $progressRepository->remove($progress);
+        }
+
+        return $this->redirectToRoute('app_progress_index', [], Response::HTTP_SEE_OTHER);
     }
 }

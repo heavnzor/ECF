@@ -30,16 +30,22 @@ class Formation
     #[ORM\OneToMany(mappedBy: 'formation', targetEntity: Section::class, orphanRemoval: true)]
     private $section;
 
-  
-
-    #[ORM\Column(type: 'integer')]
-    private $learnState; // learnState = 0 / null = formation terminée / learnState = 1 = formation non commencé / learnState = 2 = formation en cours 
 
     #[ORM\OneToMany(mappedBy: 'formation', targetEntity: Cours::class)]
     private $cours;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'formations')]
     private $user;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'formationsAuteur')]
+    private $auteur;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $learnState;
+
+    #[ORM\OneToMany(mappedBy: 'formation', targetEntity: Progress::class)]
+    private $progress;    // learnState = 0 / null = formation non commencée / learnState = 1 = formation terminé / learnState = 2 = formation en cours 
+
 
 
 
@@ -51,6 +57,7 @@ class Formation
         $this->section = new ArrayCollection();
         $this->cours = new ArrayCollection();
         $this->user = new ArrayCollection();
+        $this->progress = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -103,7 +110,7 @@ class Formation
     /**
      * @return Collection<int, User>
      */
-    public function getusersCours(): Collection
+    public function getUsersCours(): Collection
     {
         return $this->usersCours;
     }
@@ -145,17 +152,7 @@ class Formation
  
 
 
-    public function getLearnState(): ?int
-    {
-        return $this->learnState;
-    }
 
-    public function setLearnState(?int $learnState): self
-    {
-        $this->learnState = $learnState;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Cours>
@@ -165,22 +162,22 @@ class Formation
         return $this->cours;
     }
 
-    public function addCour(Cours $cour): self
+    public function addCours(Cours $cours): self
     {
-        if (!$this->cours->contains($cour)) {
-            $this->cours[] = $cour;
-            $cour->setFormation($this);
+        if (!$this->cours->contains($cours)) {
+            $this->cours[] = $cours;
+            $cours->setFormation($this);
         }
 
         return $this;
     }
 
-    public function removeCour(Cours $cour): self
+    public function removeCours(Cours $cours): self
     {
-        if ($this->cours->removeElement($cour)) {
+        if ($this->cours->removeElement($cours)) {
             // set the owning side to null (unless already changed)
-            if ($cour->getFormation() === $this) {
-                $cour->setFormation(null);
+            if ($cours->getFormation() === $this) {
+                $cours->setFormation(null);
             }
         }
         return $this;
@@ -206,6 +203,60 @@ class Formation
     public function removeUser(User $user): self
     {
         $this->user->removeElement($user);
+
+        return $this;
+    }
+
+    public function getAuteur(): ?User
+    {
+        return $this->auteur;
+    }
+
+    public function setAuteur(?User $auteur): self
+    {
+        $this->auteur = $auteur;
+
+        return $this;
+    }
+
+    public function getLearnState(): ?int
+    {
+        return $this->learnState;
+    }
+
+    public function setLearnState(?int $learnState): self
+    {
+        $this->learnState = $learnState;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Progress>
+     */
+    public function getProgress(): Collection
+    {
+        return $this->progress;
+    }
+
+    public function addProgress(Progress $progress): self
+    {
+        if (!$this->progress->contains($progress)) {
+            $this->progress[] = $progress;
+            $progress->setFormation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProgress(Progress $progress): self
+    {
+        if ($this->progress->removeElement($progress)) {
+            // set the owning side to null (unless already changed)
+            if ($progress->getFormation() === $this) {
+                $progress->setFormation(null);
+            }
+        }
 
         return $this;
     }

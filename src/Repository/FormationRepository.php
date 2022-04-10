@@ -28,6 +28,7 @@ class FormationRepository extends ServiceEntityRepository
      */
     public function add(Formation $entity, bool $flush = true): void
     {
+        
         $this->_em->persist($entity);
         if ($flush) {
             $this->_em->flush();

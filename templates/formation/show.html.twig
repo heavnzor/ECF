@@ -2,24 +2,22 @@
 
 
 {% block main %}
-	<h1>Formation</h1>
-	<table class="table">
+	<table>
 		<tbody>
 			<tr>
-				<th>Titre</th>
-				<td>{{ formation.titre }}</td>
+				<td>
+					<h1>{{ formation.titre }}</h1>
+				</td>
 			</tr>
 			<tr>
-				<th>Description</th>
+
 				<td>{{ formation.description|raw }}</td>
 			</tr>
 			<tr>
-				<th>Image</th>
 				<td><img src="{{ asset('build/uploads/photos/')}}{{ formation.image }}" width="150" height="auto" title="{{ formation.titre}} "/></td>
 			</tr>
 			{% for section in sections %}
 				<tr>
-					<th>Section :</th>
 					<td>
 						<a href="/section/{{ section.id }}">{{ section.titre }}</a>
 					</td>
@@ -28,26 +26,29 @@
 
 			{% if is_granted('ROLE_USER') %}
 				<tr>
-					<th>Progression de la formation</th>
-					{% if formation.learnState is same as (0) %}
-						{% set state = 'Pas commencée' %}
+					{% if formation.learnState is same as(0) %}
+						{% set state %}<a href="/progress/new/{{ formation.id }}">
+							<button class="btn btn-primary">Commencer la formation</button>
+						</a>
+						{% endset %}
 					{% elseif formation.learnState is same as(1) %}
-						{% set state = 'Terminée' %}
+						{% set state %}<button class="btn btn-success" href="#">Terminée</button>
+						{% endset %}
 					{% else %}
-						{% set state = 'En Cours' %}
-						{% endif %}
-						<td>{{ state }}</td>
-					</tr>
-				{% endif %}
-				{% if is_granted('ROLE_INSTRUCTEUR') %}
-					<tr>
-						<th>Action</th>
-						<td>
-							<a href="{{ path('app_formation_edit', {'id': formation.id}) }}">Modifier</a>
-						</td>
-					</tr>
-				{% endif %}
-			</tbody>
+						{% set state %}<a  href="/progress/{{ formation.id}}"><button class="btn btn-warning">En cours</button></a>
+						{% endset %}
+					{% endif %}
+					<td>{{ state }}</td>
+				</tr>
+			{% endif %}
+			{% if is_granted('ROLE_INSTRUCTEUR') %}
+				<tr>
+					<th>Action</th>
+					<td>
+						<a href="{{ path('app_formation_edit', {'id': formation.id}) }}">Modifier</a>
+					</td>
+				</tr>
+			{% endif %}
 		</tbody>
-	</table>
-{% endblock %}
+	</tbody>
+</table>{% endblock %}

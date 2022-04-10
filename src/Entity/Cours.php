@@ -46,11 +46,15 @@ class Cours
     #[ORM\JoinColumn(nullable: true)]
     private $formation;
 
+    #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Progress::class)]
+    private $progress;
+
   
 
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->progress = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -184,6 +188,36 @@ class Cours
     public function setFormation(?Formation $formation): self
     {
         $this->formation = $formation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Progress>
+     */
+    public function getProgress(): Collection
+    {
+        return $this->progress;
+    }
+
+    public function addProgress(Progress $progress): self
+    {
+        if (!$this->progress->contains($progress)) {
+            $this->progress[] = $progress;
+            $progress->setCours($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProgress(Progress $progress): self
+    {
+        if ($this->progress->removeElement($progress)) {
+            // set the owning side to null (unless already changed)
+            if ($progress->getCours() === $this) {
+                $progress->setCours(null);
+            }
+        }
 
         return $this;
     }

@@ -48,8 +48,7 @@ class FormationType extends AbstractType
                     'Non commencée' => 1,
                     'En Cours' => 2,
                 ],
-            ])
-            ->add('user');
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

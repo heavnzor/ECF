@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Progress index{% endblock %}
+
+{% block body %}
+    <h1>Progress index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>FormationFinished</th>
+                <th>CoursFinished</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for progress in progress %}
+            <tr>
+                <td>{{ progress.id }}</td>
+                <td>{{ progress.formationFinished ? 'Yes' : 'No' }}</td>
+                <td>{{ progress.coursFinished ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('app_progress_show', {'id': progress.id}) }}">show</a>
+                    <a href="{{ path('app_progress_edit', {'id': progress.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_progress_new') }}">Create new</a>
+{% endblock %}
