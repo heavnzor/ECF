@@ -19,10 +19,10 @@
 					<td>{{ cour.id }}</td>
 					<td>{{ cour.cours }}</td>
 					{% if cour.image is not same as(null) %}
-						<td><img class='imgFormation' src="{{ asset('build/uploads/photo/')}}{{ cour.image }}"></td>
+						<td><img class='imgFormation' src="{{ asset('build/uploads/photos/')}}{{ cour.image }}"></td>
 					{% endif %}
 					<td>
-						<a href="{{ asset('build/uploads/photo/') }}" {{ cour.pdf }} target="_blank"></td>
+						<a href="{{ asset('build/uploads/photos/') }}" {{ cour.pdf }} target="_blank"></td>
 					</td>
 					<td>
 						<iframe width="560" height="315" src="https://www.youtube.com/embed/{{ cour.video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

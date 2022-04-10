@@ -23,6 +23,7 @@ use Symfony\Component\Mime\Address;
 use App\Form\ChangePasswordFormType;
 use App\Repository\SectionRepository;
 use App\Repository\FormationRepository;
+use Doctrine\DBAL\Driver\PDO\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Form\ResetPasswordRequestFormType;
@@ -121,7 +122,6 @@ class IndexController extends AbstractController
         }
         switch ($step) {
             case '0':
-                $user = $this->getUser();
                 $formation = new Formation();
                 $form = $this->createForm(FormationType::class, $formation);
                 return $this->render('formation/new.html.twig', [
@@ -138,7 +138,6 @@ class IndexController extends AbstractController
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
                     $imageFile = $form->get('image')->getData();
-                    $formation = $form->getData();
                     $formationTitre = $form->get('titre')->getData();
                     $formation->setTitre(ucfirst(strtolower($formationTitre)));
                     if ($imageFile) {
@@ -147,7 +146,6 @@ class IndexController extends AbstractController
                         $safeFilename = $slugger->slug($originalFilename);
                         $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
 
-                        // Move the file to the directory where brochures are stored
                         try {
                             $imageFile->move(
                                 $this->getParameter('photo_directory'),
@@ -161,13 +159,10 @@ class IndexController extends AbstractController
                         // instead of its contents
                         $formation->setImage($newFilename);
                     }
-                    if ($this->isGranted('ROLE_INSTRUCTEUR')) {
-                        $formationRepository->add($formation);
-                        $user->addFormationsApprenant($formation);
-                    } else {
-                        $formation->addApprenant($user);
-                        $formationRepository->add($formation);
-                    }
+                    $user->addFormationsApprenant($formation);
+                    $formation->setAuteur($user);
+                    $formationRepository->add($formation);
+
                     $section = new Section();
                     $form = $this->createForm(SectionType::class, $section);
                     return $this->render('section/new.html.twig', [
@@ -180,9 +175,9 @@ class IndexController extends AbstractController
                         'formations' => $user->getFormationsAuteur(),
                     ]);
                 }
+
             case '2':
                 $section = new Section();
-                $user = $this->getUser();
                 $form = $this->createForm(SectionType::class, $section);
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
@@ -302,7 +297,6 @@ class IndexController extends AbstractController
                     ]);
                 }
         }
-        return $this->redirectToRoute('app_formation_new');
     }
 
     #[Route('/formation/{id}', name: 'app_formation_show', methods: ['GET'])]

@@ -1,15 +1,13 @@
 var enCoursCards = document.getElementsByClassName('enCours');
 var finishedCards = document.getElementsByClassName('finished');
-var allCards = document.getElementsByClassName('card');
+var unStartedCards = document.getElementsByClassName('unStarted');
+var allCards = document.getElementsByClassName('col-3 mx-auto');
 var allForm = document.getElementById('btnradio');
 var currentForm = document.getElementById('btnradio1');
 var finishedForm = document.getElementById('btnradio2');
 
 document.getElementById('searchInput').addEventListener('keyup', event => {
-  allForm.onclick = showAllFormCards;
-  currentForm.onclick = showCurrentFormCards;
-  finishedForm.onclick = showFinishedFormCards;
-  let username = event.target.value.toLowerCase();
+  var username = event.target.value.toLowerCase();
 
 
   for (let i = 0; i < allCards.length; i++) {
@@ -21,21 +19,29 @@ document.getElementById('searchInput').addEventListener('keyup', event => {
     }
   }
 })
-const showAllFormCards = () => {
+document.getElementById('btnradio').addEventListener('click', event => {
   for (let i = 0; i < allCards.length; i++) {
     allCards[i].style.display = 'block';
   }
-}
-const showCurrentFormCards = () => {
+})
+
+document.getElementById('btnradio1').addEventListener('click', event => {
   for (let i = 0; i < allCards.length; i++) {
     allCards[i].style.display = 'none';
+    unStartedCards[i].style.display = 'none';
+    finishedCards[i].style.display = 'none';
     enCoursCards[i].style.display = 'block';
   }
-};
-const showFinishedFormCards = () => {
+})
+document.getElementById('btnradio2').addEventListener('click', event => {
+
   for (let i = 0; i < allCards.length; i++) {
     allCards[i].style.display = 'none';
+    unStartedCards[i].style.display = 'none';
+    enCoursCards[i].style.display = 'none';
     finishedCards[i].style.display = 'block';
+
   }
-};
+})
+
 

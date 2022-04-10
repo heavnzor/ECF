@@ -108,6 +108,9 @@
     "laminas/laminas-code": {
         "version": "4.5.1"
     },
+    "lorenzo/pinky": {
+        "version": "1.0.6"
+    },
     "monolog/monolog": {
         "version": "2.4.0"
     },
@@ -173,6 +176,9 @@
         "files": [
             "bin/console"
         ]
+    },
+    "symfony/css-selector": {
+        "version": "v6.0.3"
     },
     "symfony/debug-bundle": {
         "version": "5.4",
@@ -519,7 +525,19 @@
     "symfonycasts/verify-email-bundle": {
         "version": "v1.10.0"
     },
+    "tijsverkoyen/css-to-inline-styles": {
+        "version": "2.2.4"
+    },
+    "twig/cssinliner-extra": {
+        "version": "v3.3.5"
+    },
     "twig/extra-bundle": {
+        "version": "v3.3.8"
+    },
+    "twig/inky-extra": {
+        "version": "v3.3.5"
+    },
+    "twig/markdown-extra": {
         "version": "v3.3.8"
     },
     "twig/twig": {

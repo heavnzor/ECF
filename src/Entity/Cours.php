@@ -43,7 +43,7 @@ class Cours
     private $isFinished;
 
     #[ORM\ManyToOne(targetEntity: Formation::class, inversedBy: 'cours')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private $formation;
 
   

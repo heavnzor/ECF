@@ -9,33 +9,33 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class FileUploader
 {
-private $targetDirectory;
-private $slugger;
+    private $targetDirectory;
+    private $slugger;
 
-public function __construct($targetDirectory, SluggerInterface $slugger)
-{
-$this->targetDirectory = $targetDirectory;
-$this->slugger = $slugger;
-}
+    public function __construct($targetDirectory, SluggerInterface $slugger)
+    {
+        $this->targetDirectory = $targetDirectory;
+        $this->slugger = $slugger;
+    }
 
-public function upload(UploadedFile $file)
-{
-$originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-$safeFilename = $this->slugger->slug($originalFilename);
-$fileName = $safeFilename.'-'.uniqid().'.'.$file->getExtension();
+    public function upload(UploadedFile $file)
+    {
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeFilename = $this->slugger->slug($originalFilename);
+        $fileName = $safeFilename . '-' . uniqid() . '.' . $file->getExtension();
 
-try {
-$file->move($this->getTargetDirectory(), $fileName);
-} catch (FileException $e) {
-    return new Response($e->getMessage());
-// ... handle exception if something happens during file upload
-}
+        try {
+            $file->move($this->getTargetDirectory(), $fileName);
+        } catch (FileException $e) {
+            return new Response($e->getMessage());
+            // ... handle exception if something happens during file upload
+        }
 
-return $fileName;
-}
+        return $fileName;
+    }
 
-public function getTargetDirectory()
-{
-return $this->targetDirectory;
-}
+    public function getTargetDirectory()
+    {
+        return $this->targetDirectory;
+    }
 }

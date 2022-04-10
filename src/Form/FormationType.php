@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class FormationType extends AbstractType
 {
@@ -35,15 +36,17 @@ class FormationType extends AbstractType
                     'mimeTypes' => [
                         'image/jpeg',
                         'image/png',
+                        'image/svg+xml'
                     ],
-                    'mimeTypesMessage' => 'Uploadez une image de 1MO maximum au format JPEG ou PNG',
+                    'mimeTypesMessage' => 'Uploadez une image de 1MO maximum au format JPEG, PNG ou SVG',
                 ])
             ],
         ])
             ->add('learnState', ChoiceType::class, [
                 'choices'  => [
-                    'Suivi' => 1,
-                    'Terminé' => 2,
+                    'Terminé' => 0,
+                    'Non commencée' => 1,
+                    'En Cours' => 2,
                 ],
             ])
             ->add('auteur')

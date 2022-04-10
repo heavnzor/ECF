@@ -69,9 +69,8 @@
    .imgFormation {
     height: auto;
     width: auto ;
-    max-width: 250px !important;
+    max-width: 220px !important;
     padding: .25rem;
-    background-color: #fff;
     border: 1px solid #fff;
     border-radius: .25rem;
    }
@@ -81,7 +80,6 @@
        width: auto;
        max-width: 150px !important;
        padding: .25rem;
-       background-color: #fff;
        border: 1px solid #fff;
        border-radius: .25rem;
    }

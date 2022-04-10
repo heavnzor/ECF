@@ -1,7 +1,14 @@
 {% extends 'index.html.twig' %}
 
 {% block main %}
-{% include 'navformateurs.html.twig' %}
-{{ include('formation/_form.html.twig') }}
+  <section class="container-fluid bg-black">
+    <div class="row g-3 align-items-center" id="results">
+      <div class="col-12">
+        {% include 'navformateurs.html.twig' %}
+      </div>
+      <div class="col-12">
+        {{ include('formation/_form.html.twig') }}
+      </div>
+    </div>
+  </section>
 {% endblock %}
-

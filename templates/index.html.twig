@@ -119,20 +119,18 @@
 								{{ error }}
 							</div>
 						{% endfor %}
-						<section class="text-center bg-black ">
-							<div class="card-group mx-auto justify-content-evenly" id="results">
+						<section class="container bg-black">
+							<div class="row align-items-center" id="results">
 								{% for formation in formations %}
-									<div class="card p-3">
-										<div class="card-body text-center">
+									<div class="col-3 mx-auto">
 											<img src="{{ asset('build/uploads/photos/')}}{{formation.image}}" class=" imgFormation" alt=" {{ formation.titre}} ">
-											<h2 class="fs-1">{{ formation.titre}}</h2>
-											<p class="card-text fs-5">{{ formation.description }}</p>
+											<h2 class="fs-2">{{ formation.titre}}</h2>
+											<p class="fs-5">{{ formation.description }}</p>
 											{% if is_granted('ROLE_USER') %}
 												<a href="{{ path('app_formation_show', {'id': formation.id}) }}">
 													<button class="btn btn-primary ">En savoir plus</button>
 												</a>
 											{% endif %}
-										</div>
 									</div>
 								{% endfor %}
 							</div>
