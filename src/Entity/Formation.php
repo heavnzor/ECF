@@ -30,24 +30,27 @@ class Formation
     #[ORM\OneToMany(mappedBy: 'formation', targetEntity: Section::class, orphanRemoval: true)]
     private $section;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'formationsAuteur', cascade: ['persist', 'remove'])]
-    private $auteur;
+  
 
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'formationsApprenants')]
-    private $apprenants;
-
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $learnState; // learnState = 0/null = formation non commencé / learnState = 1 = formation terminée / learnState = 2 = formation en cours 
+    #[ORM\Column(type: 'integer')]
+    private $learnState; // learnState = 0 / null = formation terminée / learnState = 1 = formation non commencé / learnState = 2 = formation en cours 
 
     #[ORM\OneToMany(mappedBy: 'formation', targetEntity: Cours::class)]
     private $cours;
+
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'formations')]
+    private $user;
+
+
+
+
 
   
     public function __construct()
     {
         $this->section = new ArrayCollection();
-        $this->apprenants = new ArrayCollection();
         $this->cours = new ArrayCollection();
+        $this->user = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -138,45 +141,9 @@ class Formation
         return $this;
     }
 
-  
 
+ 
 
-
-    public function getAuteur(): ?User
-    {
-        return $this->auteur;
-    }
-
-    public function setAuteur(?User $auteur): self
-    {
-        $this->auteur = $auteur;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, User>
-     */
-    public function getApprenants(): Collection
-    {
-        return $this->apprenants;
-    }
-
-    public function addApprenant(User $apprenant): self
-    {
-        if (!$this->apprenants->contains($apprenant)) {
-            $this->apprenants[] = $apprenant;
-        }
-
-        return $this;
-    }
-
-    public function removeApprenant(User $apprenant): self
-    {
-        $this->apprenants->removeElement($apprenant);
-
-        return $this;
-    }
 
     public function getLearnState(): ?int
     {
@@ -216,8 +183,37 @@ class Formation
                 $cour->setFormation(null);
             }
         }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUser(): Collection
+    {
+        return $this->user;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->user->contains($user)) {
+            $this->user[] = $user;
+        }
 
         return $this;
     }
+
+    public function removeUser(User $user): self
+    {
+        $this->user->removeElement($user);
+
+        return $this;
+    }
+
+ 
+
+
+
+
 
 }

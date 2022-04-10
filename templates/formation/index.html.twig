@@ -1,6 +1,6 @@
 {% extends 'index.html.twig' %}
 {% block main %}
-  {% if (p is defined and p == 0) or p is same as(null) %}
+  {% if p is defined and (p == 0 or p is same as(null)) %}
     {% include 'navusers.html.twig' %}
   {% endif %}
   {% if p is defined and p == 1 %}
@@ -9,7 +9,7 @@
     {% endif %}
   {% endif %}
   <section class="container bg-black">
-    <div class="row align-items-center" id="results">
+    <div class="row align-items-start my-auto py-auto" id="results">
       {% for formation in formations %}
         {% if is_granted('ROLE_USER') and formation.learnState == 1 %}
           {% set name = 'finished' %}
@@ -26,7 +26,8 @@
             {{ formation.titre }}
           </h2>
           <p class="fs-5">
-            {{ formation.description }}
+            {% set description = formation.description|raw %}
+            {{ description|length > 70 ? description|slice(0,70) ~ '...' : description }}
           </p>
           {% if is_granted('ROLE_USER') and formation.learnState == 0 %}
             <a href="{{

@@ -120,17 +120,18 @@
 							</div>
 						{% endfor %}
 						<section class="container bg-black">
-							<div class="row align-items-center" id="results">
+							<div class="row align-items-start" id="results">
 								{% for formation in formations %}
 									<div class="col-3 mx-auto">
-											<img src="{{ asset('build/uploads/photos/')}}{{formation.image}}" class=" imgFormation" alt=" {{ formation.titre}} ">
-											<h2 class="fs-2">{{ formation.titre}}</h2>
-											<p class="fs-5">{{ formation.description }}</p>
-											{% if is_granted('ROLE_USER') %}
-												<a href="{{ path('app_formation_show', {'id': formation.id}) }}">
-													<button class="btn btn-primary ">En savoir plus</button>
-												</a>
-											{% endif %}
+										<img src="{{ asset('build/uploads/photos/')}}{{formation.image}}" class=" imgFormation" alt=" {{ formation.titre}} ">
+										<h2 class="fs-2">{{ formation.titre}}</h2>
+										<p class="fs-5">{% set description = formation.description|raw %}
+											{{ description|length > 70 ? description|slice(0,70) ~ '...' : description }}</p>
+										{% if is_granted('ROLE_USER') %}
+											<a href="{{ path('app_formation_show', {'id': formation.id}) }}">
+												<button class="btn btn-primary ">En savoir plus</button>
+											</a>
+										{% endif %}
 									</div>
 								{% endfor %}
 							</div>

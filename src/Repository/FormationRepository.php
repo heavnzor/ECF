@@ -50,15 +50,18 @@ class FormationRepository extends ServiceEntityRepository
     //  * @return Formation[] Returns an array of Formation objects
     //  */
 
-    public function findAllOrderByAuteurId()
+ 
+
+    public function findAllByUserId($value)
     {
         return $this->createQueryBuilder('f')
-            ->orderBy('f.auteur', 'DESC')
+            ->setParameter('val', $value)
+            ->andWhere('f.apprenants = :val')
+            ->orderBy('f.id', 'DESC')
             ->setMaxResults(100)
             ->getQuery()
             ->getResult();
     }
-
 
 
     public function findOneByFormationId($value): ?Formation
@@ -80,13 +83,11 @@ class FormationRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function findAllFormationsOrderById($value)
+    public function findAllFormationsOrderById()
     {
         return $this->createQueryBuilder('f')
-            ->setParameter('val', $value)
-            ->andWhere('f.auteur = :val')
             ->orderBy('f.id', 'DESC')
-            ->setMaxResults(100)
+            ->setMaxResults(3)
             ->getQuery()
             ->getResult();
     }

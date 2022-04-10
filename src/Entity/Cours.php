@@ -137,7 +137,7 @@ class Cours
     {
         if (!$this->users->contains($user)) {
             $this->users[] = $user;
-            $user->addCour($this);
+            $user->addCours($this);
         }
 
         return $this;
@@ -146,7 +146,7 @@ class Cours
     public function removeUser(User $user): self
     {
         if ($this->users->removeElement($user)) {
-            $user->removeCour($this);
+            $user->removeCours($this);
         }
 
         return $this;

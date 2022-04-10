@@ -214,20 +214,7 @@ interface UserInterface
      */
     public function setIsPostulant($isPostulant);
 
-    /**
-     * @return Collection<int, Formation>
-     */
-    public function getFormationsAuteur(): Collection;
-
-    public function addFormationsAuteur(Formation $formationsAuteur): self;
-
-    public function removeFormationsAuteur(Formation $formationsAuteur): self;
-    /**
-     * @return Collection<int, Formation>
-     */
-    public function getFormationsApprenants(): Collection;
-    public function addFormationsApprenant(Formation $formationsApprenant): self;
-    public function removeFormationsApprenant(Formation $formationsApprenant): self;
+ 
     /**
      * @return Collection<int, Section>
      */
@@ -240,7 +227,15 @@ interface UserInterface
      * @return Collection<int, Cours>
      */
     public function getCours(): Collection;
-    public function addCour(Cours $cour): self;
+    public function addCours(Cours $cours): self;
 
-    public function removeCour(Cours $cour): self;
+    public function removeCours(Cours $cours): self;
+    /**
+     * @return Collection<int, Formation>
+     */
+    public function getFormations(): Collection;
+
+    public function addFormation(Formation $formation): self;
+
+    public function removeFormation(Formation $formation): self;
 }

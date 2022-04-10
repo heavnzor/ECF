@@ -11,7 +11,7 @@
 			</tr>
 			<tr>
 				<th>Description</th>
-				<td>{{ formation.description }}</td>
+				<td>{{ formation.description|raw }}</td>
 			</tr>
 			<tr>
 				<th>Image</th>
@@ -28,11 +28,26 @@
 
 			{% if is_granted('ROLE_USER') %}
 				<tr>
-					<th>Etat de la formation</th>
-					<td>{{ formation.learnState }}</td>
-				</tr>
-			{% endif %}
+					<th>Progression de la formation</th>
+					{% if formation.learnState is same as (0) %}
+						{% set state = 'Pas commencée' %}
+					{% elseif formation.learnState is same as(1) %}
+						{% set state = 'Terminée' %}
+					{% else %}
+						{% set state = 'En Cours' %}
+						{% endif %}
+						<td>{{ state }}</td>
+					</tr>
+				{% endif %}
+				{% if is_granted('ROLE_INSTRUCTEUR') %}
+					<tr>
+						<th>Action</th>
+						<td>
+							<a href="{{ path('app_formation_edit', {'id': formation.id}) }}">Modifier</a>
+						</td>
+					</tr>
+				{% endif %}
+			</tbody>
 		</tbody>
-	</tbody>
-</table>
+	</table>
 {% endblock %}

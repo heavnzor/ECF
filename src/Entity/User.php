@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'Il y a déjà un compte inscrit avec cet email.')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements  UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -43,24 +43,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $isPostulant = false;
 
-    #[ORM\OneToMany(mappedBy: 'auteur', targetEntity: Formation::class)]
-    private $formationsAuteur;
-
-    #[ORM\ManyToMany(targetEntity: Formation::class, mappedBy: 'apprenants')]
-    private $formationsApprenants;
-
     #[ORM\ManyToMany(targetEntity: Cours::class, inversedBy: 'users')]
     private $cours;
 
     #[ORM\ManyToMany(targetEntity: Section::class, mappedBy: 'auteur')]
     private $sections;
 
+    #[ORM\ManyToMany(targetEntity: Formation::class, mappedBy: 'user')]
+    private $formations;
+
+
+
     public function __construct()
     {
-        $this->formationsAuteur = new ArrayCollection();
-        $this->formationsApprenants = new ArrayCollection();
         $this->cours = new ArrayCollection();
         $this->sections = new ArrayCollection();
+        $this->formation = new ArrayCollection();
+        $this->formations = new ArrayCollection();
     }
 
 
@@ -340,62 +339,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 
-    /**
-     * @return Collection<int, Formation>
-     */
-    public function getFormationsAuteur(): Collection
-    {
-        return $this->formationsAuteur;
-    }
 
-    public function addFormationsAuteur(Formation $formationsAuteur): self
-    {
-        if (!$this->formationsAuteur->contains($formationsAuteur)) {
-            $this->formationsAuteur[] = $formationsAuteur;
-            $formationsAuteur->setAuteur($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFormationsAuteur(Formation $formationsAuteur): self
-    {
-        if ($this->formationsAuteur->removeElement($formationsAuteur)) {
-            // set the owning side to null (unless already changed)
-            if ($formationsAuteur->getAuteur() === $this) {
-                $formationsAuteur->setAuteur(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Formation>
-     */
-    public function getFormationsApprenants(): Collection
-    {
-        return $this->formationsApprenants;
-    }
-
-    public function addFormationsApprenant(Formation $formationsApprenant): self
-    {
-        if (!$this->formationsApprenants->contains($formationsApprenant)) {
-            $this->formationsApprenants[] = $formationsApprenant;
-            $formationsApprenant->addApprenant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFormationsApprenant(Formation $formationsApprenant): self
-    {
-        if ($this->formationsApprenants->removeElement($formationsApprenant)) {
-            $formationsApprenant->removeApprenant($this);
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Cours>
@@ -405,19 +349,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->cours;
     }
 
-    public function addCour(Cours $cour): self
+    public function addCours(Cours $cours): self
     {
-        if (!$this->cours->contains($cour)) {
-            $this->cours[] = $cour;
+        if (!$this->cours->contains($cours)) {
+            $this->cours[] = $cours;
         }
 
         return $this;
     }
 
-    public function removeCour(Cours $cour): self
+    public function removeCours(Cours $cours): self
     {
-        $this->cours->removeElement($cour);
-
+        $this->cours->removeElement($cours);
+        
         return $this;
     }
 
@@ -443,6 +387,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->sections->removeElement($section)) {
             $section->removeAuteur($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Formation>
+     */
+    public function getFormations(): Collection
+    {
+        return $this->formations;
+    }
+
+    public function addFormation(Formation $formation): self
+    {
+        if (!$this->formations->contains($formation)) {
+            $this->formations[] = $formation;
+            $formation->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFormation(Formation $formation): self
+    {
+        if ($this->formations->removeElement($formation)) {
+            $formation->removeUser($this);
         }
 
         return $this;

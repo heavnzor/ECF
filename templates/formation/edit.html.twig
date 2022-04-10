@@ -2,9 +2,9 @@
 
 {% block main %}
 
-    {{ include('formation/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ include('formation/_form.html.twig', {'button_label': 'Modifier'}) }}
 
-    <a href="{{ path('app_formation_index') }}">back to list</a>
+    <a href="{{ path('app_formation_index') }}">Retour</a>
 
-    {{ include('formation/_delete_form.html.twig') }}
+   {# {{ include('formation/_delete_form.html.twig') }}  #}
 {% endblock %}
