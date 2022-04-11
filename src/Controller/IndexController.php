@@ -132,7 +132,6 @@ class IndexController extends AbstractController
                     'slogan' => $imgAndSlogan->getSlogan(),
                     'user' => $user,
                 ]);
-                break;
             case '1':
                 $formation = new Formation();
                 $form = $this->createForm(FormationType::class, $formation);
@@ -301,6 +300,7 @@ class IndexController extends AbstractController
                     ]);
                 }
         }
+        return $this->redirectToRoute('app_index');
     }
 
 
@@ -518,7 +518,6 @@ class IndexController extends AbstractController
                 'user' => $user,
                 'img' => $imgAndSlogan->getImg(),
                 'slogan' => $imgAndSlogan->getSlogan(),
-                'user' => $user
             ], Response::HTTP_SEE_OTHER);
         }
 
