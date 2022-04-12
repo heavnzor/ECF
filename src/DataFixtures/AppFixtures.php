@@ -31,14 +31,14 @@ class AppFixtures extends Fixture
         $admin = new User();
         $admin->setEmail('webmaster@waldganger.net');
         $admin->setPseudo('admin');
-        $passwordAdmin = $this->hasher->hashPassword($admin, 'superAdmin');
+        $passwordAdmin = $this->hasher->hashPassword($admin, 'tqzcectv');
         $admin->setPassword($passwordAdmin);
         $admin->setIsVerified(true);
         $admin->setRoles(['ROLE_SUPER_ADMIN']);
 
         $manager->persist($admin);
 
-        // Instructeur non validé
+        // Instructeur pas encore validé
         $instructeurUnVerified = new User();
         $instructeurUnVerified->setEmail('instructeurUnVerifiedonvalide@waldganger.net');
         $instructeurUnVerified->setRoles(['ROLE_USER']);
@@ -54,9 +54,9 @@ class AppFixtures extends Fixture
 
         // Instructeur validé
         $instructeur = new User();
-        $instructeur->setEmail('instructeur@waldganger.net');
+        $instructeur->setEmail('alveyy@gmail.com');
         $instructeur->setRoles(['ROLE_INSTRUCTEUR']);
-        $passwordInstructeur = $this->hasher->hashPassword($instructeur, 'Instructeur');
+        $passwordInstructeur = $this->hasher->hashPassword($instructeur, 'tqzcectv');
         $instructeur->setPassword($passwordInstructeur);
         $instructeur->setPrenom($faker->firstName());
         $instructeur->setNom($faker->name());
@@ -69,26 +69,14 @@ class AppFixtures extends Fixture
         // user #1
 
         $user = new User();
-        $user->setEmail('user@waldganger.net');
+        $user->setEmail('anto.mela@live.fr');
         $user->setRoles(['ROLE_USER']);
-        $passwordUser = $this->hasher->hashPassword($user, 'user');
-        $user->addProgress(new Progress());
+        $passwordUser = $this->hasher->hashPassword($user, 'tqzcectv');
         $user->setPassword($passwordUser);
         $user->setPseudo($faker->firstName());
         $user->setIsVerified(true);
         $manager->persist($user);
 
-        // user #2
-
-        $user2 = new User();
-        $user2->setEmail('user2@waldganger.net');
-        $user2->setRoles(['ROLE_USER']);
-        $user2->addProgress(new Progress());
-        $passwordUser = $this->hasher->hashPassword($user2, 'user');
-        $user2->setPassword($passwordUser);
-        $user2->setPseudo($faker->firstName());
-        $user2->setIsVerified(true);
-        $manager->persist($user);
 
         for ($f = 0; $f < 20; $f++) {
             $formation = new Formation();
@@ -96,9 +84,6 @@ class AppFixtures extends Fixture
             $formation->setImage('informatique.png');
             $formation->setDescription($faker->words(50, true));
             $formation->setTitre($faker->words(6, true));
-            $formation->addUser($instructeur);
-            $formation->addUser($user);
-            $formation->addUser($user2);
             $manager->persist($formation);
 
             for ($s = 0; $s < 5; $s++) {
@@ -107,6 +92,18 @@ class AppFixtures extends Fixture
                 $section->setTitre($faker->words(6, true));
                 $section->addAuteur($instructeur);
                 $manager->persist($section);
+
+                $quizz = new Quizz();
+                $quizz->setSection($section);
+                $quizz->setQuestion1($faker->words(10, true));
+                $quizz->setReponse1($faker->words(8, true));
+                $quizz->setReponse2($faker->words(8, true));
+                $quizz->setQuestion2($faker->words(10, true));
+                $quizz->setReponse3($faker->words(8, true));
+                $quizz->setReponse4($faker->words(8, true));
+                $quizz->setBonneReponse1('reponse2');
+                $quizz->setBonneReponse2('reponse3');
+                $manager->persist($quizz);
 
                 for ($l = 0; $l < 10; $l++) {
                     $cours = new cours();
@@ -135,17 +132,7 @@ class AppFixtures extends Fixture
                     }
                     $manager->persist($progress);
 
-                    $quizz = new Quizz();
-                    $quizz->setSection($section);
-                    $quizz->setQuestion1($faker->words(10, true));
-                    $quizz->setReponse1($faker->words(8, true));
-                    $quizz->setReponse2($faker->words(8, true));
-                    $quizz->setQuestion2($faker->words(10, true));
-                    $quizz->setReponse3($faker->words(8, true));
-                    $quizz->setReponse4($faker->words(8, true));
-                    $quizz->setBonneReponse1('reponse2');
-                    $quizz->setBonneReponse2('reponse3');
-                    $manager->persist($quizz);
+                  
                 }
             }
         }

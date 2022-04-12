@@ -79,14 +79,14 @@ class IndexController extends AbstractController
     }
 
     #[Route('/formation', name: 'app_formation_index', methods: ['GET'])]
-    public function indexFormation(Request $request, Progression $progression, imgAndSlogan $imgAndSlogan): Response
+    public function indexFormation(Request $request, Progression $progression, imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository): Response
     {
         $this->getUser() ? $user = $this->getUser() : $user = new User();
         return $this->render('formation/index.html.twig', [
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user,
-            'formations' => $progression->getProgress()[0],
+            'formations' => $formationRepository->findAll(),
             'progress' => $progression->getProgress()[1],
             'progression' => $progression->getProgress()[2]
         ]);
