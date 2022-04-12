@@ -1,24 +1,32 @@
+{% if is_granted('ROLE_INSTRUCTEUR') %}
 {{ form_start(form) }}
-<h1>Création d'un nouveau Quizz</h1><br><br>
-
 <input type="hidden" id="step" name="step" value="4"/>
 Vos sections :
 <select class="form-select" name="quizz[section]" aria-label="Sections">
 	{% for section in sections %}
 		<option value="{{ section.id }}">
-			{{ section.titre }}
+			Formation : {{section.formation.titre}} - Section : {{ section.titre }}
 		</option>
 	{% endfor %}
 </select>
-
-{{ form_label(form.question, 'Question') }}
 <br>
-{{ form_widget(form.question) }}<br>
+{{ form_label(form.question1, 'Question') }}
+<br>
+{{ form_widget(form.question1) }}<br>
 {{ form_label(form.reponse1, 'Réponse 1') }}<br>{{ form_widget(form.reponse1) }}
 <br>{{ form_label(form.reponse2, 'Réponse 2') }}<br>{{ form_widget(form.reponse2) }}
-<br>{{ form_label(form.reponse3, 'Réponse 3') }}<br>{{ form_widget(form.reponse3) }}<br><br>
 
-<br>{{ form_label(form.bonnereponse, 'Bonne réponse') }}<br>{{ form_widget(form.bonnereponse) }}<br><br>
+<br>{{ form_label(form.bonnereponse1, 'Bonne réponse') }}<br>{{ form_widget(form.bonnereponse1) }}<br><br>
+
+{{ form_label(form.question2, 'Question') }}
+<br>
+{{ form_widget(form.question2) }}<br>
+{{ form_label(form.reponse3, 'Réponse 1') }}<br>{{ form_widget(form.reponse3) }}
+<br>{{ form_label(form.reponse4, 'Réponse 2') }}<br>{{ form_widget(form.reponse4) }}
+
+<br>{{ form_label(form.bonnereponse2, 'Bonne réponse') }}<br>{{ form_widget(form.bonnereponse2) }}<br><br>
+
 
 <button class="btn btn-primary" type="submit">Soumettre</button>
 {{ form_widget(form._token) }}{{ form_end(form, {render_rest: false}) }}
+{% endif %}

@@ -60,7 +60,7 @@ class Section
 
     public function __toString()
     {
-        return $this->formation;
+        return $this->titre;
     }
 
 

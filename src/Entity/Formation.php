@@ -8,7 +8,6 @@ use App\Repository\FormationRepository;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: FormationRepository::class)]
 class Formation
@@ -39,9 +38,6 @@ class Formation
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'formationsAuteur')]
     private $auteur;
-
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $learnState;
 
     #[ORM\OneToMany(mappedBy: 'formation', targetEntity: Progress::class)]
     private $progress;    // learnState = 0 / null = formation non commencée / learnState = 1 = formation terminé / learnState = 2 = formation en cours 
@@ -219,17 +215,6 @@ class Formation
         return $this;
     }
 
-    public function getLearnState(): ?int
-    {
-        return $this->learnState;
-    }
-
-    public function setLearnState(?int $learnState): self
-    {
-        $this->learnState = $learnState;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Progress>

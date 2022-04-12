@@ -12,11 +12,12 @@ use App\Form\QuizzType;
 use App\Entity\Progress;
 use App\Entity\Formation;
 use App\Form\SectionType;
+use App\Form\ProgressType;
 use App\Form\FormationType;
+use App\Services\Progression;
 use App\Services\FileUploader;
 use App\Security\EmailVerifier;
 use App\Controller\imgAndSlogan;
-use App\Form\ProgressType;
 use App\Repository\UserRepository;
 use App\Repository\CoursRepository;
 use App\Repository\QuizzRepository;
@@ -55,14 +56,15 @@ class IndexController extends AbstractController
     private EmailVerifier $emailVerifier;
     private MailerInterface $mailer;
 
-    public function __construct(EmailVerifier $emailVerifier, MailerInterface $mailer)
+    public function __construct(EmailVerifier $emailVerifier, MailerInterface $mailer, Progression $progression)
     {
+        $this->progression = $progression;
         $this->emailVerifier = $emailVerifier;
         $this->mailer = $mailer;
     }
 
     #[Route('/', name: 'app_index', methods: ['GET'])]
-    public function index(imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository): Response
+    public function index(imgAndSlogan $imgAndSlogan,Progression $progression, FormationRepository $formationRepository): Response
     {
         $this->getUser() ? $user = $this->getUser() : $user = new User();
         return $this->render('index.html.twig', [
@@ -70,52 +72,29 @@ class IndexController extends AbstractController
             'formations' => $formationRepository->findBy([], ['id' => 'DESC'], 3),
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
-            'user' => $user
+            'user' => $user,
+            'progress' => $progression->getProgress()[1],
+            'progression' => $progression->getProgress()[2]
         ]);
     }
 
     #[Route('/formation', name: 'app_formation_index', methods: ['GET'])]
-
-    public function indexFormation(Request $request, FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan, UserRepository $userRepository): Response
+    public function indexFormation(Request $request, Progression $progression, imgAndSlogan $imgAndSlogan): Response
     {
-        isset($_GET['p']) ? $p = $_GET['p'] : $p = null;
         $this->getUser() ? $user = $this->getUser() : $user = new User();
-        if ($this->isGranted('ROLE_INSTRUCTEUR') && $p == 1) {
-            $formations = $user->getFormations();
-        } elseif ($this->isGranted('ROLE_USER') && $p == 0) {
-            $formationsApp = $user->getFormations();
-            $formationNb = 0;
-            foreach ($formationsApp as $formation) {
-                if ($formation->getLearnState() == 1) {
-                    $formationNb++;
-                }
-            }
-            $cours = $user->getCours();
-            $coursNb = 0;
-            foreach ($cours as $lesson) {
-                if ($lesson->getIsFinished() == 1) {
-                    $coursNb++;
-                }
-            }
-            $progress = ($coursNb * $formationNb) / 100;
-            $formations = $formationRepository->findAllOrderByLearnState(); // learnState = 2 = formation en cours
-        } else {
-            $formations = $formationRepository->findAllFormationsOrderById();
-        }
-
         return $this->render('formation/index.html.twig', [
-            'formations' => $formations,
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user,
-            'p' => $p,
+            'formations' => $progression->getProgress()[0],
+            'progress' => $progression->getProgress()[1],
+            'progression' => $progression->getProgress()[2]
         ]);
     }
 
     #[Route('/formation/new', name: 'app_formation_new', methods: ['GET', 'POST'])]
     public function newFormation(Request $request, UserInterface $user, UserRepository $userRepository, CoursRepository $coursRepository, QuizzRepository $quizzRepository, SectionRepository $sectionRepository, imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository, FileUploader $fileUploader, SluggerInterface $slugger): Response
     {
-        $this->getUser() ? $user = $this->getUser() : $user = new User();
         if (!isset($_POST['step']) && $this->isGranted('ROLE_INSTRUCTEUR')) {
             $step = '0';
         } elseif (isset($_POST['step']) && $this->isGranted('ROLE_INSTRUCTEUR')) {
@@ -165,10 +144,6 @@ class IndexController extends AbstractController
                     $formation->addUser($user);
                     $user->addFormationsAuteur($formation);
                     $formationRepository->add($formation);
-
-
-
-
                     $section = new Section();
                     $form = $this->createForm(SectionType::class, $section);
                     return $this->render('section/new.html.twig', [
@@ -305,24 +280,33 @@ class IndexController extends AbstractController
 
 
     #[Route('/formation/{id}', name: 'app_formation_show', methods: ['GET'])]
-    public function showFormation(ManagerRegistry $doctrine, FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan, Int $id): Response
+    public function showFormation(ManagerRegistry $doctrine, ProgressRepository $progressRepository, FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan, Int $id, Progression $progression): Response
     {
         $this->getUser() ? $user = $this->getUser() : $user = new User();
         $formation = $formationRepository->find($id);
-        $formationToClone = new Formation();
-        $formationToClone = $formation;
-        $formationToClone->addUser($user);
-        $user->addFormation($formationToClone);
-        $formationRepository->add($formationToClone);
-      
-
-
+        if ($formation->getAuteur() == $user) {
+            $progress = null;
+        } else {
+            $progressRepository->findOneBy(['user' => $user, 'formation' => $formation]) ? $progress = $progressRepository->findOneBy(['user' => $user, 'formation' => $formation]) : $progress = new Progress();
+            $learnState = $progress->getFormationFinished();
+            if ($learnState == 0) { // si la formation n'est pas commencée
+                $progress->setUser($user);
+                $progress->setFormation($formation);
+                $progress->setFormationFinished('2'); //set formation à "en cours"
+                $progressRepository->add($progress);
+            } else {
+                $progress = $progressRepository->findOneBy(['formation' => $formation, 'user' => $user]);
+            }
+        }
         return $this->render('formation/show.html.twig', [
             'formation' => $formationRepository->find($id),
             'sections' => $formationRepository->find($id)->getSection(),
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
-            'user' => $user
+            'user' => $user,
+            'formations' => $progression->getProgress()[0],
+            'progress' => $progression->getProgress()[1],
+            'progression' => $progression->getProgress()[2],
         ]);
     }
 
@@ -381,20 +365,6 @@ class IndexController extends AbstractController
         ]);
     }
 
-    #[Route('/formation/{id}', name: 'app_formation_delete', methods: ['POST'])]
-    public function deleteFormation(Request $request,  Formation $formation, FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $formation->getId(), $request->request->get('_token'))) {
-            $formationRepository->remove($formation);
-        }
-
-        return $this->redirectToRoute('app_formation_index', [
-
-            'img' => $imgAndSlogan->getImg(),
-            'slogan' => $imgAndSlogan->getSlogan(),
-            'user' => $this->getUser(),
-        ], Response::HTTP_SEE_OTHER);
-    }
     #[Route('cours/', name: 'app_cours_index', methods: ['GET'])]
     public function indexCours(CoursRepository $coursRepository, UserInterface $user, imgAndSlogan $imgAndSlogan): Response
     {
@@ -491,12 +461,36 @@ class IndexController extends AbstractController
     }
 
     #[Route('cours/{id}', name: 'app_cours_show', methods: ['GET'])]
-    public function showCours(Cours $cours, imgAndSlogan $imgAndSlogan): Response
+    public function showCours(Cours $cours, imgAndSlogan $imgAndSlogan, ProgressRepository $progressRepository): Response
     {
         $this->getUser() ? $user = $this->getUser() : $user = new User();
+        $progressRepository->findOneBy(['user' => $user, 'cours' => $cours]) ? $progress = $progressRepository->findOneBy(['user' => $user, 'cours' => $cours]) : $progress = new Progress();
+        $coursProgress = $progress->getCoursFinished();
+        if ($coursProgress == 0 || $progress == new Progress()) {
+            $progress->setUser($user);
+            $progress->setFormation($cours->getSection()->getFormation());
+            $progress->setCours($cours);
+            $progress->setCoursFinished(2);
+            $progressRepository->add($progress);
+            $coursProgress = $progress->getCoursFinished();
+        } elseif (isset($_GET['f']) && $_GET['f'] == 1) {
+            $progress->setCoursFinished(1);
+            $progressRepository->add($progress);
+            $coursProgress = $progress->getCoursFinished();
+            $formation = $cours->getSection()->getFormation();
+            $allCoursFormation = $formation->getCours();
+            foreach($allCoursFormation as $cours){
+                if($progress->getCoursFinished() == 2 || $progress->getCoursFinished() == 0){
+                    //formation unfinished
+                }else{
+                    $progress->setFormationFinished(1);
+                    $progressRepository->add($progress);
+                }
+            }
+        }
         return $this->render('cours/show.html.twig', [
             'cours' => $cours,
-
+            'coursProgress' => $coursProgress,
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user
@@ -545,25 +539,8 @@ class IndexController extends AbstractController
             'user' => $user
         ], Response::HTTP_SEE_OTHER);
     }
-    #[Route('/membres', name: 'app_membres')]
-    public function membres(UserInterface $user, imgAndSlogan $imgAndSlogan): Response
-    {
-        if ($this->getUser->isAuthenticated()) {
-            return $this->render('formation/show.html.twig', [
-
-                'img' => $imgAndSlogan->getImg(),
-                'slogan' => $imgAndSlogan->getSlogan(),
-                'user' => $user
-            ]);
-        } else {
-            return $this->render('formation/index.html.twig', [
-
-                'img' => $imgAndSlogan->getImg(),
-                'slogan' => $imgAndSlogan->getSlogan(),
-                'user' => $user
-            ]);
-        }
-    }
+   
+    
 
 
     #[Route('/registration/postulant', name: 'app_postulant')]
@@ -657,7 +634,7 @@ class IndexController extends AbstractController
         $this->getUser() ? $user = $this->getUser() : $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
-        
+
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password
             $user->setPassword(
@@ -896,13 +873,16 @@ class IndexController extends AbstractController
         return $this->redirectToRoute('app_check_email');
     }
     #[Route('/section', name: 'app_section_index', methods: ['GET'])]
-    public function indexSection(SectionRepository $sectionRepository, imgAndSlogan $imgAndSlogan, UserInterface $user): Response
+    public function indexSection(SectionRepository $sectionRepository, imgAndSlogan $imgAndSlogan, UserInterface $user, Progression $progression): Response
     {
 
         return $this->render('section/index.html.twig', [
             'sections' => $sectionRepository->findAll(),
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
+            'formations' => $progression->getProgress()[0],
+            'progress' => $progression->getProgress()[1],
+            'progression' => $progression->getProgress()[2],
             'user' => $user
         ]);
     }
@@ -943,11 +923,15 @@ class IndexController extends AbstractController
     }
 
     #[Route('/section/{id}', name: 'app_section_show', methods: ['GET'])]
-    public function showSection(Section $section, imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository, Request $request): Response
+    public function showSection(Section $section, CoursRepository $coursRepository, imgAndSlogan $imgAndSlogan,Progression $progression, FormationRepository $formationRepository, Request $request): Response
     {
         $this->getUser() ? $user = $this->getUser() : $user = new User();
         return $this->render('section/show.html.twig', [
             'section' =>  $section,
+            'formations' => $progression->getProgress()[0],
+            'progress' => $progression->getProgress()[1],
+            'progression' => $progression->getProgress()[2],
+            'cours' => $coursRepository->findBy(['section' => $section]),
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user
@@ -996,10 +980,12 @@ class IndexController extends AbstractController
     }
 
     #[Route('/quizz', name: 'app_quizz_index', methods: ['GET'])]
-    public function quizzIndex(QuizzRepository $quizzRepository): Response
+    public function quizzIndex(QuizzRepository $quizzRepository, imgAndSlogan $imgAndSlogan): Response
     {
         return $this->render('quizz/index.html.twig', [
             'quizzs' => $quizzRepository->findAll(),
+            'img' => $imgAndSlogan->getImg(),
+            'slogan' => $imgAndSlogan->getSlogan(),
         ]);
     }
 
@@ -1016,6 +1002,8 @@ class IndexController extends AbstractController
                 'img' => $imgAndSlogan->getImg(),
                 'slogan' => $imgAndSlogan->getSlogan(),
                 'user' => $user,
+                'formations' => $user->getFormations(),
+                'sections' => $sectionRepository->findBy(['user' => $user]),
                 'section' => $quizzRepository->findOneByQuizzId($quizz->getId()),
 
             ]);
@@ -1023,24 +1011,33 @@ class IndexController extends AbstractController
 
         return $this->renderForm('quizz/new.html.twig', [
             'quizz' => $quizz,
-            'form' => $form,
-            'user' => $user,
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
+            'form' => $form,
+            'user' => $user,
+            'formations' => $user->getFormations(),
+            'sections' => $user->getSections(),
         ]);
     }
 
     #[Route('/quizz/{id}', name: 'app_quizz_show', methods: ['GET'])]
-    public function showQuizz(Quizz $quizz): Response
+    public function showQuizz(Quizz $quizz, imgAndSlogan $imgAndSlogan, SectionRepository $sectionRepository): Response
     {
+        $this->getUser() ? $user = $this->getUser() : $user = new User();
+
         return $this->render('quizz/show.html.twig', [
             'quizz' => $quizz,
+            'img' => $imgAndSlogan->getImg(),
+            'slogan' => $imgAndSlogan->getSlogan(),
+            'sections' => $user->getSections(),
         ]);
     }
 
     #[Route('/quizz/{id}/edit', name: 'app_quizz_edit', methods: ['GET', 'POST'])]
-    public function quizzEdit(Request $request, Quizz $quizz, QuizzRepository $quizzRepository): Response
+    public function quizzEdit(Request $request, Quizz $quizz, QuizzRepository $quizzRepository,SectionRepository $sectionRepository, imgAndSlogan $imgAndSlogan): Response
     {
+        $this->getUser() ? $user = $this->getUser() : $user = new User();
+
         $form = $this->createForm(QuizzType::class, $quizz);
         $form->handleRequest($request);
 
@@ -1052,6 +1049,9 @@ class IndexController extends AbstractController
         return $this->renderForm('quizz/edit.html.twig', [
             'quizz' => $quizz,
             'form' => $form,
+            'sections' => $user->getSections(),
+            'img' => $imgAndSlogan->getImg(),
+            'slogan' => $imgAndSlogan->getSlogan(),
         ]);
     }
 
@@ -1153,15 +1153,17 @@ class IndexController extends AbstractController
         ], Response::HTTP_SEE_OTHER);
     }
     #[Route('/progress', name: 'app_progress_index', methods: ['GET'])]
-    public function indexProgress(ProgressRepository $progressRepository): Response
+    public function indexProgress(ProgressRepository $progressRepository, imgAndSlogan $imgAndSlogan): Response
     {
         return $this->render('progress/index.html.twig', [
             'progress' => $progressRepository->findAll(),
+            'img' => $imgAndSlogan->getImg(),
+            'slogan' => $imgAndSlogan->getSlogan(),
         ]);
     }
 
     #[Route('/progress/new/{id}', name: 'app_progress_new', methods: ['GET', 'POST'])]
-    public function newProgress(Request $request, FormationRepository $formationRepository, ProgressRepository $progressRepository, Int $id): Response
+    public function newProgress(Request $request, ImgAndSlogan $imgAndSlogan, FormationRepository $formationRepository, ProgressRepository $progressRepository, Int $id): Response
     {
         $this->getUser() ? $user = $this->getUser() : $user = new User();
         $formation = $formationRepository->find($id);
@@ -1169,29 +1171,33 @@ class IndexController extends AbstractController
         $progress->setFormation($formation);
         $progress->setUser($user);
         $user->addProgress($progress);
+        $progressRepository->add($progress);
         $form = $this->createForm(ProgressType::class, $progress);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $progressRepository->add($progress);
             return $this->redirectToRoute('app_progress_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('progress/new.html.twig', [
             'progress' => $progress,
             'form' => $form,
+            'img' => $imgAndSlogan->getImg(),
+            'slogan' => $imgAndSlogan->getSlogan(),
         ]);
     }
 
     #[Route('/progress/{id}', name: 'app_progress_show', methods: ['GET'])]
-    public function showProgress(Progress $progress): Response
+    public function showProgress(Progress $progress, imgAndSlogan $imgAndSlogan): Response
     {
         return $this->render('progress/show.html.twig', [
             'progress' => $progress,
+            'img' => $imgAndSlogan->getImg(),
+            'slogan' => $imgAndSlogan->getSlogan(),
         ]);
     }
 
     #[Route('/progress/{id}/edit', name: 'app_progress_edit', methods: ['GET', 'POST'])]
-    public function editProgress(Request $request, Progress $progress, ProgressRepository $progressRepository): Response
+    public function editProgress(Request $request, imgAndSlogan $imgAndSlogan, Progress $progress, ProgressRepository $progressRepository): Response
     {
         $form = $this->createForm(ProgressType::class, $progress);
         $form->handleRequest($request);
@@ -1204,16 +1210,8 @@ class IndexController extends AbstractController
         return $this->renderForm('progress/edit.html.twig', [
             'progress' => $progress,
             'form' => $form,
+            'img' => $imgAndSlogan->getImg(),
+            'slogan' => $imgAndSlogan->getSlogan(),
         ]);
-    }
-
-    #[Route('/progress/{id}', name: 'app_progress_delete', methods: ['POST'])]
-    public function deleteProgress(Request $request, Progress $progress, ProgressRepository $progressRepository): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $progress->getId(), $request->request->get('_token'))) {
-            $progressRepository->remove($progress);
-        }
-
-        return $this->redirectToRoute('app_progress_index', [], Response::HTTP_SEE_OTHER);
     }
 }

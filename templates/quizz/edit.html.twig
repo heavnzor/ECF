@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-
-<title>Edit Quizz</title>
-
-{% block body %}
-    <h1>Edit Quizz</h1>
+{% extends 'index.html.twig' %}
+{% block main %}
+    <h1>Modifier un quizz</h1>
 
     {{ include('quizz/_form.html.twig', {'button_label': 'Update'}) }}
 

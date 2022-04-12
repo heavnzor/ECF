@@ -22,39 +22,39 @@ class Progress
     #[ORM\JoinColumn(nullable: false)]
     private $formation;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private $formationFinished;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $formationFinished = 0;
 
     #[ORM\ManyToOne(targetEntity: Cours::class, inversedBy: 'progress')]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(nullable: false)]
     private $cours;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private $coursFinished;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $coursFinished = 0;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getCoursFinished(): ?bool
+    public function getCoursFinished(): ?int
     {
         return $this->coursFinished;
     }
 
-    public function setCoursFinished(?bool $coursFinished): self
+    public function setCoursFinished(?int $coursFinished): self
     {
         $this->coursFinished = $coursFinished;
 
         return $this;
     }
 
-    public function getFormationFinished(): ?bool
+    public function getFormationFinished(): ?int
     {
         return $this->formationFinished;
     }
 
-    public function setFormationFinished(?bool $formationFinished): self
+    public function setFormationFinished(?int $formationFinished): self
     {
         $this->formationFinished = $formationFinished;
 

@@ -1,39 +1,27 @@
 {% extends 'index.html.twig' %}
 {% block main %}
-	<h1>Catalogue des cours</h1>
-
 	<table class="table">
-		<thead>
-			<tr>
-				<th>Id</th>
-				<th>Cours</th>
-				<th>Image</th>
-				<th>Pdf</th>
-				<th>Video</th>
-				<th>Actions</th>
-			</tr>
-		</thead>
 		<tbody>
-			{% for cour in cours %}
+			{% for cours in cours %}
 				<tr>
-					<td>{{ cour.id }}</td>
-					<td>{{ cour.cours }}</td>
-					{% if cour.image is not same as(null) %}
-						<td><img class='imgFormation' src="{{ asset('build/uploads/photos/')}}{{ cour.image }}"></td>
+					<h1>{{ cours.titre }}</h1>
+					<p>{{ cours.cours|raw }}</p>
+					{% if cours.image is not same as(null) %}
+						<img class='imgFormation' src="{{ asset('build/uploads/photos/')}}{{ cours.image }}">
 					{% endif %}
-					<td>
-						<a href="{{ asset('build/uploads/photos/') }}" {{ cour.pdf }} target="_blank"></td>
-					</td>
-					<td>
-						<iframe width="560" height="315" src="https://www.youtube.com/embed/{{ cour.video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-					</td>
-					<td>
-						<a href="{{ path('app_cours_show', {'id': cour.id}) }}">Voir</a>
-						<a href="{{ path('app_cours_edit', {'id': cour.id}) }}">Modifier/supprimer</a>
 
-					</td>
+					<a href="{{ asset('build/uploads/photos/') }}" {{ cours.pdf }} target="_blank">
 
+
+						<iframe width="560" height="315" src="https://www.youtube.com/embed/{{ cours.video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+					</tr>
 				</tr>
+				<tr>
+					<br><a href="{{ path('app_cours_show', {'id': cours.id}) }}">Voir</a><br>
+					<a href="{{ path('app_cours_edit', {'id': cours.id}) }}">Modifier/supprimer</a>
+				</tr>
+
+
 			{% else %}
 				<tr>
 					<td colspan="7">Aucun cours trouvé</td>

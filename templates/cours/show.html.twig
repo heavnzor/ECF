@@ -1,37 +1,40 @@
 {% extends 'index.html.twig' %}
 {% block main %}
-	<h1>Cours</h1>
-
 	<table class="table">
 		<tbody>
-			
 			<tr>
-				<th>Cours</th>
-				<td>{{ cours.cours }}</td>
+				<h1>{{ cours.titre }}</h1>
 			</tr>
 			<tr>
-				<th>Image</th>
-				<td><img class="imgCours" src="{{ asset('build/uploads/photos/') }}{{ cours.image }}"></td>
+				<p>{{ cours.cours|raw }}</p>
 			</tr>
 			<tr>
-				<th>Pdf</th>
-				<td>
+				{% if cours.image is not same as(null) %}
+					<img class="imgCours" src="{{ asset('build/uploads/photos/') }}{{ cours.image }}">
+				{% endif %}
+			</tr>
+			<tr>
+				{% if cours.pdf is not same as(null) %}
 					<a href="{{ asset('build/uploads/photos/') }}{{ cours.pdf }}">{{ cours.pdf }}</a>
-				</td>
+				{% endif %}
 			</tr>
 			<tr>
-				<th>Video</th>
-				<td>
-					<iframe width="560" height="315" src="https://www.youtube.com/embed/{{ cours.video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-				</td>
+
+
+				<iframe width="560" height="315" src="https://www.youtube.com/embed/{{ cours.video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 			</tr>
+			<tr>
+				<p>Leçon terminée ?<br>
+					{% if coursProgress == 2 %}
+						<a href='/cours/{{ cours.id }}?f=1'>Oui</a>
+					{% elseif coursProgress == 1 %}
+						Oui
+					{% endif %}
+				</p>
+			</tr>
+			<tr>
+			<a href='javascript:history.back()'>Retour</a></tr>
 		</tbody>
-	</td>
-</tr>
-{% if is_granted('ROLE_USER') %}
-	<tr>
-		<th>Progression</th>
-		<td>{{ cours.isFinished ? 'Oui' : 'Non' }}</td>
-	</tr>
-{% endif %}</tbody></table><a href="{{ path('app_cours_index') }}">Retour aux cours</a><br>
-{% if is_granted('ROLE_INSTRUCTEUR') %}<a href="{{ path('app_cours_edit', {'id': cours.id}) }}">Modifier</a>{% endif %}<br>{{ include('cours/_delete_form.html.twig') }}{% endblock %}
+	</table>
+{% endblock %}

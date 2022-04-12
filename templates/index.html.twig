@@ -31,37 +31,20 @@
 						<div class="collapse navbar-collapse" id="navbarText">
 							<br>
 							<ul class="navbar-nav">
-								<li class="nav-item dropdown">
-									<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-										Waldganger
-									</a>
-									<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-										<li>
-											<a class="dropdown-item" href="#">L'organisation</a>
-										</li>
-
-										<li>
-											<a class="dropdown-item" href="#">Certification</a>
-										</li>
-										<li>
-											<a class="dropdown-item" href="#">Dons</a>
-										</li>
-									</ul>
+								<li>
+									<a class="nav-link" href="#">L'organisation</a>
 								</li>
-								{% if is_granted('ROLE_INSTRUCTEUR') %}
-									<li class="nav-item">
-										<a class="nav-link" href="/formation?p=1">Parcours formateur</a>
-									</li>
-								{% endif %}
-								{% if is_granted('ROLE_USER') %}
-									<li class="nav-item">
-										<a class="nav-link" href="/formation?p=0">Parcours apprenant</a>
-									</li>
-								{% else %}
-									<li class="nav-item">
-										<a class="nav-link" href="/formation">Formations</a>
-									</li>
-								{% endif %}
+
+								<li>
+									<a class="nav-link" href="#">Certification</a>
+								</li>
+								<li>
+									<a class="nav-link" href="#">Dons</a>
+								</li>
+
+								<li class="nav-item">
+									<a class="nav-link" href="/formation">Formations</a>
+								</li>
 								{% if not is_granted('ROLE_INSTRUCTEUR') %}
 									<li class="nav-item">
 										<a class="nav-link" href="/registration/postulant">Devenir formateur</a>
@@ -102,13 +85,17 @@
 								</strong>
 							</h1>
 						</div>
-						<span>Waldganger&trade;</span>
+						<span class="fs-2">Waldganger&trade;</span>
 					</div>
 				</div>
 			</header>
 			<div class='container-fluid border border-primary  '>
-				<div class='container text-center  justify-content-center mx-auto px-auto my-3 '>
+				<div class='container text-center  justify-content-center px-auto my-3 '>
+					{% if is_granted('ROLE_INSTRUCTEUR') %}
+						{% include 'navformateurs.html.twig' %}
+					{% endif %}
 					{% block main %}
+						{% include 'navusers.html.twig' %}
 						{% for success in app.flashes('success') %}
 							<div class="alert alert-success">
 								{{ success }}
@@ -121,8 +108,10 @@
 						{% endfor %}
 						<section class="container bg-black">
 							<div class="row align-items-start" id="results">
+
+
 								{% for formation in formations %}
-									<div class="col-3 mx-auto">
+									<div class="col-3">
 										<img src="{{ asset('build/uploads/photos/')}}{{formation.image}}" class=" imgFormation" alt=" {{ formation.titre}} ">
 										<h2 class="fs-2">{{ formation.titre}}</h2>
 										<p class="fs-5">{% set description = formation.description|raw %}

@@ -14,7 +14,10 @@ class Quizz
     private $id;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
-    private $question;
+    private $question1;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    private $question2;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private $reponse1;
@@ -26,7 +29,13 @@ class Quizz
     private $reponse3;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
-    private $bonnereponse;
+    private $reponse4;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    private $bonnereponse1;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    private $bonnereponse2;
 
     #[ORM\OneToOne(inversedBy: 'quizz', targetEntity: Section::class, cascade: ['persist', 'remove'])]
     private $section;
@@ -123,9 +132,9 @@ class Quizz
     /**
      * Get the value of bonnereponse
      */ 
-    public function getBonnereponse()
+    public function getBonnereponse1()
     {
-        return $this->bonnereponse;
+        return $this->bonnereponse1;
     }
 
     /**
@@ -133,9 +142,9 @@ class Quizz
      *
      * @return  self
      */ 
-    public function setBonnereponse($bonnereponse)
+    public function setBonnereponse1($bonnereponse1)
     {
-        $this->bonnereponse = $bonnereponse;
+        $this->bonnereponse1 = $bonnereponse1;
 
         return $this;
     }
@@ -156,6 +165,46 @@ class Quizz
     public function setQuestion($question)
     {
         $this->question = $question;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of reponse4
+     */ 
+    public function getReponse4()
+    {
+        return $this->reponse4;
+    }
+
+    /**
+     * Set the value of reponse4
+     *
+     * @return  self
+     */ 
+    public function setReponse4($reponse4)
+    {
+        $this->reponse4 = $reponse4;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of bonnereponse2
+     */ 
+    public function getBonnereponse2()
+    {
+        return $this->bonnereponse2;
+    }
+
+    /**
+     * Set the value of bonnereponse2
+     *
+     * @return  self
+     */ 
+    public function setBonnereponse2($bonnereponse2)
+    {
+        $this->bonnereponse2 = $bonnereponse2;
 
         return $this;
     }
