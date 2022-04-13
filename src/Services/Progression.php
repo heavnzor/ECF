@@ -27,33 +27,36 @@ class Progression extends AbstractController
         $this->getUser() ? $user = $this->getUser() : $user = new User();
 
         if ($this->isGranted('ROLE_USER')) {
-            $formationsApp = $user->getFormations();
-            $formationNb = count($formationsApp);
-            $this->progressRepository->findOneBy(['user' => $user]) ? $progress = $this->progressRepository->findOneBy(['user' => $user]) : $progress = $user->getProgress();
-            if ($progress !== $user->getProgress()) {
-                foreach ($formationsApp as $formation) {
-                    if ($formation->getProgress() && $user->getProgress() && $progress->getFormationFinished() == 1 && $formation->getAuteur() !== $user) {
-                        $formationNb++;
-                    }
+            $formations = $user->getFormations();
+            $formationNb = 0;
+            $coursNb = 0;
+            foreach ($formations as $formation) {
+                $progressF = $this->progressRepository->findOneBy(['user' => $user, 'formationFinished' => 1]);
+                if ($progressF->getFormationFinished() == 1 && $formation->getAuteur() !== $user) {
+                    $formationNb++;
                 }
+
+
                 $cours = $formation->getCours();
-                $coursNb = count($cours);
                 foreach ($cours as $lesson) {
-                    if ($lesson->getProgress() && $user->getProgress() && $progress->getCoursFinished() == 1 && $formation->getAuteur() !== $user) {
+                    $progress = $this->progressRepository->findOneBy(['user' => $user, 'coursFinished' => 1, 'formationFinished' => 1]);
+                    if ($progress->getCoursFinished() == 1 && $progress->getCours() == $lesson) {
                         $coursNb++;
                     }
                 }
-                $progression = ($coursNb * 100) / $formationNb;
-            }else{
-                $progression = 0;
             }
-            $formations = $user->getFormations();
+            $progression = ($coursNb * 100) / $formationNb;
+
+
             return array($formations, $progress, $progression);
-        } else {
+        }
+        else {
             $formations = $this->formationRepository->findAllFormationsOrderById();
             $progress = null;
             $progression = 0;
             return array($formations, $progress, $progression);
-        };
+        }
     }
 }
+    
+

@@ -40,7 +40,7 @@ class AppFixtures extends Fixture
 
         // Instructeur pas encore validé
         $instructeurUnVerified = new User();
-        $instructeurUnVerified->setEmail('instructeurUnVerifiedonvalide@waldganger.net');
+        $instructeurUnVerified->setEmail('instructeurUnVerifiedUnvalided@waldganger.net');
         $instructeurUnVerified->setRoles(['ROLE_USER']);
         $passwordInstructeurUnVerified = $this->hasher->hashPassword($instructeurUnVerified, 'yannick');
         $instructeurUnVerified->setPassword($passwordInstructeurUnVerified);
@@ -78,20 +78,25 @@ class AppFixtures extends Fixture
         $manager->persist($user);
 
 
-        for ($f = 0; $f < 20; $f++) {
+        for ($f = 0; $f < 10; $f++) {
             $formation = new Formation();
             $formation->setAuteur($instructeur);
             $formation->setImage('informatique.png');
             $formation->setDescription($faker->words(50, true));
             $formation->setTitre($faker->words(6, true));
             $manager->persist($formation);
+            $user->addFormation($formation);
+            $instructeur->addFormation($formation);
+            // prendre une formation au hasard, mettre tous ses courts finis et donc la formation fini aussi
 
-            for ($s = 0; $s < 5; $s++) {
+
+            for ($s = 0; $s < 3; $s++) {
                 $section = new Section();
                 $section->setFormation($formation);
                 $section->setTitre($faker->words(6, true));
                 $section->addAuteur($instructeur);
                 $manager->persist($section);
+                $user->addSection($section);
 
                 $quizz = new Quizz();
                 $quizz->setSection($section);
@@ -105,7 +110,7 @@ class AppFixtures extends Fixture
                 $quizz->setBonneReponse2('reponse3');
                 $manager->persist($quizz);
 
-                for ($l = 0; $l < 10; $l++) {
+                for ($l = 0; $l < 5; $l++) {
                     $cours = new cours();
                     $cours->setTitre($faker->words(6, true));
                     $cours->setSection($section);
@@ -115,6 +120,9 @@ class AppFixtures extends Fixture
                     $cours->setVideo('wfhAh4y53tI');
                     $cours->addUser($instructeur);
                     $manager->persist($cours);
+                    $cours->addUser($user);
+                    $formation->addCours($cours);
+
 
                     $randProgress = rand(0, 2);
 
@@ -123,18 +131,31 @@ class AppFixtures extends Fixture
                     $progress->setFormation($formation);
                     $progress->setCours($cours);
                     $progress->setCoursFinished($randProgress);
-                    if ($progress->getCoursfinished() == 2) {
-                        $progress->setFormationFinished(2);
-                    }elseif($progress->getCoursfinished() == 1){
-                        $progress->setFormationFinished(1);
-                    }else{
-                        $progress->setFormationFinished(0);
-                    }
                     $manager->persist($progress);
 
-                  
+                    $randProgress2 = rand(0, 2);
+
+                    $progress2 = new Progress();
+                    $progress2->setUser($instructeur);
+                    $progress2->setFormation($formation);
+                    $progress2->setCours($cours);
+                    $progress2->setCoursFinished($randProgress2);
+                    $manager->persist($progress2);
                 }
             }
+        }
+        $randProgressF = rand(0, 1);
+        $progressF = new Progress();
+        if ($randProgressF == 1) {
+            $cours = $formation->getCours();
+            foreach ($cours as $coursF) {
+                $progressF->setUser($user);
+                $progressF->setFormation($formation);
+                $progressF->setCours($coursF);
+                $progressF->setCoursFinished($randProgressF);
+                $progressF->setFormationFinished($randProgressF);
+            }
+            $manager->persist($progressF);
         }
         $manager->flush();
     }

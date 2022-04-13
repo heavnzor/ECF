@@ -119,7 +119,6 @@ class IndexController extends AbstractController
                     $formation = $form->getData();
                     $imageFile = $form->get('image')->getData();
                     $formationTitre = $form->get('titre')->getData();
-                    $formation->setLearnState(0);
                     $formation->setTitre(ucfirst(strtolower($formationTitre)));
                     if ($imageFile) {
                         $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
