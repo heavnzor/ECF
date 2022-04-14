@@ -17,6 +17,8 @@ document.getElementById('searchInput').addEventListener('keyup', event => {
     }
   }
 
+})
+
 
   document.getElementById('btnradio').addEventListener('click', event => {
     for (let i = 0; i < allCards.length; i++) {
@@ -27,7 +29,7 @@ document.getElementById('searchInput').addEventListener('keyup', event => {
   document.getElementById('btnradio1').addEventListener('click', event => {
     for (let i = 0; i < allCards.length; i++) {
       if (allCards[i].className.includes('enCours')) {
-        allCards[i].style.visibility = 'visible';
+        enCoursCards[i].style.visibility = 'visible';
       } else {
         allCards[i].style.visibility = 'collapse';
       }
@@ -36,12 +38,13 @@ document.getElementById('searchInput').addEventListener('keyup', event => {
   document.getElementById('btnradio2').addEventListener('click', event => {
     for (let i = 0; i < allCards.length; i++) {
       if (allCards[i].className.includes('finished')) {
-        allCards[i].style.visibility = 'visible';
+        finishedCards[i].style.visibility = 'visible';
       } else {
         allCards[i].style.visibility = 'collapse';
       }
     }
   })
-})
+
+
 
 

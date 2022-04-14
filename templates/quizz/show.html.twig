@@ -1,34 +1,69 @@
 {% extends 'index.html.twig' %}
 {% block main %}
-	<h1>Quizz</h1>
+	<h2>Quizz</h2><br>
+	{% if r is defined %}
+		{% if r == 2 %}
+			<span class="alert-success fs-5 px-2 py-2">Bravo vous avez répondu juste à toutes les questions ! &#128512;</span>
+		{% elseif r == 1 %}
+			<span class="alert-warning fs-5 px-2 py-2">Ah ... vous n'avez répondu juste qu'à une seule question... Repassez le quizz directement ou revoyez les cours de la section &#128524;</span>
+		{% elseif r == 0 %}
+			<span class="alert-danger fs-5 px-2 py-2">Vous n'avez répondu juste à aucune question ! Malheureux ! &#128514; Revoyez vous cours ! &#128522;</span>
+		{% endif %}
+	{% endif %}
+{{ form_start(form, {'action': path('app_quizz_show', {'id': quizz.id}), 'method': 'POST'}) }}
 
-	<table class="table">
-		<tbody>
-			<tr>
-				<th>Question1</th>
-				<td>{{ quizz.question }}</td>
-			</tr>
-			<tr>
-				<th>Question2</th>
-				<td>{{ quizz.bonnereponse1 }}</td>
-			</tr>
-			<tr>
-				<th>Reponse2</th>
-				<td>{{ quizz.bonnereponse2 }}</td>
-			</tr>
-			<tr>
-				<th>Question3</th>
-				<td>{{ quizz.bonnereponse3 }}</td>
-			</tr>
-			<tr>
-				<th>Bonne réponse</th>
-				<td>{{ quizz.bonnereponse }}</td>
-			</tr>
-		</tbody>
-	</table>
+<input type="hidden" name="quizz[section]" value="{{quizz.section.id}}">
 
-	<a href="{{ path('app_quizz_index') }}">Retour aux quizz</a>
-<br><br>
-	<a href="{{ path('app_quizz_edit', {'id': quizz.id}) }}">Modifier</a><br><br> {{ include('quizz/_delete_form.html.twig') }}
+
+
+	<br>
+	{{ form_label(form.question1, 'Question n°1') }}
+	<br>
+	<input type="hidden" name="quizz[reponse1]" value="{{quizz.reponse1}}">
+	<input type="hidden" name="quizz[reponse2]" value="{{quizz.reponse2}}">
+	<input type="hidden" name="quizz[question1]" value="{{quizz.question1}}">
+
+
+	{{ quizz.question1 }}<br>
+	<br>{{ form_label(form.bonnereponse1, 'Bonne réponse ?') }}<br>
+	<select class="form-select" name="quizz[bonnereponse1]" aria-label="Bonne réponse">
+		<option value="reponse1">
+			{{quizz.reponse1}}
+		</option>
+		<option value="reponse2">
+			{{ quizz.reponse2 }}
+		</option>
+	</select><br><br>
+
+
+	{{ form_label(form.question2, 'Question n°2') }}
+	<br>
+	<input type="hidden" name="quizz[reponse3]" value="{{quizz.reponse3}}">
+	<input type="hidden" name="quizz[reponse4]" value="{{quizz.reponse4}}">
+	<input type="hidden" name="quizz[question2]" value="{{quizz.question2}}">
+
+
+	{{ quizz.question2 }}<br>
+
+	<br>{{ form_label(form.bonnereponse1, 'Bonne réponse ?') }}<br>
+	<select class="form-select" name="quizz[bonnereponse2]" aria-label="Bonne réponse">
+		<option value="reponse3">
+			{{quizz.reponse3}}
+		</option>
+		<option value="reponse4">
+			{{ quizz.reponse4 }}
+		</option>
+	</select><br><br>
+
+	<a href=""><button class="btn btn-primary">Voir les résultats</button></a>
+	{{ form_widget(form._token) }}
+	{{ form_end(form, {render_rest: false}) }} 
+
+
+	<a href="{{ path('app_section_show', {'id': quizz.section.id })}}">Retour</a>
+	<br><br>
+	{% if is_granted('ROLE_INSTRUCTEUR') %}
+		<a href="{{ path('app_quizz_edit', {'id': quizz.id}) }}">Modifier</a><br><br>
+		{{ include('quizz/_delete_form.html.twig') }}
+	{% endif %}
 {% endblock %}
-

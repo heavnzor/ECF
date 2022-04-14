@@ -42,11 +42,11 @@ class Cours
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $isFinished;
 
-    #[ORM\ManyToOne(targetEntity: Formation::class, inversedBy: 'cours')]
+    #[ORM\ManyToOne(targetEntity: Formation::class, inversedBy:'cours', cascade: ["persist"])]
     #[ORM\JoinColumn(nullable: true)]
     private $formation;
 
-    #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Progress::class)]
+    #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Progress::class, cascade: ["persist", "remove"])]
     private $progress;
 
   

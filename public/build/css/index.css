@@ -1,93 +1,97 @@
-   @font-face {
-       font-family: "Billabong.ttf";
-       src: url("../fonts/Billabong.ttf");
-   }
+@font-face {
+  font-family: 'VW';
+  src: url('../fonts/Vampire Wars.ttf');
+}
 
-   @font-face {
-       font-family: "Yaldevi";
-       src: url("../fonts/Yaldevi-Regular.ttf");
-   }
+@font-face {
+  font-family: 'Yaldevi';
+  src: url('../fonts/Yaldevi-Regular.ttf');
+}
 
-   body {
-       background-color: black !important;
-       font-family: "Yaldevi";
-   }
+body {
+  background-color: black !important;
+  font-family: 'Yaldevi';
+}
 
-   a {
-       color: #59a96a !important;
-       font-weight: bold !important;
-       text-decoration: none !important;
-   }
+a {
+  color: #59a96a !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
+}
+a:hover {
+  color: white !important;
+  font-weight: bold !important;
+  text-decoration: underline !important;
+}
+a:active {
+  color: #307df6 !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
+}
 
-   a:hover {
-       color: white !important;
-       font-weight: bold !important;
-       text-decoration: underline !important;
-   }
+h1 {
+  font-family: 'VW' !important;
+  text-shadow: -1px 0 #307df6, 0 1px #307df6, 1px 0 #307df6, 0 -1px #307df6;
+  color: black !important;
+}
+.waldganger {
+  font-family: 'VW' !important;
+  text-shadow: -1px 0 #307df6, 0 1px #307df6, 1px 0 #307df6, 0 -1px #307df6;
+  color: black !important;
+}
+div {
+  color: white;
+}
 
-   h1 {
-       font-family: "Yaldevi" !important;
-       text-shadow: -1px 0 #b4e7ce,
-           0 1px #b4e7ce,
-           1px 0 #b4e7ce,
-           0 -1px #b4e7ce;
-       color: white !important;
-   }
+h2,
+h3 {
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  font-family: 'Yaldevi' !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 0.2rem !important;
+  text-decoration-color: #307df6 !important;
+  color: #b4e7ce;
+}
 
-   div {
-       color: white;
-   }
+h4,
+h5,
+h6 {
+  font-family: 'Yaldevi' !important;
+  color: #b4e7ce;
+}
 
-   h2,
-   h3 {
-       text-shadow: -1px 0 black,
-           0 1px black,
-           1px 0 black,
-           0 -1px black;
-       font-family: "Billabong" !important;
-       text-decoration: underline !important;
-       text-decoration-thickness: 0.2rem !important;
-       text-decoration-color: #307df6 !important;
-       color: #b4e7ce;
-   }
+.slogan {
+  background-image: url('../images/slogan.png');
+}
 
-   h4,
-   h5,
-   h6 {
-       font-family: "Billabong" !important;
-       color: #b4e7ce;
-   }
+.hidden {
+  display: none;
+}
 
-   .slogan {
-       background-image: url("../images/slogan.png");
-   }
+.imgFormation {
+  height: auto;
+  width: auto;
+  max-width: 400px !important;
+  padding: 0.25rem;
+  border: 1px solid #fff;
+  border-radius: 0.25rem;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
 
-   .hidden {
-       display: none;
-   }
+.imgCours {
+  height: auto;
+  width: auto;
+  max-width: 400px !important;
+  padding: 0.25rem;
+  border: 1px solid #fff;
+  border-radius: 0.25rem;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
 
-   .imgFormation {
-    height: auto;
-    width: auto ;
-    max-width: 220px !important;
-    padding: .25rem;
-    border: 1px solid #fff;
-    border-radius: .25rem;
-   }
-
-   .imgCours {
-       height: auto;
-       width: auto;
-       max-width: 150px !important;
-       padding: .25rem;
-       border: 1px solid #fff;
-       border-radius: .25rem;
-   }
-
-   .icons{
-       width: 30px;
-       height: auto;
-       margin-right: 3rem;
-   }
-
-
+.icons {
+  width: 30px;
+  height: auto;
+  margin-right: 3rem;
+}

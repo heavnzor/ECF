@@ -2,12 +2,12 @@
 {% block main %}
 	{% include 'navusers.html.twig' %}
 	<section class="container bg-black justify-content-center mx-auto">
-		<div class="row g-3 mx-auto" id="results">
+		<div class="row align-items-center g-3 mx-auto" id="results">
 
 			{% for formation in formations %}
-				{% if is_granted('ROLE_USER') and (formation == progress.formation) and progress.formationFinished  == 1 %}
+				{% if is_granted('ROLE_USER') and (formation == formation.progress) and progress.formationFinished  == 1 %}
 					{% set name = 'finished' %}
-				{% elseif is_granted('ROLE_USER') and (formation == progress.formation) and progress.formationFinished  == 2 %}
+				{% elseif is_granted('ROLE_USER') and (formation == formation.progress) and progress.formationFinished  == 2 %}
 					{% set name = 'enCours' %}
 				{% else %}
 					{% set name = 'unStarted' %}
@@ -23,15 +23,16 @@
               ? (description|slice(0, 100)) ~ '...'
               : description }}
 					</p>
-					{% if is_granted('ROLE_USER')  and progress.formationFinished == 0 %}
+					{% if is_granted('ROLE_USER') and user.progress == user  and progress.formationFinished == 0 %}
+
 						<a href="{{ path( 'app_formation_show', { id: formation.id} ) }}">
 							<button class="btn btn-primary">Commencer l'apprentissage</button>
 						</a>
-					{% elseif is_granted('ROLE_USER') and (formation == progress.formation) and progress.formationFinished  == 2 %}
+					{% elseif is_granted('ROLE_USER')  and user.progress == user  and progress.formationFinished == 2 %}
 						<a href="{{ path( 'app_formation_show', { id: formation.id }) }}">
 							<button class="btn btn-primary">En cours d'apprentissage</button>
 						</a>
-					{% elseif is_granted('ROLE_USER') and (formation == progress.formation) and progress.formationFinished  == 1 %}
+					{% elseif is_granted('ROLE_USER') and user.progress == user  and progress.formationFinished  == 1 %}
 						<a href="{{ path( 'app_formation_show', { id: formation.id } ) }}">
 							<button class="btn btn-primary">Formation terminé</button>
 						</a>

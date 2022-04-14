@@ -30,25 +30,24 @@ class Progression extends AbstractController
             $formations = $user->getFormations();
             $formationNb = 0;
             $coursNb = 0;
+            $this->progressRepository->findOneBy(['user' => $user, 'formationFinished' => 1]) ? $progressF = $this->progressRepository->findOneBy(['user' => $user, 'formationFinished' => 1]) : $progressF = new Progress();
+                $this->progressRepository->findOneBy(['user' => $user, 'coursFinished' => 1]) ? $progress = $this->progressRepository->findOneBy(['user' => $user, 'coursFinished' => 1]) : $progress = new Progress();
+
             foreach ($formations as $formation) {
-                $progressF = $this->progressRepository->findOneBy(['user' => $user, 'formationFinished' => 1]);
-                if ($progressF->getFormationFinished() == 1 && $formation->getAuteur() !== $user) {
+                if ($formation->getAuteur() !== $user && $progressF->getFormationFinished() == 1) {
                     $formationNb++;
                 }
-
-
                 $cours = $formation->getCours();
                 foreach ($cours as $lesson) {
-                    $progress = $this->progressRepository->findOneBy(['user' => $user, 'coursFinished' => 1, 'formationFinished' => 1]);
-                    if ($progress->getCoursFinished() == 1 && $progress->getCours() == $lesson) {
+                    if ($progress->getCours() == $lesson && $progress->getCoursFinished() == 1) {
                         $coursNb++;
                     }
                 }
             }
             $progression = ($coursNb * 100) / $formationNb;
+           $user->getProgress() ?  $progress = $user->getProgress() : $progress = new Progress;
 
-
-            return array($formations, $progress, $progression);
+            return array($formations, $progressF, $progression);
         }
         else {
             $formations = $this->formationRepository->findAllFormationsOrderById();

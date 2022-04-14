@@ -14,7 +14,7 @@ class Progress
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'progress')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy:'progress')]
     #[ORM\JoinColumn(nullable: false)]
     private $user;
 
@@ -22,14 +22,14 @@ class Progress
     #[ORM\JoinColumn(nullable: false)]
     private $formation;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'boolean', nullable: true)]
     private $formationFinished = 0;
 
     #[ORM\ManyToOne(targetEntity: Cours::class, inversedBy: 'progress')]
     #[ORM\JoinColumn(nullable: false)]
     private $cours;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'boolean', nullable: true)]
     private $coursFinished = 0;
 
     public function getId(): ?int
@@ -37,24 +37,24 @@ class Progress
         return $this->id;
     }
 
-    public function getCoursFinished(): ?int
+    public function getCoursFinished(): ?bool
     {
         return $this->coursFinished;
     }
 
-    public function setCoursFinished(?int $coursFinished): self
+    public function setCoursFinished(?bool $coursFinished): self
     {
         $this->coursFinished = $coursFinished;
 
         return $this;
     }
 
-    public function getFormationFinished(): ?int
+    public function getFormationFinished(): ?bool
     {
         return $this->formationFinished;
     }
 
-    public function setFormationFinished(?int $formationFinished): self
+    public function setFormationFinished(?bool $formationFinished): self
     {
         $this->formationFinished = $formationFinished;
 

@@ -53,7 +53,7 @@ class User implements  UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'auteur', targetEntity: Formation::class)]
     private $formationsAuteur;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Progress::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Progress::class, cascade: ["persist"])]
     private $progress;
 
 

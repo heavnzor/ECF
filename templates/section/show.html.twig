@@ -3,14 +3,18 @@
 	<table class="table">
 		<tbody>
 			<tr>
-				<strong><h1>{{ section.formation }}</h1></strong>
+				<strong>
+					<h2>{{ section.formation }}</h2>
+				</strong>
 			</tr>
 			<tr>
-				<em><p class="fs-4">{{ section.titre }}</p></em>
+				<em>
+					<p class="fs-4">{{ section.titre }}</p>
+				</em>
 			</tr>
 			<tr>
 				<ul>
-					<p class='fs-5'>Cours :</p> 
+					<p class='fs-5'>Cours :</p>
 					{% for cours in section.cours %}
 						<li>
 							<a href="{{path('app_cours_show', {'id': cours.id}) }}">{{ cours.titre }}</a>
@@ -18,11 +22,14 @@
 					{% endfor %}
 				</ul>
 			</tr>
+			<tr>
+				<span class="fs-5">
+					<a href="{{path('app_quizz_show', {'id': section.quizz.id}) }}">Accéder au quizz</a>
+				</span>
+			</tr>
 		</tbody>
 	</tr>
-</tbody></table>
-<a href='javascript:history.back()'>Retour</a><br><br>
-{% if is_granted('ROLE_INSTRUCTEUR') %}
+</tbody></table><a href='javascript:history.back()'>Retour</a><br><br>{% if is_granted('ROLE_INSTRUCTEUR') %}
 <a href="{{ path('app_section_index') }}">Retour aux sections</a><br><br>
 <a href="{{ path('app_section_edit', {'id': section.id}) }}">Modifier</a>
 <br><br>{% endif %}{% endblock %}

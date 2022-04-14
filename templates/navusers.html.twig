@@ -12,10 +12,12 @@
 		</div>
 	</nav>
 	{% if is_granted('ROLE_USER') %}
-		<Progression class="fs-5">{{ app.user.pseudo ? app.user.pseudo : app.user.prenom ~ " " ~ app.user.nom }} - Progression générale :
+		<Progression class="fs-5">{{ app.user.pseudo ? app.user.pseudo : app.user.prenom ~ " " ~ app.user.nom }}
+			- Progression générale :
 		</p>
-		<div class="progress">
-			<div class="progress-bar" role="progressbar" style="width: {{ progression }}%;" aria-valuenow="{{ progression }}" aria-valuemin="0" aria-valuemax="100">{{ progression }}%</div>
+		<div class="progress" style="height: 2em;">
+
+			<div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: {{ progression }}%; " aria-valuenow="{{ progression }}" aria-valuemin="0" aria-valuemax="100">{{ progression }}%</div>
 		</div>
 	{% endif %}
 	<hr>

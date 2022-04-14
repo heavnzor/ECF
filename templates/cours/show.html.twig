@@ -12,11 +12,12 @@
 				{% if cours.image is not same as(null) %}
 					<img class="imgCours" src="{{ asset('build/uploads/photos/') }}{{ cours.image }}">
 				{% endif %}
+				<br>
 			</tr>
 			<tr>
 				{% if cours.pdf is not same as(null) %}
 					<a href="{{ asset('build/uploads/photos/') }}{{ cours.pdf }}">{{ cours.pdf }}</a>
-				{% endif %}
+				{% endif %}<br>
 			</tr>
 			<tr>
 
@@ -34,7 +35,7 @@
 				</p>
 			</tr>
 			<tr>
-			<a href='javascript:history.back()'>Retour</a></tr>
+			<a href='{{ path('app_section_show', {'id': cours.section.id}) }}'>Retour</a></tr>
 		</tbody>
 	</table>
 {% endblock %}

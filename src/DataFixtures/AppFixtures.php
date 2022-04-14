@@ -10,6 +10,7 @@ use App\Entity\Section;
 use App\Entity\Progress;
 use App\Entity\Formation;
 use App\Entity\Newsletter;
+use App\Repository\ProgressRepository;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -17,10 +18,12 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class AppFixtures extends Fixture
 {
     private $hasher;
+    private $progressRepository;
 
-    public function __construct(UserPasswordHasherInterface $hasher)
+    public function __construct(UserPasswordHasherInterface $hasher, ProgressRepository $progressRepository)
     {
         $this->hasher = $hasher;
+        $this->progressRepository = $progressRepository;
     }
 
     public function load(ObjectManager $manager): void
@@ -37,6 +40,8 @@ class AppFixtures extends Fixture
         $admin->setRoles(['ROLE_SUPER_ADMIN']);
 
         $manager->persist($admin);
+        $manager->flush();
+
 
         // Instructeur pas encore validé
         $instructeurUnVerified = new User();
@@ -51,6 +56,8 @@ class AppFixtures extends Fixture
         $instructeurUnVerified->setIsPostulant(true);
 
         $manager->persist($instructeurUnVerified);
+        $manager->flush();
+
 
         // Instructeur validé
         $instructeur = new User();
@@ -65,6 +72,8 @@ class AppFixtures extends Fixture
         $instructeur->setIsVerified(true);
         $instructeur->setIsPostulant(true);
         $manager->persist($instructeur);
+        $manager->flush();
+
 
         // user #1
 
@@ -76,6 +85,8 @@ class AppFixtures extends Fixture
         $user->setPseudo($faker->firstName());
         $user->setIsVerified(true);
         $manager->persist($user);
+        $manager->flush();
+
 
 
         for ($f = 0; $f < 10; $f++) {
@@ -84,10 +95,10 @@ class AppFixtures extends Fixture
             $formation->setImage('informatique.png');
             $formation->setDescription($faker->words(50, true));
             $formation->setTitre($faker->words(6, true));
-            $manager->persist($formation);
             $user->addFormation($formation);
             $instructeur->addFormation($formation);
-            // prendre une formation au hasard, mettre tous ses courts finis et donc la formation fini aussi
+            $manager->persist($formation);
+            $manager->flush();
 
 
             for ($s = 0; $s < 3; $s++) {
@@ -97,6 +108,11 @@ class AppFixtures extends Fixture
                 $section->addAuteur($instructeur);
                 $manager->persist($section);
                 $user->addSection($section);
+                $instructeur->addSection($section);
+                $manager->persist($section);
+                $manager->flush();
+
+
 
                 $quizz = new Quizz();
                 $quizz->setSection($section);
@@ -109,6 +125,8 @@ class AppFixtures extends Fixture
                 $quizz->setBonneReponse1('reponse2');
                 $quizz->setBonneReponse2('reponse3');
                 $manager->persist($quizz);
+                $manager->flush();
+
 
                 for ($l = 0; $l < 5; $l++) {
                     $cours = new cours();
@@ -119,44 +137,33 @@ class AppFixtures extends Fixture
                     $cours->setPdf('greenIT.pdf');
                     $cours->setVideo('wfhAh4y53tI');
                     $cours->addUser($instructeur);
-                    $manager->persist($cours);
                     $cours->addUser($user);
                     $formation->addCours($cours);
-
-
-                    $randProgress = rand(0, 2);
-
                     $progress = new Progress();
                     $progress->setUser($user);
                     $progress->setFormation($formation);
+                    $progress->setFormationFinished(0);
                     $progress->setCours($cours);
-                    $progress->setCoursFinished($randProgress);
+                    $progress->setCoursFinished(0);
                     $manager->persist($progress);
-
-                    $randProgress2 = rand(0, 2);
-
-                    $progress2 = new Progress();
-                    $progress2->setUser($instructeur);
-                    $progress2->setFormation($formation);
-                    $progress2->setCours($cours);
-                    $progress2->setCoursFinished($randProgress2);
-                    $manager->persist($progress2);
+                    $manager->flush();
+                    $manager->persist($cours);
+                    $manager->flush();
+                }
+            }
+            $randProgressF = rand(0, 1);
+            $allcours = $formation->getCours();
+            if ($randProgressF == 1) {
+                foreach ($allcours as $cour) {
+                    $progress = $this->progressRepository->findOneBy(['formation' => $formation, 'user' => $user, 'cours' => $cour]);
+                    $progress->setUser($user);
+                    $progress->setFormation($formation);
+                    $progress->setFormationFinished(1);
+                    $progress->setCours($cour);
+                    $progress->setCoursFinished(1);
+                    $manager->flush();
                 }
             }
         }
-        $randProgressF = rand(0, 1);
-        $progressF = new Progress();
-        if ($randProgressF == 1) {
-            $cours = $formation->getCours();
-            foreach ($cours as $coursF) {
-                $progressF->setUser($user);
-                $progressF->setFormation($formation);
-                $progressF->setCours($coursF);
-                $progressF->setCoursFinished($randProgressF);
-                $progressF->setFormationFinished($randProgressF);
-            }
-            $manager->persist($progressF);
-        }
-        $manager->flush();
     }
 }

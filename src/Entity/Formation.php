@@ -30,7 +30,7 @@ class Formation
     private $section;
 
 
-    #[ORM\OneToMany(mappedBy: 'formation', targetEntity: Cours::class)]
+    #[ORM\OneToMany(mappedBy: 'formation', targetEntity: Cours::class, cascade: ["persist", "remove"])]
     private $cours;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'formations')]
@@ -39,8 +39,8 @@ class Formation
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'formationsAuteur')]
     private $auteur;
 
-    #[ORM\OneToMany(mappedBy: 'formation', targetEntity: Progress::class)]
-    private $progress;    // learnState = 0 / null = formation non commencée / learnState = 1 = formation terminé / learnState = 2 = formation en cours 
+    #[ORM\OneToMany(mappedBy: 'formation', targetEntity: Progress::class, cascade: ["persist", "remove"])]
+    private $progress;    // progress = 0 / null = formation non terminé / progress = 1 = formation terminé 
 
 
 
