@@ -23,8 +23,9 @@
 				</ul>
 			</tr>
 			<tr>
-				<span class="fs-5">
-					<a href="{{path('app_quizz_show', {'id': section.quizz.id}) }}">Accéder au quizz</a>
+				<span class="fs-5">{% if quizz.id is not same as(null) %}
+					<a href="{{path('app_quizz_show', {'id': quizz.id }) }}">Accéder au quizz</a>
+					{% endif %}
 				</span>
 			</tr>
 		</tbody>

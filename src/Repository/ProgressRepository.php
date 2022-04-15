@@ -54,7 +54,7 @@ class ProgressRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->orderBy('p.formationFinished', 'DESC')
             ->groupBy('p.formation')
-            ->setMaxResults(1000)
+            ->setMaxResults(100)
             ->getQuery()
             ->getResult()
         ;

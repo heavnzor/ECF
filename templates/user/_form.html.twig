@@ -1,10 +1,10 @@
-<h1>
+<h2>
   {% if postulant is same as(true) %}
     Postuler en tant qu'instructeur
   {% else %}
     Inscription
   {% endif %}
-</h1>
+</h2>
 {% if is_granted('ROLE_INSTRUCTEUR') and postulant is same as(true) %}
   <br />Vous êtes déjà formateur.
 {% elseif is_granted('ROLE_USER') and app.user.isPostulant is same as(true) %}

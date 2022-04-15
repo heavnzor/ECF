@@ -36,7 +36,7 @@
 						{% if progressF.formation == formation or is_granted('ROLE_INSTRUCTEUR') %}
 							{% if is_granted('ROLE_USER') and progressF.formationFinished is same as(true)  %}
 								{% set name = 'finished' %}
-							{% elseif is_granted('ROLE_USER') and progressF.formationFinished is same as(false) %}
+							{% elseif is_granted('ROLE_USER') and progressF.coursFinished is same as(true) and progressF.formationFinished is same as(false) %}
 								{% set name = 'enCours' %}
 							{% else %}
 								{% set name = 'unStarted' %}
@@ -52,10 +52,9 @@
               ? (description|slice(0, 100)) ~ '...'
               : description }}
 								</p>
-								{% if is_granted('ROLE_USER')  and progressF.formationFinished is same as(false) %}
-
+								{% if is_granted('ROLE_USER')  and progressF.formationFinished is same as(false) and progressF.coursFinished is same as(true) %}
 									<a href="{{ path( 'app_formation_show', { id: formation.id} ) }}">
-										<button class="btn btn-primary">Voir la formation</button>
+										<button class="btn btn-primary">Formation en cours</button>
 									</a>
 								{% elseif is_granted('ROLE_USER')  and progressF.formationFinished is same as(true)  %}
 									<a href="{{ path( 'app_formation_show', { id: formation.id } ) }}">

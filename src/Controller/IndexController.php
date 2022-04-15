@@ -89,7 +89,7 @@ class IndexController extends AbstractController
                 }
             }
             $progress = $progressRepository->GroupByFormations();
-
+            $formations = $formationRepository->findAll();
             $progression = ($coursNb * 100) / $formationNb;
         } elseif ($this->isGranted('ROLE_INSTRUCTEUR')) {
             $formations = $formationRepository->findAll();
@@ -727,7 +727,7 @@ class IndexController extends AbstractController
     /**
      * Display & process form to request a password reset.
      */
-    #[Route('', name: 'app_forgot_password_request')]
+    #[Route('/password', name: 'app_forgot_password_request')]
     public function request(Request $request, MailerInterface $mailer,  $imgAndSlogan): Response
     {
         $form = $this->createForm(ResetPasswordRequestFormType::class);
@@ -933,6 +933,7 @@ class IndexController extends AbstractController
         $this->getUser() ? $user = $this->getUser() : $user = new User();
         return $this->render('section/show.html.twig', [
             'section' =>  $section,
+            'quizz' => $section->getQuizz(),
             'formations' => $user->getFormations(),
             'cours' => $coursRepository->findBy(['section' => $section]),
             'img' => $imgAndSlogan->getImg(),
@@ -1006,7 +1007,7 @@ class IndexController extends AbstractController
                 'slogan' => $imgAndSlogan->getSlogan(),
                 'user' => $user,
                 'formations' => $user->getFormations(),
-                'sections' => $sectionRepository->findBy(['user' => $user]),
+                'sections' => $user->getSections(),
                 'section' => $quizzRepository->findOneByQuizzId($quizz->getId()),
 
             ]);

@@ -3,14 +3,11 @@
 	<table class="table">
 		<tbody>
 			<tr>
-				<h1>{{ cours.titre }}</h1>
+				<h2>{{ cours.titre }}</h2><br>
 			</tr>
 			<tr>
-				<p>{% if cours.image is not same as(null) %}<img class="imgCours" src="{{ asset('build/uploads/photos/') }}{{ cours.image }}">{% endif %}{{ cours.cours|raw }}
-					
+				<p>{% if cours.image is not same as(null) %}<img class="imgCours" src="{{ asset('build/uploads/photos/') }}{{ cours.image }}">{% endif %}{{ cours.cours|raw }}	
 				</p>
-
-
 				<br>
 			</tr>
 			<tr>
@@ -19,8 +16,6 @@
 				{% endif %}<br>
 			</tr>
 			<tr>
-
-
 				<iframe width="560" height="315" src="https://www.youtube.com/embed/{{ cours.video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 			</tr>
