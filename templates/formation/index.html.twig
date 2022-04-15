@@ -3,45 +3,73 @@
 	{% include 'navusers.html.twig' %}
 	<section class="container bg-black justify-content-center mx-auto">
 		<div class="row align-items-center g-3 mx-auto" id="results">
-
 			{% for formation in formations %}
-				{% if is_granted('ROLE_USER') and (formation == formation.progress) and progress.formationFinished  == 1 %}
-					{% set name = 'finished' %}
-				{% elseif is_granted('ROLE_USER') and (formation == formation.progress) and progress.formationFinished  == 2 %}
-					{% set name = 'enCours' %}
-				{% else %}
-					{% set name = 'unStarted' %}
-				{% endif %}
-				<div class="col-md-4 mx-auto d-flex flex-column my-3 {{ name }}">
-					<img src="{{ asset('build/uploads/photos/') }}{{ formation.image }}" class="imgFormation mx-auto" alt=" {{ formation.titre }} "/>
-					<h2 class="fs-2">
-						{{ formation.titre }}
-					</h2>
-					<p class="fs-5">
-						{% set description = formation.description|raw %}
-						{{ (description|length) > 100
+				{% if progress is same as(null) %}
+					{% if is_granted('ROLE_USER') %}
+						{% set name = 'enCours' %}
+					{% else %}
+						{% set name = 'unStarted' %}
+					{% endif %}
+					<div class="col-md-4 mx-auto d-flex flex-column my-auto py-3 {{ name }}">
+						<img src="{{ asset('build/uploads/photos/') }}{{ formation.image }}" class="imgFormation mx-auto" alt=" {{ formation.titre }} "/>
+						<h2 class="fs-4">
+							{{ formation.titre }}
+						</h2>
+						<p class="fs-5">
+							{% set description = formation.description|raw %}
+							{{ (description|length) > 100
               ? (description|slice(0, 100)) ~ '...'
               : description }}
-					</p>
-					{% if is_granted('ROLE_USER') and user.progress == user  and progress.formationFinished == 0 %}
+						</p>
+						{% if is_granted('ROLE_USER')  %}
+							<a href="{{ path( 'app_formation_show', { id: formation.id} ) }}">
+								<button class="btn btn-primary">Voir la formation</button>
+							</a>
+						{% else %}
+							<a href="{{ path( 'app_formation_show', { id: formation.id } ) }}">
+								<button class="btn btn-primary">En savoir plus</button>
+							</a>
+						{% endif %}
+					</div>
+				{% else %}
+					{% for progressF in progress %}
+						{% if progressF.formation == formation or is_granted('ROLE_INSTRUCTEUR') %}
+							{% if is_granted('ROLE_USER') and progressF.formationFinished is same as(true)  %}
+								{% set name = 'finished' %}
+							{% elseif is_granted('ROLE_USER') and progressF.formationFinished is same as(false) %}
+								{% set name = 'enCours' %}
+							{% else %}
+								{% set name = 'unStarted' %}
+							{% endif %}
+							<div class="col-md-4 mx-auto d-flex flex-column my-auto py-3 {{ name }}">
+								<img src="{{ asset('build/uploads/photos/') }}{{ formation.image }}" class="imgFormation mx-auto" alt=" {{ formation.titre }} "/>
+								<h2 class="fs-4">
+									{{ formation.titre }}
+								</h2>
+								<p class="fs-5">
+									{% set description = formation.description|raw %}
+									{{ (description|length) > 100
+              ? (description|slice(0, 100)) ~ '...'
+              : description }}
+								</p>
+								{% if is_granted('ROLE_USER')  and progressF.formationFinished is same as(false) %}
 
-						<a href="{{ path( 'app_formation_show', { id: formation.id} ) }}">
-							<button class="btn btn-primary">Commencer l'apprentissage</button>
-						</a>
-					{% elseif is_granted('ROLE_USER')  and user.progress == user  and progress.formationFinished == 2 %}
-						<a href="{{ path( 'app_formation_show', { id: formation.id }) }}">
-							<button class="btn btn-primary">En cours d'apprentissage</button>
-						</a>
-					{% elseif is_granted('ROLE_USER') and user.progress == user  and progress.formationFinished  == 1 %}
-						<a href="{{ path( 'app_formation_show', { id: formation.id } ) }}">
-							<button class="btn btn-primary">Formation terminé</button>
-						</a>
-					{% else %}
-						<a href="#">
-							<button class="btn btn-primary">Formation</button>
-						</a>
-					{% endif %}
-				</div>
+									<a href="{{ path( 'app_formation_show', { id: formation.id} ) }}">
+										<button class="btn btn-primary">Voir la formation</button>
+									</a>
+								{% elseif is_granted('ROLE_USER')  and progressF.formationFinished is same as(true)  %}
+									<a href="{{ path( 'app_formation_show', { id: formation.id } ) }}">
+										<button class="btn btn-primary">Formation terminé</button>
+									</a>
+								{% else %}
+									<a href="{{ path( 'app_formation_show', { id: formation.id } ) }}">
+										<button class="btn btn-primary">En savoir plus</button>
+									</a>
+								{% endif %}
+							</div>
+						{% endif %}
+					{% endfor %}
+				{% endif %}
 			{% endfor %}
 		</div>
 	</section>

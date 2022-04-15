@@ -39,8 +39,6 @@ class Cours
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'cours')]
     private $users;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private $isFinished;
 
     #[ORM\ManyToOne(targetEntity: Formation::class, inversedBy:'cours', cascade: ["persist"])]
     #[ORM\JoinColumn(nullable: true)]

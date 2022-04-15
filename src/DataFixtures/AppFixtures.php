@@ -89,7 +89,7 @@ class AppFixtures extends Fixture
 
 
 
-        for ($f = 0; $f < 10; $f++) {
+        for ($f = 0; $f < 5; $f++) {
             $formation = new Formation();
             $formation->setAuteur($instructeur);
             $formation->setImage('informatique.png');
@@ -101,7 +101,7 @@ class AppFixtures extends Fixture
             $manager->flush();
 
 
-            for ($s = 0; $s < 3; $s++) {
+            for ($s = 0; $s < 2; $s++) {
                 $section = new Section();
                 $section->setFormation($formation);
                 $section->setTitre($faker->words(6, true));
@@ -128,7 +128,7 @@ class AppFixtures extends Fixture
                 $manager->flush();
 
 
-                for ($l = 0; $l < 5; $l++) {
+                for ($l = 0; $l < 3; $l++) {
                     $cours = new cours();
                     $cours->setTitre($faker->words(6, true));
                     $cours->setSection($section);

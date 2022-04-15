@@ -15,10 +15,10 @@
 		{% endfor %}
 	</ul>
 	{% if is_granted('ROLE_USER') and progress is not same as(null) %}
-		{% if progress.formation == formation and progress.formationFinished is same as(0) %}
+		{% if  progress.formationFinished is same as(false) %}
 			{% set state %}Formation non commencée
 			{% endset %}
-		{% elseif progress.formation == formation and progress.formationFinished == 1 %}
+		{% elseif progress.formationFinished is same as(true) %}
 			{% set state %}Formation terminée
 			{% endset %}
 		{% else %}

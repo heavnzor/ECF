@@ -1,10 +1,12 @@
 {% extends 'index.html.twig' %}
 {% block main %}
-    <h1>Modifier un quizz</h1>
+{% if is_granted('ROLE_INSTRUCTEUR') %}
+    <h2>Modifier un quizz</h2>
 
     {{ include('quizz/_form.html.twig', {'button_label': 'Update'}) }}
 
     <a href="{{ path('app_quizz_index') }}">back to list</a>
 
     {{ include('quizz/_delete_form.html.twig') }}
+    {% endif %}
 {% endblock %}

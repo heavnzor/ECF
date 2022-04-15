@@ -18,7 +18,7 @@ class FormationType extends AbstractType
         $builder
             ->add('titre')
             ->add('description')
-            ->add('image', FileType::class, [
+            ->add('image', FileType::class , [
             'label' => 'Vignette (JPEG ou PNG, 1MO MAX)',
 
             // unmapped means that this field is not associated to any entity property
@@ -41,14 +41,7 @@ class FormationType extends AbstractType
                     'mimeTypesMessage' => 'Uploadez une image de 1MO maximum au format JPEG, PNG ou SVG',
                 ])
             ],
-        ])
-            ->add('learnState', ChoiceType::class, [
-                'choices'  => [
-                    'Terminé' => 0,
-                    'Non commencée' => 1,
-                    'En Cours' => 2,
-                ],
-            ]);
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

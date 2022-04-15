@@ -2,32 +2,49 @@
 {% block main %}
 	<table class="table">
 		<tbody>
-			{% for cours in cours %}
+			{% for cour in cours %}
 				<tr>
-					<h1>{{ cours.titre }}</h1>
-					<p>{{ cours.cours|raw }}</p>
-					{% if cours.image is not same as(null) %}
-						<img class='imgFormation' src="{{ asset('build/uploads/photos/')}}{{ cours.image }}">
-					{% endif %}
+					<h1>{{ cour.titre }}</h1>
+				</tr>
+				<tr>
+					<p>
+						{% if cour.image is not same as(null) %}<img class="imgCours" src="{{ asset('build/uploads/photos/') }}{{ cour.image }}">
+						{% endif %}
+						{{ cour.cours|raw }}
 
-					<a href="{{ asset('build/uploads/photos/') }}" {{ cours.pdf }} target="_blank">
+					</p>
 
 
-						<iframe width="560" height="315" src="https://www.youtube.com/embed/{{ cours.video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+					<br>
+				</tr>
+				<tr>
+					{% if cour.pdf is not same as(null) %}
+						<span class="fs-4 mx-2">
+							<a class="px-3" href="{{ asset('build/uploads/photos/') }}{{ cour.pdf }}">{{ cour.pdf }}</a>
+							&#127385;</span>
+					{% endif %}<br>
+				</tr>
+				<tr>
+
+
+					<iframe width="560" height="315" src="https://www.youtube.com/embed/{{ cour.video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+				</tr>
+				<tr>
+					<a href='{{ path('app_section_show', {'id': cour.section.id}) }}'>Retour</a>
+				</tr>
+				<tr>
+
+					<br><a href="{{ path('app_cours_show', {'id': cour.id}) }}">Voir</a><br>
+					<a href="{{ path('app_cours_edit', {'id': cour.id}) }}">Modifier/supprimer</a>
+				</tr>
+				<hr>
+
+				{% else %}
+					<tr>
+						<td colspan="7">Aucun cour trouvé</td>
 					</tr>
-				</tr>
-				<tr>
-					<br><a href="{{ path('app_cours_show', {'id': cours.id}) }}">Voir</a><br>
-					<a href="{{ path('app_cours_edit', {'id': cours.id}) }}">Modifier/supprimer</a>
-				</tr>
-
-
-			{% else %}
-				<tr>
-					<td colspan="7">Aucun cours trouvé</td>
-				</tr>
 			{% endfor %}
 		</tbody>
-	</table>
-
-{% endblock %}
+	</tbody>
+</table>{% endblock %}

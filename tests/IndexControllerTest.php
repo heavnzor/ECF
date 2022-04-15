@@ -50,7 +50,7 @@ use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 
 
-class IndexController extends AbstractController
+class IndexControllerTest extends AbstractController
 {
 
     private EmailVerifier $emailVerifier;
@@ -67,7 +67,7 @@ class IndexController extends AbstractController
     {
         $this->getUser() ? $user = $this->getUser() : $user = new User();
         return $this->render('index.html.twig', [
-            'formations' => $formationRepository->findBy([], ['id' => 'desc'], 3),
+            'formations' => $formationRepository->findBy([],['id' => 'desc'], 3),
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user
@@ -75,38 +75,19 @@ class IndexController extends AbstractController
     }
 
     #[Route('/formation', name: 'app_formation_index', methods: ['GET'])]
-    public function indexFormation(Request $request, imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository, ProgressRepository $progressRepository): Response
+    public function indexFormation(Request $request, Progression $progression, imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository, ProgressRepository $progressRepository): Response
     {
         $this->getUser() ? $user = $this->getUser() : $user = new User();
-        if ($this->isGranted('ROLE_USER') and $this->isGranted('ROLE_INSTRUCTEUR') == false) {
-            $formations = $progressRepository->findAll();
-            $cours = $user->getCours();
-            $formationNb = count($formations);
-            $coursNb = 0;
-            foreach ($cours as $lesson) {
-                if ($progressRepository->findOneBy(['cours' => $lesson, 'coursFinished' => 1, 'user' => $user])) {
-                    $coursNb++;
-                }
-            }
-            $progress = $progressRepository->GroupByFormations();
+        exit("<pre>" . var_dump($imgAndSlogan) . "</pre>");
 
-            $progression = ($coursNb * 100) / $formationNb;
-        } elseif ($this->isGranted('ROLE_INSTRUCTEUR')) {
-            $formations = $formationRepository->findAll();
-            $progression = 0;
-            $progress = null;
-        } else {
-            $formations = $formationRepository->findAll();
-            $progress = null;
-            $progression = 0;
-        }
         return $this->render('formation/index.html.twig', [
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user,
-            'formations' => $formations,
-            'progress' => $progress,
-            'progression' => $progression
+            'formations' => $progression->getProgress()[0],
+            'progressF' => $progression->getProgress()[1],
+            'progressC' => $progression->getProgress()[2],
+            'progression' => $progression->getProgress()[3]
 
         ]);
     }
@@ -305,7 +286,6 @@ class IndexController extends AbstractController
             'formation' => $formationRepository->find($id),
             'sections' => $formationRepository->find($id)->getSection(),
             'img' => $imgAndSlogan->getImg(),
-            'progress' => $progressRepository->findOneBy(["formation" => $formationRepository->find($id)]),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user,
             'formations' => $user->getFormations()
@@ -498,7 +478,7 @@ class IndexController extends AbstractController
         }
         return $this->render('cours/show.html.twig', [
             'cours' => $cours,
-            'coursProgress' => $progressRepository->findOneBy(['cours' => $cours]),
+            'coursProgress' => $coursProgress,
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user
@@ -921,7 +901,7 @@ class IndexController extends AbstractController
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'section' => $section,
-            'formations' => $user->getFormations(),
+            'formations' => $formationRepository->findAllFormationsOrderById($user->getId()),
             'form' => $form,
             'user' => $user
         ]);
@@ -1237,33 +1217,6 @@ class IndexController extends AbstractController
             'progress' => $progress,
             'form' => $form,
             'img' => $imgAndSlogan->getImg(),
-            'slogan' => $imgAndSlogan->getSlogan(),
-        ]);
-    }
-
-    #[Route('/organisation', name: 'app_organisation')]
-    public function indexOrganisation(imgAndSlogan $imgAndSlogan): Response
-    {
-        return $this->render('organisation/index.html.twig', [
-            'img' => $imgAndSlogan->getImg(),
-            'slogan' => $imgAndSlogan->getSlogan(),
-        ]);
-    }
-
-    #[Route('/certification', name: 'app_certification')]
-    public function indexCertification(imgAndSlogan $imgAndSlogan): Response
-    {
-        return $this->render('certification/index.html.twig', [
-            'img' => $imgAndSlogan->getImg(),
-            'slogan' => $imgAndSlogan->getSlogan(),
-        ]);
-    }
-
-    #[Route('/dons', name: 'app_dons')]
-    public function indexDons(imgAndSlogan $imgAndSlogan): Response
-    {
-        return $this->render('dons/index.html.twig', [
-             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
         ]);
     }

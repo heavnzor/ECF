@@ -18,14 +18,14 @@ class Section
     #[ORM\Column(type: 'string', length: 100)]
     private $titre;
 
-    #[ORM\OneToMany(mappedBy: 'section', targetEntity: Cours::class)]
+    #[ORM\OneToMany(mappedBy: 'section', targetEntity: Cours::class, orphanRemoval: true)]
     private $cours;
 
     #[ORM\ManyToOne(targetEntity: Formation::class, inversedBy: 'section')]
     #[ORM\JoinColumn(nullable: false)]
     private $formation;
 
-    #[ORM\OneToOne(mappedBy: 'section', targetEntity: Quizz::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'section', targetEntity: Quizz::class, orphanRemoval: true)]
     private $quizz;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'sections')]

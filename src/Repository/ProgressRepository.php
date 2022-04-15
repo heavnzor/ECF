@@ -48,19 +48,18 @@ class ProgressRepository extends ServiceEntityRepository
     // /**
     //  * @return Progress[] Returns an array of Progress objects
     //  */
-    /*
-    public function findByExampleField($value)
+    
+    public function GroupByFormations()
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+            ->orderBy('p.formationFinished', 'DESC')
+            ->groupBy('p.formation')
+            ->setMaxResults(1000)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+    
 
     /*
     public function findOneBySomeField($value): ?Progress

@@ -19,8 +19,8 @@
 					<td>{{ section.formation }}</td>
 					<td>
 						{% if is_granted('ROLE_INSTRUCTEUR') %}
-							<a href="{{ path('app_section_show', {'id': section.id}) }}">show</a>
-							<a href="{{ path('app_section_edit', {'id': section.id}) }}">edit</a>
+							<a href="{{ path('app_section_show', {'id': section.id}) }}">Voir</a>
+							<a href="{{ path('app_section_edit', {'id': section.id}) }}">Modifier</a>
 						{% endif %}
 					</td>
 				</tr>
