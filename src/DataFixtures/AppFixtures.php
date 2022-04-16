@@ -45,7 +45,7 @@ class AppFixtures extends Fixture
 
         // Instructeur pas encore validé
         $instructeurUnVerified = new User();
-        $instructeurUnVerified->setEmail('instructeurUnVerifiedUnvalided@waldganger.net');
+        $instructeurUnVerified->setEmail('instructeur0@waldganger.net');
         $instructeurUnVerified->setRoles(['ROLE_USER']);
         $passwordInstructeurUnVerified = $this->hasher->hashPassword($instructeurUnVerified, 'ecfjuin2022');
         $instructeurUnVerified->setPassword($passwordInstructeurUnVerified);
@@ -53,6 +53,7 @@ class AppFixtures extends Fixture
         $instructeurUnVerified->setNom($faker->name());
         $instructeurUnVerified->setPhoto('jadot.jpg');
         $instructeurUnVerified->setDescription($faker->words(5, true));
+        $instructeurUnVerified->setIsVerified(1);
         $instructeurUnVerified->setIsPostulant(true);
 
         $manager->persist($instructeurUnVerified);
