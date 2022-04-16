@@ -35,7 +35,8 @@ Les documents annexes sont disponibles dans le dossier ANNEXES :
  ***
 # Exigences
 J'utilise [Symfony CLI](https://symfony.com/download)
-Tout d'abord, essayez cette ligne de commande pour vérifier vos besoins avant d'installer ce projet :
+
+Taper cette ligne de commande pour vérifier si vous réunissez toutes les conditions requises avant d'installer ce projet :
 
 ```
 $ symfony check:requirements
