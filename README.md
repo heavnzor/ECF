@@ -35,7 +35,7 @@ Les documents annexes sont disponibles dans le dossier ANNEXES :
 
  ***
 # Exigences
-* J'utilise [Symfony CLI](https://symfony.com/download)
+* Téléchargez [Symfony CLI](https://symfony.com/download)
 
 * Pour vérifier si vous réunissez toutes les conditions requises avant d'installer ce projet :
 
@@ -78,35 +78,28 @@ $ yarn install
 
 ## Création de la base de données
 ```
-$ php bin/console doctrine:database:create
+$ symfony console doctrine:database:create
 ```
 
 ## Création des tables
 ```
-$ php bin/console doctrine:migrations:migrate
+$ symfony console doctrine:migrations:migrate
 OU
-$ php bin/console doctrine:schema:update --force
+$ symfony console doctrine:schema:update --force
 ```
 
 ## Insertions des jeux de données
 ```
-$ php bin/console doctrine:fixtures:load 
+$ symfony console doctrine:fixtures:load 
 ```
 ***
 
 # Utilisation 
 
-Deux options pour lancer le serveur de développement PHP :
+Pour lancer le serveur :
 
-* Si _Symfony_ est installé
 ```
 symfony server:start
-```
-
-* Sinon, il faut utiliser _Composer_, et installer le bundle webapp :
-```
-$ composer require webapp
-$ php bin/console server:start
 ```
 
  ***
