@@ -21,10 +21,10 @@
 - [Login](#login)
 - [Installation du serveur](#utilisation)
 
-## Notion
+# Notion
 Bonjour à toi jeune padawan, le lien vers les quelques réfléxions qui m'ont traversées l'esprit durant ce projet sont ici :[Notion](https://gleaming-hellebore-10a.notion.site/1e29d5ecb67d4723b45294029b7c31c8?v=e0d2c04c24184feda16bb47c14bb54c8) 
 
-## Description
+# Description
 
 Les documents annexes sont disponibles dans le dossier ANNEXES :
 
@@ -35,7 +35,7 @@ Les documents annexes sont disponibles dans le dossier ANNEXES :
 
  ***
 
-## Récupération du projet
+# Récupération du projet
 
 ```
 $ git clone https://github.com/heavnzor/ECF
