@@ -50,11 +50,12 @@ class AppFixtures extends Fixture
         $passwordInstructeurUnVerified = $this->hasher->hashPassword($instructeurUnVerified, 'ecfjuin2022');
         $instructeurUnVerified->setPassword($passwordInstructeurUnVerified);
         $instructeurUnVerified->setPrenom($faker->firstName());
-        $instructeurUnVerified->setNom($faker->name());
+        $instructeurUnVerified->setNom($faker->lastName());
         $instructeurUnVerified->setPhoto('jadot.jpg');
         $instructeurUnVerified->setDescription($faker->words(5, true));
         $instructeurUnVerified->setIsVerified(1);
         $instructeurUnVerified->setIsPostulant(true);
+
         $manager->persist($instructeurUnVerified);
         $manager->flush();
 
@@ -66,11 +67,12 @@ class AppFixtures extends Fixture
         $passwordInstructeur = $this->hasher->hashPassword($instructeur, 'ecfjuin2022');
         $instructeur->setPassword($passwordInstructeur);
         $instructeur->setPrenom($faker->firstName());
-        $instructeur->setNom($faker->name());
+        $instructeur->setNom($faker->lastName());
         $instructeur->setPhoto('vitalik.jpg');
         $instructeur->setDescription($faker->words(8, true));
         $instructeur->setIsVerified(true);
         $instructeur->setIsPostulant(true);
+
         $manager->persist($instructeur);
         $manager->flush();
 
@@ -84,6 +86,7 @@ class AppFixtures extends Fixture
         $user->setPassword($passwordUser);
         $user->setPseudo($faker->firstName());
         $user->setIsVerified(true);
+        
         $manager->persist($user);
         $manager->flush();
 
