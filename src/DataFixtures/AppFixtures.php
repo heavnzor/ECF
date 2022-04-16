@@ -55,14 +55,13 @@ class AppFixtures extends Fixture
         $instructeurUnVerified->setDescription($faker->words(5, true));
         $instructeurUnVerified->setIsVerified(1);
         $instructeurUnVerified->setIsPostulant(true);
-
         $manager->persist($instructeurUnVerified);
         $manager->flush();
 
 
         // Instructeur validé
         $instructeur = new User();
-        $instructeur->setEmail('alveyy@gmail.com');
+        $instructeur->setEmail('instructeur@waldganger.net');
         $instructeur->setRoles(['ROLE_INSTRUCTEUR']);
         $passwordInstructeur = $this->hasher->hashPassword($instructeur, 'ecfjuin2022');
         $instructeur->setPassword($passwordInstructeur);
@@ -79,7 +78,7 @@ class AppFixtures extends Fixture
         // user #1
 
         $user = new User();
-        $user->setEmail('anto.mela@live.fr');
+        $user->setEmail('user@waldganger.net');
         $user->setRoles(['ROLE_USER']);
         $passwordUser = $this->hasher->hashPassword($user, 'ecfjuin2022');
         $user->setPassword($passwordUser);
