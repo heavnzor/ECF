@@ -35,15 +35,15 @@ Les documents annexes sont disponibles dans le dossier ANNEXES :
 
  ***
 # Exigences
-J'utilise [Symfony CLI](https://symfony.com/download)
+* J'utilise [Symfony CLI](https://symfony.com/download)
 
-Taper cette ligne de commande pour vérifier si vous réunissez toutes les conditions requises avant d'installer ce projet :
+* Pour vérifier si vous réunissez toutes les conditions requises avant d'installer ce projet :
 
 ```
 $ symfony check:requirements
 ```
 
-Mais surtout [Composer](https://getcomposer.org/)
+* Mais surtout téléchargez [Composer](https://getcomposer.org/)
 
 ```
 $ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
@@ -52,7 +52,7 @@ $ php composer-setup.php
 $ php -r "unlink('composer-setup.php');"
 ```
 
-Puis Yarn : [Yarn](https://yarnpkg.com/getting-started/install)
+* Puis Yarn : [Yarn](https://yarnpkg.com/getting-started/install)
 
 # Récupération du projet
 
