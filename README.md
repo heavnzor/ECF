@@ -18,7 +18,7 @@
 - [Création des tables](#création-des-tables)
 - [Insertions des jeux de données](#insertion-des-jeux-de-données)
 - [Installation du serveur](#utilisation)
-- [Login](#login)
+- [Login](#tester-le-projet)
 
 # Notion
 Bien le bonjour mon brave. Le lien vers les quelques (grossières) étapes & réfléxions qui m'ont traversées l'esprit durant ce projet sont ici :
@@ -111,9 +111,9 @@ $ php bin/console server:start
 
  ***
 
-# Login
+# Tester le projet
 
-Après le chargement des fixtures, les identifiants pour tester le projet sont : 
+Les identifiants pour tester le projet sont : 
 
 * Administrateur 
 ```
