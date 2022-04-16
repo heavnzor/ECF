@@ -1,7 +1,7 @@
 {% if is_granted('ROLE_INSTRUCTEUR') %}
-	{{ form_start(form) }}<h1>
+	{{ form_start(form) }}<h2>
 		Création d'une nouvelle formation
-	</h1><br/>
+	</h2><br/>
 	{{ form_label(form.titre, 'Titre') }}<br/>
 	{{ form_widget(form.titre) }}<br/><br>
 	{{ form_label(form.description, 'Description') }}<br/>{{
