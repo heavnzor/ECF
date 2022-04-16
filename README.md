@@ -17,8 +17,8 @@
 - [Création de la base de donnée](#création-de-la-base-de-données)
 - [Création des tables](#création-des-tables)
 - [Insertions des jeux de données](#insertion-des-jeux-de-données)
-- [Login](#login)
 - [Installation du serveur](#utilisation)
+- [Login](#login)
 
 # Notion
 Bien le bonjour mon brave. Le lien vers les quelques (grossières) étapes & réfléxions qui m'ont traversées l'esprit durant ce projet sont ici :
@@ -92,6 +92,22 @@ $ php bin/console doctrine:schema:update --force
 ```
 $ php bin/console doctrine:fixtures:load 
 ```
+***
+
+# Utilisation 
+
+Deux options pour lancer le serveur de développement PHP :
+
+* Si _Symfony_ est installé
+```
+symfony server:start
+```
+
+* Sinon, il faut utiliser _Composer_, et installer le bundle webapp :
+```
+$ composer require webapp
+$ php bin/console server:start
+```
 
  ***
 
@@ -120,22 +136,7 @@ Email =  user@waldganger.net
 Mdp = ecfjuin2022
 ```
 
- ***
-
-# Utilisation 
-
-Deux options pour lancer le serveur de développement PHP :
-
-* Si _Symfony_ est installé
-```
-symfony server:start
-```
-
-* Sinon, il faut utiliser _Composer_, et installer le bundle webapp :
-```
-$ composer require webapp
-$ php bin/console server:start
-```
+ 
 
 
 
