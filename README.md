@@ -125,7 +125,7 @@ Deux options pour lancer le serveur de développement PHP :
 symfony server:start
 ```
 
-* Sinon, il faut utiliser _Composer_, et installer le Web Server Bundle :
+* Sinon, il faut utiliser _Composer_, et installer le bundle webapp :
 ```
 $ composer require webapp
 $ php bin/console server:start
