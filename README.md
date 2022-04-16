@@ -28,18 +28,18 @@ $ git clone https://github.com/heavnzor/ECF
 $ cd ECF
 
 # Installation des dépendances
-composer install
+$ composer install
 
 # Création de la base de données
-php bin/console doctrine:database:create
+$ php bin/console doctrine:database:create
 
 # Création des tables (migrations)
-php bin/console doctrine:migrations:migrate
+$ php bin/console doctrine:migrations:migrate
 OU
-php bin/console doctrine:schema:update --force
+$ php bin/console doctrine:schema:update --force
 
 # Insertions des jeux de données (fixtures)
-php bin/console doctrine:fixtures:load 
+$ php bin/console doctrine:fixtures:load 
 ```
  ***
 
@@ -74,15 +74,19 @@ Mdp = ecfjuin2022
 
 Deux options pour lancer le serveur de développement PHP :
 
-* Si vous avez installé _Symfony_
+* Si _Symfony_ est installé
 ```
 symfony server:start
 ```
 
-* Si vous utilisez _Composer_, il faut installer le Web Server Bundle :
+* Sinon, il faut télécharger _Composer_, et installer le Web Server Bundle :
 ```
-composer require symfony/web-server-bundle --dev
-php bin/console server:start
+$ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+$ php -r "if (hash_file('sha384', 'composer-setup.php') === '906a84df04cea2aa72f40b5f787e49f22d4c2f19492ac310e8cba5b96ac8b64115ac402c8cd292b8a03482574915d1a8') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+$ php composer-setup.php
+$ php -r "unlink('composer-setup.php');"
+$ composer require webapp
+$ php bin/console server:start
 ```
 
 
