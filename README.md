@@ -34,14 +34,14 @@ Les documents annexes sont disponibles dans le dossier ANNEXES :
 
  ***
 # Exigences
-J'utilise Symfony CLI  [Symfony CLI](https://symfony.com/download)
+J'utilise [Symfony CLI](https://symfony.com/download)
 Tout d'abord, essayez cette ligne de commande pour vérifier vos besoins avant d'installer ce projet :
 
 ```
 $ symfony check:requirements
 ```
 
-Composer[Composer](https://getcomposer.org/)
+Mais surtout [Composer](https://getcomposer.org/)
 
 ```
 $ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
