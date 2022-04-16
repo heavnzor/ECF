@@ -21,7 +21,8 @@
 - [Installation du serveur](#utilisation)
 
 # Notion
-Bien le bonjour mon brave. Le lien vers les quelques (grossières) étapes & réfléxions qui m'ont traversées l'esprit durant ce projet sont ici :[Notion](https://gleaming-hellebore-10a.notion.site/1e29d5ecb67d4723b45294029b7c31c8?v=e0d2c04c24184feda16bb47c14bb54c8) 
+Bien le bonjour mon brave. Le lien vers les quelques (grossières) étapes & réfléxions qui m'ont traversées l'esprit durant ce projet sont ici :
+[Notion](https://gleaming-hellebore-10a.notion.site/1e29d5ecb67d4723b45294029b7c31c8?v=e0d2c04c24184feda16bb47c14bb54c8) 
 
 # Description
 
