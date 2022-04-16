@@ -5,7 +5,7 @@
 <img src="https://waldganger.net/build/images/logo.png" alt="logo eco it" width="250px" height="auto" />
 
 <hr />
- ***
+ 
  
  ## Table des matières
 - [Notion](#notion)
