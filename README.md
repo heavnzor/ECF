@@ -1,6 +1,28 @@
-![logo](Eco-Web/public/Images/logo-ecoit-removebg.png)
-# ECF2022 - Waldganger 
+# ECF 2022 - ECO IT / STUDI DIGITAL CAMPUS / WALDGANGER.NET
+
+<hr />
+
+<img src="https://waldganger.net/build/images/logo.png" alt="logo eco it" width="250px" height="auto" />
+
+<hr />
  ***
+ 
+ ## Table des matières
+- [Notion](#notion)
+- [Description](#description)
+- [Récupération du projet](#récuperation-du-projet)
+- [Installation](#installation)
+- [Télécharger composer](#télécharger-composer)
+- [Installer composer](#installer-composer)
+- [Installation des dépendances](#installation-des-dépendances)
+- [Création de la base de donnée](#création-de-la-base-de-données)
+- [Création des tables](#création-des-tables)
+- [Insertions des jeux de données](#insertion-des-jeux-de-données)
+- [Login](#login)
+- [Installation du serveur](#utilisation)
+
+## Notion
+Bonjour à toi jeune padawan, le lien vers les quelques réfléxions qui m'ont traversées l'esprit durant ce projet sont ici :[Notion](https://gleaming-hellebore-10a.notion.site/1e29d5ecb67d4723b45294029b7c31c8?v=e0d2c04c24184feda16bb47c14bb54c8) 
 
 ## Description
 
@@ -53,21 +75,21 @@ $ composer install
 $ php bin/console doctrine:database:create
 ```
 
-## Création des tables (migrations)
+## Création des tables
 ```
 $ php bin/console doctrine:migrations:migrate
 OU
 $ php bin/console doctrine:schema:update --force
 ```
 
-# Insertions des jeux de données (fixtures)
+# Insertions des jeux de données
 ```
 $ php bin/console doctrine:fixtures:load 
 ```
 
  ***
 
-## Login en fonction des rôles
+## Login
 
 Après le chargement des fixtures, les identifiants pour tester le projet sont : 
 
