@@ -43,7 +43,7 @@ $ git clone https://github.com/heavnzor/ECF
 
  ***
 
-## Installation
+# Installation
 
 * Déplacement dans le dossier
 
@@ -82,14 +82,14 @@ OU
 $ php bin/console doctrine:schema:update --force
 ```
 
-# Insertions des jeux de données
+## Insertions des jeux de données
 ```
 $ php bin/console doctrine:fixtures:load 
 ```
 
  ***
 
-## Login
+# Login
 
 Après le chargement des fixtures, les identifiants pour tester le projet sont : 
 
@@ -116,7 +116,7 @@ Mdp = ecfjuin2022
 
  ***
 
-## Utilisation 
+# Utilisation 
 
 Deux options pour lancer le serveur de développement PHP :
 
