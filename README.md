@@ -10,10 +10,9 @@
  ## Table des matières
 - [Notion](#notion)
 - [Description](#description)
+- [Vérification des conditions requises](#exigences)
 - [Récupération du projet](#récuperation-du-projet)
 - [Installation](#installation)
-- [Télécharger composer](#télécharger-composer)
-- [Installer composer](#installer-composer)
 - [Installation des dépendances](#installation-des-dépendances)
 - [Création de la base de donnée](#création-de-la-base-de-données)
 - [Création des tables](#création-des-tables)
@@ -22,7 +21,7 @@
 - [Installation du serveur](#utilisation)
 
 # Notion
-Bonjour à toi jeune padawan, le lien vers les quelques réfléxions qui m'ont traversées l'esprit durant ce projet sont ici :[Notion](https://gleaming-hellebore-10a.notion.site/1e29d5ecb67d4723b45294029b7c31c8?v=e0d2c04c24184feda16bb47c14bb54c8) 
+Bien le bonjour mon brave. Le lien vers les quelques (grossières) étapes & réfléxions qui m'ont traversées l'esprit durant ce projet sont ici :[Notion](https://gleaming-hellebore-10a.notion.site/1e29d5ecb67d4723b45294029b7c31c8?v=e0d2c04c24184feda16bb47c14bb54c8) 
 
 # Description
 
@@ -34,6 +33,24 @@ Les documents annexes sont disponibles dans le dossier ANNEXES :
 * Wireframes
 
  ***
+# Exigences
+J'utilise Symfony CLI  [Symfony CLI](https://symfony.com/download)
+Tout d'abord, essayez cette ligne de commande pour vérifier vos besoins avant d'installer ce projet :
+
+```
+$ symfony check:requirements
+```
+
+Composer[Composer](https://getcomposer.org/)
+
+```
+$ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+$ php -r "if (hash_file('sha384', 'composer-setup.php') === '906a84df04cea2aa72f40b5f787e49f22d4c2f19492ac310e8cba5b96ac8b64115ac402c8cd292b8a03482574915d1a8') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+$ php composer-setup.php
+$ php -r "unlink('composer-setup.php');"
+```
+
+Puis Yarn : [Yarn](https://yarnpkg.com/getting-started/install]
 
 # Récupération du projet
 
@@ -51,23 +68,10 @@ $ git clone https://github.com/heavnzor/ECF
 $ cd ECF
 ```
 
-
-## Télécharger composer
-```
-$ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-$ php -r "if (hash_file('sha384', 'composer-setup.php') === '906a84df04cea2aa72f40b5f787e49f22d4c2f19492ac310e8cba5b96ac8b64115ac402c8cd292b8a03482574915d1a8') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-```
-
-## Installer composer
-```
-$ php composer-setup.php
-$ php -r "unlink('composer-setup.php');"
-```
-
-
 ## Installation des dépendances
 ```
 $ composer install
+$ yarn install
 ```
 
 ## Création de la base de données
