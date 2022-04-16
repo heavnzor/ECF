@@ -34,7 +34,7 @@ class AppFixtures extends Fixture
         $admin = new User();
         $admin->setEmail('webmaster@waldganger.net');
         $admin->setPseudo('admin');
-        $passwordAdmin = $this->hasher->hashPassword($admin, 'ecfjuin2022');
+        $passwordAdmin = $this->hasher->hashPassword($admin, 'ecfjuin2022!');
         $admin->setPassword($passwordAdmin);
         $admin->setIsVerified(true);
         $admin->setRoles(['ROLE_SUPER_ADMIN']);
