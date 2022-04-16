@@ -34,7 +34,7 @@ class AppFixtures extends Fixture
         $admin = new User();
         $admin->setEmail('webmaster@waldganger.net');
         $admin->setPseudo('admin');
-        $passwordAdmin = $this->hasher->hashPassword($admin, 'tqzcectv');
+        $passwordAdmin = $this->hasher->hashPassword($admin, '*******');
         $admin->setPassword($passwordAdmin);
         $admin->setIsVerified(true);
         $admin->setRoles(['ROLE_SUPER_ADMIN']);
@@ -47,7 +47,7 @@ class AppFixtures extends Fixture
         $instructeurUnVerified = new User();
         $instructeurUnVerified->setEmail('instructeurUnVerifiedUnvalided@waldganger.net');
         $instructeurUnVerified->setRoles(['ROLE_USER']);
-        $passwordInstructeurUnVerified = $this->hasher->hashPassword($instructeurUnVerified, 'yannick');
+        $passwordInstructeurUnVerified = $this->hasher->hashPassword($instructeurUnVerified, '*******');
         $instructeurUnVerified->setPassword($passwordInstructeurUnVerified);
         $instructeurUnVerified->setPrenom($faker->firstName());
         $instructeurUnVerified->setNom($faker->name());
@@ -63,7 +63,7 @@ class AppFixtures extends Fixture
         $instructeur = new User();
         $instructeur->setEmail('alveyy@gmail.com');
         $instructeur->setRoles(['ROLE_INSTRUCTEUR']);
-        $passwordInstructeur = $this->hasher->hashPassword($instructeur, 'tqzcectv');
+        $passwordInstructeur = $this->hasher->hashPassword($instructeur, '*******');
         $instructeur->setPassword($passwordInstructeur);
         $instructeur->setPrenom($faker->firstName());
         $instructeur->setNom($faker->name());
@@ -80,7 +80,7 @@ class AppFixtures extends Fixture
         $user = new User();
         $user->setEmail('anto.mela@live.fr');
         $user->setRoles(['ROLE_USER']);
-        $passwordUser = $this->hasher->hashPassword($user, 'tqzcectv');
+        $passwordUser = $this->hasher->hashPassword($user, '*******');
         $user->setPassword($passwordUser);
         $user->setPseudo($faker->firstName());
         $user->setIsVerified(true);
