@@ -23,7 +23,7 @@ $ git clone https://github.com/heavnzor/ECF
 
 ## Installation
 
-```
+
 ```
 # Déplacement dans le dossier
 $ cd ECF
@@ -40,11 +40,10 @@ $ php -r "if (hash_file('sha384', 'composer-setup.php') === '906a84df04cea2aa72f
 $ php composer-setup.php
 $ php -r "unlink('composer-setup.php');"
 
-```
+
 ```
 # Installation des dépendances
 $ composer install
-```
 ```
 
 # Création de la base de données
