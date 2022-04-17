@@ -280,16 +280,18 @@ class IndexController extends AbstractController
                 $form->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid()) {
-                    $quizzQuestion = $form->get('question')->getData();
-                    $quizz->setQuestion(ucfirst(strtolower($quizzQuestion)));
+                    $quizzQuestion1 = $form->get('question1')->getData();
+                    $quizzQuestion2 = $form->get('question2')->getData();
+                    $quizz->setQuestion(ucfirst(strtolower($quizzQuestion1)));
+                    $quizz->setQuestion(ucfirst(strtolower($quizzQuestion2)));
                     $quizz->setSection($sectionRepository->findOneBy(['id' => $form->get('section')->getData()]));
                     $quizzRepository->add($quizz);
-                    return $this->render('formation/index.html.twig', [
+                    return $this->render('index.html.twig', [
                         $this->addFlash('success', "Quizz créé !"),
                         'img' => $imgAndSlogan->getImg(),
                         'slogan' => $imgAndSlogan->getSlogan(),
                         'user' => $user,
-                        'formations' => $formationRepository->findAll()
+                        'formations' => $formationRepository->findBy([], ['id' => 'desc'], 3)
                     ]);
                 }
         }
@@ -1264,7 +1266,7 @@ class IndexController extends AbstractController
     public function indexDons(imgAndSlogan $imgAndSlogan): Response
     {
         return $this->render('dons/index.html.twig', [
-             'img' => $imgAndSlogan->getImg(),
+            'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
         ]);
     }

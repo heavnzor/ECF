@@ -1,0 +1,13 @@
+{% extends 'index.html.twig' %}
+
+{% block main %}
+	<h1>Oups ! Erreur {{code}} de notre côté !</h1>
+<p>
+{{ message }}
+</p>
+
+	<p>
+		Veuillez contactez l'admin ou
+		<a href="{{ path('app_index') }}">retournez sur la page d'accueil</a>.
+	</p>
+{% endblock %}
