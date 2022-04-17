@@ -85,7 +85,7 @@ OU
 $ symfony console doctrine:schema:update --force
 ```
 
-## Insertions des jeux de donnees
+## Insertion des jeux de donnees
 ```
 $ symfony console doctrine:fixtures:load 
 ```
