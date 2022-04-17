@@ -11,12 +11,12 @@
 - [Notion](#notion)
 - [Description](#description)
 - [Vérification des conditions requises](#exigences)
-- [Récupération du projet](#récuperation-du-projet)
+- [Récupération du projet](#recuperation-du-projet)
 - [Installation](#installation)
-- [Installation des dépendances](#installation-des-dépendances)
-- [Création de la base de donnée](#création-de-la-base-de-données)
-- [Création des tables](#création-des-tables)
-- [Insertions des jeux de données](#insertion-des-jeux-de-données)
+- [Installation des dépendances](#installation-des-dependances)
+- [Création de la base de donnée](#creation-de-la-base-de-donnees)
+- [Création des tables](#creation-des-tables)
+- [Insertions des jeux de données](#insertion-des-jeux-de-donnees)
 - [Installation du serveur](#utilisation)
 - [Login](#tester-le-projet)
 
@@ -52,7 +52,7 @@ $ php composer-setup.php
 $ php -r "unlink('composer-setup.php');"
 ```
 
-# Récupération du projet
+# Recuperation du projet
 
 ```
 $ git clone https://github.com/heavnzor/ECF
@@ -68,24 +68,24 @@ $ git clone https://github.com/heavnzor/ECF
 $ cd ECF
 ```
 
-## Installation des dépendances
+## Installation des dependances
 ```
 $ composer install
 ```
 
-## Création de la base de données
+## Creation de la base de donnees
 ```
 $ symfony console doctrine:database:create
 ```
 
-## Création des tables
+## Creation des tables
 ```
 $ symfony console doctrine:migrations:migrate
 OU
 $ symfony console doctrine:schema:update --force
 ```
 
-## Insertions des jeux de données
+## Insertions des jeux de donnees
 ```
 $ symfony console doctrine:fixtures:load 
 ```
