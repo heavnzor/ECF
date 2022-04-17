@@ -52,8 +52,6 @@ $ php composer-setup.php
 $ php -r "unlink('composer-setup.php');"
 ```
 
-* Puis Yarn : [Yarn](https://yarnpkg.com/getting-started/install)
-
 # Récupération du projet
 
 ```
@@ -73,7 +71,6 @@ $ cd ECF
 ## Installation des dépendances
 ```
 $ composer install
-$ yarn install
 ```
 
 ## Création de la base de données
