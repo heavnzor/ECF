@@ -31,6 +31,10 @@
 			{% endfor %}
 		</tbody>
 	</table>
+{% if is_granted('ROLE_INSTRUCTEUR') %}
+
 
 	<a href="{{ path('app_section_new') }}">Créer une nouvelle section</a>
+
+	{% endif %}
 {% endblock %}
