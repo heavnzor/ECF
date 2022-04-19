@@ -28,7 +28,7 @@
 				<p>Leçon terminée ?<br>
 					{% if progress.coursFinished is defined  and progress.coursFinished is same as(true) %}
 						Oui
-					{% elseif  progress.coursFinished is defined  and progress.coursFinished is same as(false)  %}
+					{% elseif  progress.coursFinished is defined  and progress.coursFinished is same as(false) or progress is same as(null)  %}
 						<a href='/cours/{{ cours.id }}?f=1'>Oui</a>
 					{% endif %}
 

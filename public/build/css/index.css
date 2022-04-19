@@ -9,7 +9,7 @@
 }
 
 body {
-  background-color: black !important;
+  background-color: rgb(20, 20, 20) !important;
   font-family: 'Yaldevi';
 }
 
@@ -79,5 +79,5 @@ h6 {
 .icons {
   width: 30px;
   height: auto;
-  margin-right: 3rem;
+  margin: 0.25rem;
 }

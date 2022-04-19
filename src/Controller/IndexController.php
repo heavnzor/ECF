@@ -459,18 +459,20 @@ class IndexController extends AbstractController
         $this->getUser() ? $user = $this->getUser() : $user = new User();
         $cours = $coursRepository->find($id);
         $progressRepository->findOneBy(['user' => $user, 'cours' => $cours]) ? $progress = $progressRepository->findOneBy(['user' => $user, 'cours' => $cours]) : $progress = new Progress();
-        if (isset($_GET['f']) && $_GET['f'] == 1) {
+        if (isset($_GET['f']) && $_GET['f'] == 1 && $progress == $progressRepository->findOneBy(['user' => $user, 'cours' => $cours])) {
             $progress = $progressRepository->findOneBy(['user' => $user, 'cours' => $cours]);
             $progress->setUser($user);
             $progress->setFormation($cours->getFormation());
+            $progress->setFormationFinished(0);
             $progress->setCoursFinished(1);
             $em->flush();
-        }else{
+        }elseif(isset($_GET['f']) && $_GET['f'] == 1 && $progress == new Progress()){
             $progress = new Progress();
             $progress->setUser($user);
             $progress->setCours($cours);
             $progress->setFormation($cours->getFormation());
-            $progress->setCoursFinished(0);
+            $progress->setFormationFinished(0);
+            $progress->setCoursFinished(1);
             $progressRepository->add($progress);
         }
         $cours = $coursRepository->find($id);
