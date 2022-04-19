@@ -26,7 +26,6 @@
 			</tr>
 			<tr>
 				<p>Leçon terminée ?<br>
-					{{ dump(progress) }}
 					{% if progress.coursFinished is defined  and progress.coursFinished is same as(true) %}
 						Oui
 					{% elseif  progress.coursFinished is defined  and progress.coursFinished is same as(false)  %}

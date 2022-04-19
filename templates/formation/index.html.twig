@@ -7,7 +7,8 @@
 			{% for formation in formations %}
 				{% if is_granted('ROLE_USER') and progressEnCours[i].formationFinished is defined and progressEnCours[i].formationFinished is same as(true) and progressEnCours[i].formationFinished is same as(true) %}
 					{% set name = 'finished' %}
-				{% elseif is_granted('ROLE_USER')and progressEnCours[i].coursFinished is defined and progressEnCours[i].coursFinished is same as(true) and progressEnCours[i].formationFinished is same as(false) %}
+				{% elseif is_granted('ROLE_USER') and progressEnCours[i].coursFinished is defined and progressEnCours[i].coursFinished is same as(true) and (progressEnCours[i].formationFinished is same as(false) or progressEnCours[i].formationFinished is same as(null)) %}
+
 					{% set name = 'enCours' %}
 				{% else %}
 					{% set name = 'unStarted' %}
@@ -23,12 +24,12 @@
 			              ? (description|slice(0, 100)) ~ '...'
 			              : description }}
 					</p>
-					{% if is_granted('ROLE_USER')and progressEnCours[i].coursFinished is defined and progressEnCours[i].coursFinished is same as(true) and progressEnCours[i].formationFinished is same as(false) %}
+					{% if is_granted('ROLE_USER') and progressEnCours[i].coursFinished is defined and progressEnCours[i].coursFinished is same as(true) and (progressEnCours[i].formationFinished is same as(false) or progressEnCours[i].formationFinished is same as(null)) %}
 
 						<a href="{{ path( 'app_formation_show', { id: formation.id } ) }}">
 							<button class="btn btn-primary">Formation en cours</button>
 						</a>
-					{% elseif is_granted('ROLE_USER') and progressEnCours[i].formationFinished is defined and progressEnCours[i].formationFinished is same as(true) and progressEnCours[i].formationFinished is same as(true) %}
+					{% elseif is_granted('ROLE_USER') and progressEnCours[i].formationFinished is defined and progressEnCours[i].formationFinished is same as(true) %}
 						<a href="{{ path( 'app_formation_show', { id: formation.id } ) }}">
 							<button class="btn btn-primary">Formation terminé</button>
 						</a>
