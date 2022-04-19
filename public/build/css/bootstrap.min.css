@@ -1,11 +1,10 @@
 @import url(
   https://fonts.googleapis.com/css?family=Lato:300,
-  400,
+400,
   700,
   300italic,
   400italic,
-  700italic
-);
+  700italic);
 
 /*!
  * Bootstrap v5.1.3 (https://getbootstrap.com/)
@@ -687,20 +686,31 @@ progress {
   margin-right: auto;
   margin-left: auto;
 }
-@media (min-width: 376px) {
+@media (min-width: 320px) {
   .video {
-    max-width: 200px;
+    max-width: 280px !important;
   }
   .imgFormation {
     max-width: 120px !important;
+    max-height: 120px !important;
+  }
+}
+@media (min-width: 376px) {
+  .video {
+    max-width: 280px !important;
+  }
+  .imgFormation {
+    max-width: 120px !important;
+    max-height: 120px !important;
   }
 }
 @media (min-width: 576px) {
   .video {
-    max-width: 300px;
+    max-width: 450px !important;
   }
   .imgFormation {
     max-width: 150px !important;
+    max-height: 150px !important;
   }
   .container-sm,
   .container {
@@ -711,9 +721,10 @@ progress {
 @media (min-width: 768px) {
   .imgFormation {
     max-width: 180px !important;
+    max-height: 180px !important;
   }
   .video {
-    max-width: 400px;
+    max-width: 680px !important;
   }
   .container-md,
   .container-sm,
@@ -724,10 +735,11 @@ progress {
 
 @media (min-width: 992px) {
   .video {
-    max-width: 500px;
+    max-width: 900px !important;
   }
   .imgFormation {
     max-width: 220px !important;
+    max-height: 220px !important;
   }
   .container-lg,
   .container-md,
@@ -739,10 +751,11 @@ progress {
 
 @media (min-width: 1200px) {
   .video {
-    max-width: 600px;
+    max-width: 900px !important;
   }
   .imgFormation {
     max-width: 250px !important;
+    max-height: 250px !important;
   }
   .container-xl,
   .container-lg,
@@ -755,10 +768,11 @@ progress {
 
 @media (min-width: 1400px) {
   .video {
-    max-width: 600px;
+    max-width: 900px !important;
   }
   .imgFormation {
     max-width: 300px !important;
+    max-height: 300px !important;
   }
   .container-xxl,
   .container-xl,
@@ -2247,6 +2261,10 @@ progress {
     width: 3.5em !important;
     height: auto !important;
   }
+  .imgFormation {
+    max-width: 200px !important;
+    max-height: 200px !important;
+  }
   .table-responsive-sm {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -2262,12 +2280,22 @@ progress {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
+    .imgFormation {
+    max-width: 200px !important;
+    max-height: 200px !important;
+  }
+  
+
 }
 
 @media (max-width: 991.98px) {
   .table-responsive-lg {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+  }
+      .imgFormation {
+    max-width: 200px !important;
+    max-height: 200px !important;
   }
 }
 
@@ -2276,12 +2304,20 @@ progress {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
+      .imgFormation {
+    max-width: 240px !important;
+    max-height: 240px !important;
+  }
 }
 
 @media (max-width: 1399.98px) {
   .table-responsive-xxl {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+  }
+      .imgFormation {
+    max-width: 240px !important;
+    max-height: 240px !important;
   }
 }
 

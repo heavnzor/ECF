@@ -75,26 +75,17 @@ class IndexController extends AbstractController
     }
 
     #[Route('/formation', name: 'app_formation_index', methods: ['GET'])]
-    public function indexFormation(Request $request, imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository, ProgressRepository $progressRepository): Response
+    public function indexFormation(Request $request, CoursRepository $coursRepository, imgAndSlogan $imgAndSlogan, FormationRepository $formationRepository, ProgressRepository $progressRepository): Response
     {
         $this->getUser() ? $user = $this->getUser() : $user = new User();
-        if ($this->isGranted('ROLE_USER') and $this->isGranted('ROLE_INSTRUCTEUR') == false) {
-            $formations = $progressRepository->findAll();
-            $cours = $user->getCours();
+        if ($this->isGranted('ROLE_USER')) {
+            $formations = $formationRepository->findAll();
             $formationNb = count($formations);
-            $coursNb = 0;
-            foreach ($cours as $lesson) {
-                if ($progressRepository->findOneBy(['cours' => $lesson, 'coursFinished' => 1, 'user' => $user])) {
-                    $coursNb++;
-                }
-            }
-            $progress = $progressRepository->GroupByFormations();
+            $coursNb = count($coursRepository->findAll());
+            $coursNbFinished = count($progressRepository->findBy(['coursFinished' => 1, 'user' => $user]));
+            $progression = ($coursNbFinished * 100) / $coursNb;
+            $progressEnCours = $progressRepository->groupByFormation($user);
             $formations = $formationRepository->findAll();
-            $progression = ($coursNb * 100) / $formationNb;
-        } elseif ($this->isGranted('ROLE_INSTRUCTEUR')) {
-            $formations = $formationRepository->findAll();
-            $progression = 0;
-            $progress = null;
         } else {
             $formations = $formationRepository->findAll();
             $progress = null;
@@ -104,10 +95,9 @@ class IndexController extends AbstractController
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user,
-            'formations' => $formations,
-            'progress' => $progress,
+            'formations' => $formationRepository->findAll(),
+            'progressEnCours' => $progressEnCours,
             'progression' => $progression
-
         ]);
     }
 
@@ -307,7 +297,6 @@ class IndexController extends AbstractController
             'formation' => $formationRepository->find($id),
             'sections' => $formationRepository->find($id)->getSection(),
             'img' => $imgAndSlogan->getImg(),
-            'progress' => $progressRepository->findOneBy(["formation" => $formationRepository->find($id)]),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user,
             'formations' => $user->getFormations()
@@ -465,42 +454,42 @@ class IndexController extends AbstractController
     }
 
     #[Route('cours/{id}', name: 'app_cours_show', methods: ['GET'])]
-    public function showCours(Cours $cours, imgAndSlogan $imgAndSlogan, ProgressRepository $progressRepository, EntityManagerInterface $em): Response
+    public function showCours(Cours $cours, imgAndSlogan $imgAndSlogan, CoursRepository $coursRepository, ProgressRepository $progressRepository, EntityManagerInterface $em, Int $id): Response
     {
         $this->getUser() ? $user = $this->getUser() : $user = new User();
-        $progressRepository->findOneBy(['user' => $user, 'cours' => $cours, 'formation' => $cours->getSection()->getFormation()]) ? $progress = $progressRepository->findOneBy(['user' => $user, 'cours' => $cours, 'formation' => $cours->getSection()->getFormation()]) : $progress = new Progress();
-        if ($progress == new Progress()) {
+        $cours = $coursRepository->find($id);
+        $progressRepository->findOneBy(['user' => $user, 'cours' => $cours]) ? $progress = $progressRepository->findOneBy(['user' => $user, 'cours' => $cours]) : $progress = new Progress();
+        if (isset($_GET['f']) && $_GET['f'] == 1) {
+            $progress = $progressRepository->findOneBy(['user' => $user, 'cours' => $cours]);
             $progress->setUser($user);
-            $progress->setFormation($cours->getSection()->getFormation());
-            $progress->setCours($cours);
+            $progress->setFormation($cours->getFormation());
             $progress->setCoursFinished(1);
             $em->flush();
-        } elseif (isset($_GET['f']) && $_GET['f'] == 1) {
+        }else{
+            $progress = new Progress();
             $progress->setUser($user);
-            $progress->setFormation($cours->getSection()->getFormation());
             $progress->setCours($cours);
-            $progress->setCoursFinished(1);
-            $em->flush();
-            $coursProgress = $cours->getProgress();
-            $formation = $cours->getSection()->getFormation();
-            $allCoursFormation = $formation->getCours();
-            $nbCours = count($allCoursFormation);
-            $nbCoursFinished = 1;
-            foreach ($allCoursFormation as $cours) {
-                if ($progress->getCoursFinished() == 1 || $progress->getCours() == $cours) {
-                    $progress->setFormationFinished(0);
-                    $nbCoursFinished++;
-                    $em->flush();
-                } elseif ($nbCours == $nbCoursFinished) {
-                    $progress = $progressRepository->findOneBy(['user' => $user, 'formation' => $formation]);
-                    $progress->setFormationFinished(1);
-                    $em->flush();
-                }
+            $progress->setFormation($cours->getFormation());
+            $progress->setCoursFinished(0);
+            $progressRepository->add($progress);
+        }
+        $cours = $coursRepository->find($id);
+        $formation = $cours->getFormation();
+        $allCoursFormation = $formation->getCours();
+        $nbCours = count($allCoursFormation);
+        $allCoursFinishedFormation = $progressRepository->findBy(['formation' => $formation, 'user' => $user, 'cours' => $cours, 'coursFinished' => 1]);
+        $allCoursFinishedFormationNb = count($allCoursFinishedFormation);
+        for($i = 0 ; $i < $nbCours ; $i++) {
+            $progress = $progressRepository->findBy(['user' => $user, 'formation' => $formation]);
+            if ($allCoursFinishedFormationNb == $nbCours) {
+                $progress[$i]->setFormationFinished(1);
+                $em->flush();
             }
         }
+
         return $this->render('cours/show.html.twig', [
-            'cours' => $cours,
-            'coursProgress' => $progressRepository->findOneBy(['cours' => $cours]),
+            'cours' => $coursRepository->find($id),
+            'progress' => $progressRepository->findOneBy(['user' => $user, 'cours' => $cours, 'formation' => $formation]),
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user

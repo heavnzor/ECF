@@ -49,27 +49,82 @@ class ProgressRepository extends ServiceEntityRepository
     //  * @return Progress[] Returns an array of Progress objects
     //  */
     
-    public function GroupByFormations()
+    public function groupByFormationEnCours($user): ?array
     {
         return $this->createQueryBuilder('p')
-            ->orderBy('p.formationFinished', 'DESC')
+            ->setParameter('val', $user)
+            ->andWhere('p.user = :val')
+            ->andWhere('p.coursFinished = 1')
+            ->andWhere('p.formationFinished = 0')
             ->groupBy('p.formation')
             ->setMaxResults(100)
             ->getQuery()
             ->getResult()
         ;
     }
-    
-
-    /*
-    public function findOneBySomeField($value): ?Progress
+    public function groupByFormation($user): ?array
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
+            ->setParameter('val', $user)
+            ->andWhere('p.user = :val')
+            ->groupBy('p.formation')
+            ->setMaxResults(100)
+            ->getQuery()
+            ->getResult();
+    }
+    public function groupByFormationFinished($user): ?array
+    {
+        return $this->createQueryBuilder('p')
+            ->setParameter('val', $user)
+            ->andWhere('p.user = :val')
+            ->andWhere('p.formationFinished = 1')
+            ->groupBy('p.formation')
+            ->setMaxResults(100)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
+    public function groupByFormationsEnCours($user, $formation)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.user = :val')
+            ->setParameter('val', $user)
+            ->andWhere('p.formation = :formation')
+            ->setParameter('formation', $formation)
+            ->groupBy('p.formation')
+            ->getQuery()
+            ->getResult();
+    }
+    public function findFormationsEnCours($user)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT * FROM progress p
+            WHERE p.user = :user
+            AND p.coursFinished = 1
+            ORDER BY p.user ASC
+            ';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery(['user' => $user]);
+
+        // returns an array of arrays (i.e. a raw data set)
+        return $resultSet->fetchAllAssociative();
+    }
+
+    
+    public function f($user, $cours): ?Progress
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.user = :val')
+            ->setParameter('val', $user)
+            ->andWhere('p.cours = :val')
+            ->setParameter('val', $cours)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
+
 }

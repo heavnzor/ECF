@@ -145,9 +145,7 @@ class AppFixtures extends Fixture
                     $progress = new Progress();
                     $progress->setUser($user);
                     $progress->setFormation($formation);
-                    $progress->setFormationFinished(0);
                     $progress->setCours($cours);
-                    $progress->setCoursFinished(0);
                     $manager->persist($progress);
                     $manager->flush();
                     $manager->persist($cours);

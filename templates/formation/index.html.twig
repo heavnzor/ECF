@@ -3,72 +3,42 @@
 	{% include 'navusers.html.twig' %}
 	<section class="container bg-black justify-content-center mx-auto">
 		<div class="row align-items-center g-3 mx-auto" id="results">
+			{% set i = 0 %}
 			{% for formation in formations %}
-				{% if progress is same as(null) %}
-					{% if is_granted('ROLE_USER') %}
-						{% set name = 'enCours' %}
-					{% else %}
-						{% set name = 'unStarted' %}
-					{% endif %}
-					<div class="col-md-4 mx-auto d-flex flex-column my-auto py-3 {{ name }}">
-						<img src="{{ asset('build/uploads/photos/') }}{{ formation.image }}" class="imgFormation mx-auto" alt=" {{ formation.titre }} "/>
-						<h2 class="fs-4">
-							{{ formation.titre }}
-						</h2>
-						<p class="fs-5">
-							{% set description = formation.description|raw %}
-							{{ (description|length) > 100
-              ? (description|slice(0, 100)) ~ '...'
-              : description }}
-						</p>
-						{% if is_granted('ROLE_USER')  %}
-							<a href="{{ path( 'app_formation_show', { id: formation.id} ) }}">
-								<button class="btn btn-primary">Voir la formation</button>
-							</a>
-						{% else %}
-							<a href="{{ path( 'app_formation_show', { id: formation.id } ) }}">
-								<button class="btn btn-primary">En savoir plus</button>
-							</a>
-						{% endif %}
-					</div>
+				{% if is_granted('ROLE_USER') and progressEnCours[i].formationFinished is defined and progressEnCours[i].formationFinished is same as(true) and progressEnCours[i].formationFinished is same as(true) %}
+					{% set name = 'finished' %}
+				{% elseif is_granted('ROLE_USER')and progressEnCours[i].coursFinished is defined and progressEnCours[i].coursFinished is same as(true) and progressEnCours[i].formationFinished is same as(false) %}
+					{% set name = 'enCours' %}
 				{% else %}
-					{% for progressF in progress %}
-						{% if progressF.formation == formation or is_granted('ROLE_INSTRUCTEUR') %}
-							{% if is_granted('ROLE_USER') and progressF.formationFinished is same as(true)  %}
-								{% set name = 'finished' %}
-							{% elseif is_granted('ROLE_USER') and progressF.coursFinished is same as(true) and progressF.formationFinished is same as(false) %}
-								{% set name = 'enCours' %}
-							{% else %}
-								{% set name = 'unStarted' %}
-							{% endif %}
-							<div class="col-md-4 mx-auto d-flex flex-column my-auto py-3 {{ name }}">
-								<img src="{{ asset('build/uploads/photos/') }}{{ formation.image }}" class="imgFormation mx-auto" alt=" {{ formation.titre }} "/>
-								<h2 class="fs-4">
-									{{ formation.titre }}
-								</h2>
-								<p class="fs-5">
-									{% set description = formation.description|raw %}
-									{{ (description|length) > 100
-              ? (description|slice(0, 100)) ~ '...'
-              : description }}
-								</p>
-								{% if is_granted('ROLE_USER')  and progressF.formationFinished is same as(false) and progressF.coursFinished is same as(true) %}
-									<a href="{{ path( 'app_formation_show', { id: formation.id} ) }}">
-										<button class="btn btn-primary">Formation en cours</button>
-									</a>
-								{% elseif is_granted('ROLE_USER')  and progressF.formationFinished is same as(true)  %}
-									<a href="{{ path( 'app_formation_show', { id: formation.id } ) }}">
-										<button class="btn btn-primary">Formation terminé</button>
-									</a>
-								{% else %}
-									<a href="{{ path( 'app_formation_show', { id: formation.id } ) }}">
-										<button class="btn btn-primary">En savoir plus</button>
-									</a>
-								{% endif %}
-							</div>
-						{% endif %}
-					{% endfor %}
+					{% set name = 'unStarted' %}
 				{% endif %}
+				<div class="col-md-4 mx-auto d-flex flex-column my-auto py-3 {{ name }}">
+					<img src="{{ asset('build/uploads/photos/') }}{{ formation.image }}" class="imgFormation mx-auto" alt=" {{ formation.titre }} "/>
+					<h2 class="fs-4">
+						{{ formation.titre }}
+					</h2>
+					<p class="fs-5">
+						{% set description = formation.description|raw %}
+						{{ (description|length) > 100
+			              ? (description|slice(0, 100)) ~ '...'
+			              : description }}
+					</p>
+					{% if is_granted('ROLE_USER')and progressEnCours[i].coursFinished is defined and progressEnCours[i].coursFinished is same as(true) and progressEnCours[i].formationFinished is same as(false) %}
+
+						<a href="{{ path( 'app_formation_show', { id: formation.id } ) }}">
+							<button class="btn btn-primary">Formation en cours</button>
+						</a>
+					{% elseif is_granted('ROLE_USER') and progressEnCours[i].formationFinished is defined and progressEnCours[i].formationFinished is same as(true) and progressEnCours[i].formationFinished is same as(true) %}
+						<a href="{{ path( 'app_formation_show', { id: formation.id } ) }}">
+							<button class="btn btn-primary">Formation terminé</button>
+						</a>
+					{% else %}
+						<a href="{{ path( 'app_formation_show', { id: formation.id } ) }}">
+							<button class="btn btn-primary">Commencer la formation</button>
+						</a>
+					{% endif %}
+				</div>
+				{% set i = i+1 %}
 			{% endfor %}
 		</div>
 	</section>

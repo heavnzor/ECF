@@ -14,7 +14,7 @@ class Progress
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy:'progress')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'progress')]
     #[ORM\JoinColumn(nullable: false)]
     private $user;
 
@@ -23,14 +23,14 @@ class Progress
     private $formation;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $formationFinished = 0;
+    private $formationFinished;
 
     #[ORM\ManyToOne(targetEntity: Cours::class, inversedBy: 'progress')]
     #[ORM\JoinColumn(nullable: false)]
     private $cours;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private $coursFinished = 0;
+    private $coursFinished;
 
     public function getId(): ?int
     {
@@ -41,6 +41,7 @@ class Progress
     {
         return $this->coursFinished;
     }
+
 
     public function setCoursFinished(?bool $coursFinished): self
     {
@@ -96,6 +97,4 @@ class Progress
 
         return $this;
     }
-
-    
 }

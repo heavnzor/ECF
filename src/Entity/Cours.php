@@ -76,7 +76,10 @@ class Cours
     {
         return $this->image;
     }
-
+    public function __toString()
+    {
+        return $this->getTitre();
+    }
     public function setImage(?string $image): self
     {
         $this->image = $image;

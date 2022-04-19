@@ -6,26 +6,33 @@
 				<h2>{{ cours.titre }}</h2><br>
 			</tr>
 			<tr>
-				<p>{% if cours.image is not same as(null) %}<img class="imgCours" src="{{ asset('build/uploads/photos/') }}{{ cours.image }}">{% endif %}{{ cours.cours|raw }}	
+				<p>
+					{% if cours.image is not same as(null) %}<img class="imgFormation imgCours" src="{{ asset('build/uploads/photos/') }}{{ cours.image }}">
+					{% endif %}
+					{{ cours.cours|raw }}
 				</p>
 				<br>
 			</tr>
 			<tr>
 				{% if cours.pdf is not same as(null) %}
-					<span class="fs-4 mx-2"><a class="px-3" href="{{ asset('build/uploads/photos/') }}{{ cours.pdf }}">{{ cours.pdf }}</a> &#127385;</span>
+					<span class="fs-4 mx-2">
+						<a class="px-3" href="{{ asset('build/uploads/photos/') }}{{ cours.pdf }}">{{ cours.pdf }}</a>
+						&#127385;</span>
 				{% endif %}<br>
 			</tr>
 			<tr>
-				<iframe width="560" height="315" src="https://www.youtube.com/embed/{{ cours.video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+				<iframe class="video" width="560" height="315" src="https://www.youtube.com/embed/{{ cours.video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 			</tr>
 			<tr>
 				<p>Leçon terminée ?<br>
-					{% if coursProgress.coursFinished is same as(false) %}
-						<a href='/cours/{{ cours.id }}?f=1'>Oui</a>
-					{% else %}
+					{{ dump(progress) }}
+					{% if progress.coursFinished is defined  and progress.coursFinished is same as(true) %}
 						Oui
+					{% elseif  progress.coursFinished is defined  and progress.coursFinished is same as(false)  %}
+						<a href='/cours/{{ cours.id }}?f=1'>Oui</a>
 					{% endif %}
+
 				</p>
 			</tr>
 			<tr>

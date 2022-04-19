@@ -3,11 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\Cours;
+use App\Entity\Progress;
 use App\Entity\Formation;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Formation|null find($id, $lockMode = null, $lockVersion = null)
@@ -92,7 +93,22 @@ class FormationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
+    public function groupByProgress()
+    {
+        return $this->createQueryBuilder('f')
+            ->groupBy('f.progress')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getResult();
+    }
+    public function findByProgress()
+    {
+        return $this->createQueryBuilder('f')
+            ->groupBy('f.progress')
+            ->setMaxResults(100)
+            ->getQuery()
+            ->getResult();
+    }
     public function findAllOrderByLearnState()
     {
         return $this->createQueryBuilder('f')
