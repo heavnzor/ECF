@@ -79,15 +79,11 @@ class IndexController extends AbstractController
     {
         $this->getUser() ? $user = $this->getUser() : $user = new User();
         if ($this->isGranted('ROLE_USER')) {
-            $formations = $formationRepository->findAll();
-            $formationNb = count($formations);
             $coursNb = count($coursRepository->findAll());
             $coursNbFinished = count($progressRepository->findBy(['coursFinished' => 1, 'user' => $user]));
             $progression = ($coursNbFinished * 100) / $coursNb;
             $progressEnCours = $progressRepository->groupByFormation($user);
-            $formations = $formationRepository->findAll();
         } else {
-            $formations = $formationRepository->findAll();
             $progressEnCours = null;
             $progression = 0;
         }
