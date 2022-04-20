@@ -88,7 +88,7 @@ class IndexController extends AbstractController
             $formations = $formationRepository->findAll();
         } else {
             $formations = $formationRepository->findAll();
-            $progress = null;
+            $progressEnCours = null;
             $progression = 0;
         }
         return $this->render('formation/index.html.twig', [
@@ -466,7 +466,7 @@ class IndexController extends AbstractController
             $progress->setFormationFinished(0);
             $progress->setCoursFinished(1);
             $em->flush();
-        }elseif(isset($_GET['f']) && $_GET['f'] == 1 && $progress == new Progress()){
+        } elseif (isset($_GET['f']) && $_GET['f'] == 1 && $progress == new Progress()) {
             $progress = new Progress();
             $progress->setUser($user);
             $progress->setCours($cours);
@@ -481,7 +481,7 @@ class IndexController extends AbstractController
         $nbCours = count($allCoursFormation);
         $allCoursFinishedFormation = $progressRepository->findBy(['formation' => $formation, 'user' => $user, 'cours' => $cours, 'coursFinished' => 1]);
         $allCoursFinishedFormationNb = count($allCoursFinishedFormation);
-        for($i = 0 ; $i < $nbCours ; $i++) {
+        for ($i = 0; $i < $nbCours; $i++) {
             $progress = $progressRepository->findBy(['user' => $user, 'formation' => $formation]);
             if ($allCoursFinishedFormationNb == $nbCours) {
                 $progress[$i]->setFormationFinished(1);
