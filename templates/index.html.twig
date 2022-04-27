@@ -128,11 +128,11 @@
 										<h2 class="fs-2">{{ formation.titre}}</h2>
 										<p class="fs-5">{% set description = formation.description|raw %}
 											{{ description|length > 70 ? description|slice(0,70) ~ '...' : description }}</p>
-									
-											<a href="{{ path('app_formation_show', {'id': formation.id}) }}">
-												<button class="btn btn-primary ">En savoir plus</button>
-											</a>
-								
+
+										<a href="{{ path('app_formation_show', {'id': formation.id}) }}">
+											<button class="btn btn-primary ">En savoir plus</button>
+										</a>
+
 									</div>
 								{% endfor %}
 							</div>

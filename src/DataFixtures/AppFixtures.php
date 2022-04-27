@@ -86,7 +86,7 @@ class AppFixtures extends Fixture
         $user->setPassword($passwordUser);
         $user->setPseudo($faker->firstName());
         $user->setIsVerified(true);
-        
+
         $manager->persist($user);
         $manager->flush();
 
@@ -96,8 +96,8 @@ class AppFixtures extends Fixture
             $formation = new Formation();
             $formation->setAuteur($instructeur);
             $formation->setImage('informatique.png');
-            $formation->setDescription($faker->words(50, true));
-            $formation->setTitre($faker->words(6, true));
+            $formation->setDescription($faker->words(10, true));
+            $formation->setTitre("Titre de la formation #" . $f);
             $user->addFormation($formation);
             $instructeur->addFormation($formation);
             $manager->persist($formation);
@@ -107,7 +107,7 @@ class AppFixtures extends Fixture
             for ($s = 0; $s < 2; $s++) {
                 $section = new Section();
                 $section->setFormation($formation);
-                $section->setTitre($faker->words(6, true));
+                $section->setTitre("Section numéro #" . $s);
                 $section->addAuteur($instructeur);
                 $manager->persist($section);
                 $user->addSection($section);
@@ -119,13 +119,13 @@ class AppFixtures extends Fixture
 
                 $quizz = new Quizz();
                 $quizz->setSection($section);
-                $quizz->setQuestion1($faker->words(10, true));
-                $quizz->setReponse1($faker->words(8, true));
-                $quizz->setReponse2($faker->words(8, true));
-                $quizz->setQuestion2($faker->words(10, true));
-                $quizz->setReponse3($faker->words(8, true));
-                $quizz->setReponse4($faker->words(8, true));
-                $quizz->setBonneReponse1('reponse2');
+                $quizz->setQuestion1("Quel est le nom de notre organisation ?");
+                $quizz->setReponse1("Waldganger");
+                $quizz->setReponse2("Stephanie de Monaco");
+                $quizz->setQuestion2("A se trouve-t-il avant B dans l'alphabet ?");
+                $quizz->setReponse3("Oui");
+                $quizz->setReponse4("Non");
+                $quizz->setBonneReponse1('reponse1');
                 $quizz->setBonneReponse2('reponse3');
                 $manager->persist($quizz);
                 $manager->flush();
@@ -133,9 +133,9 @@ class AppFixtures extends Fixture
 
                 for ($l = 0; $l < 3; $l++) {
                     $cours = new cours();
-                    $cours->setTitre($faker->words(6, true));
+                    $cours->setTitre("Titre du cours #" . $l);
                     $cours->setSection($section);
-                    $cours->setCours($faker->text(2000));
+                    $cours->setCours($faker->text(1500));
                     $cours->setImage('greencomputer.png');
                     $cours->setPdf('greenIT.pdf');
                     $cours->setVideo('wfhAh4y53tI');

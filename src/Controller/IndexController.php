@@ -140,7 +140,7 @@ class IndexController extends AbstractController
                             // .. handle exception if something happens during file upload
                         }
 
-                        // updates the 'brochureFilename' property to store the PDF file name
+                        // updates the 'file name' property to store the PDF file name
                         // instead of its contents
                         $formation->setImage($newFilename);
                     }
@@ -213,7 +213,7 @@ class IndexController extends AbstractController
                             // .. handle exception if something happens during file upload
                         }
 
-                        // updates the 'brochureFilename' property to store the PDF file name
+                        // updates the 'file name' property to store the PDF file name
                         // instead of its contents
                         $cours->setImage($newFilename);
                     }
@@ -234,8 +234,7 @@ class IndexController extends AbstractController
                             // .. handle exception if something happens during file upload
                         }
 
-                        // updates the 'brochureFilename' property to store the PDF file name
-                        // instead of its contents
+
 
                         // updates the 'photoname' property to store the PDF file name
                         // instead of its contents
@@ -289,12 +288,21 @@ class IndexController extends AbstractController
     public function showFormation(ProgressRepository $progressRepository, FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan, Int $id): Response
     {
         $this->getUser() ? $user = $this->getUser() : $user = new User();
+        if ($this->isGranted('ROLE_USER')) {
+            $coursNb = count($progressRepository->findBy(['formation' => $formationRepository->find($id), 'user' => $user]));
+            $coursNbFinished = count($progressRepository->findBy(['coursFinished' => 1, 'user' => $user, 'formation' => $formationRepository->find($id)]));
+            $progression = ($coursNbFinished * 100) / $coursNb;
+        } else {
+            $progression = 0;
+        }
         return $this->render('formation/show.html.twig', [
             'formation' => $formationRepository->find($id),
             'sections' => $formationRepository->find($id)->getSection(),
             'img' => $imgAndSlogan->getImg(),
             'slogan' => $imgAndSlogan->getSlogan(),
             'user' => $user,
+            'particuliere' => true,
+            'progression' => $progression,
             'formations' => $user->getFormations()
         ]);
     }
@@ -923,6 +931,7 @@ class IndexController extends AbstractController
         return $this->render('section/show.html.twig', [
             'section' =>  $section,
             'quizz' => $section->getQuizz(),
+            'formation' => $section->getFormation(),
             'formations' => $user->getFormations(),
             'cours' => $coursRepository->findBy(['section' => $section]),
             'img' => $imgAndSlogan->getImg(),

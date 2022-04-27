@@ -23,16 +23,15 @@
 				</ul>
 			</tr>
 			<tr>
-				<span class="fs-5">{% if quizz.id is not same as(null) %}
-					<a href="{{path('app_quizz_show', {'id': quizz.id }) }}">Accéder au quizz</a>
+				<span class="fs-5">
+					{% if quizz.id is not same as(null) %}
+						<a href="{{path('app_quizz_show', {'id': quizz.id }) }}">Accéder au quizz</a>
 					{% endif %}
 				</span>
 			</tr>
 		</tbody>
 	</tr>
 </tbody></table><br><br>{% if is_granted('ROLE_USER') %}
-<a href="{{ path('app_section_index') }}">Retour aux sections</a><br><br>
-{% endif %}
-{% if is_granted('ROLE_INSTRUCTEUR') %}
+<a href="{{ path('app_formation_show', { id: formation.id } ) }}">Retour à la formation</a><br><br>{% endif %}{% if is_granted('ROLE_INSTRUCTEUR') %}
 <a href="{{ path('app_section_edit', {'id': section.id}) }}">Modifier</a>
 <br><br>{% endif %}{% endblock %}

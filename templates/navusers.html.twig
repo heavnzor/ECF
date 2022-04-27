@@ -1,23 +1,32 @@
 <div class="container text-center my-auto px-auto">
-	<nav class="navbar navbar-expand-lg navbar-light bg-black">
-		<div class="container mx-auto d-flex flex-wrap justify-content-center">
-			<form class="d-flex flex-wrap justify-content-center mx-auto">
-				<input id="searchInput" type="search" class="form-control my-auto text-center" placeholder="Rechercher une formation" aria-label="Chercher une formation">
-				<label id="btnradio" class="btn btn-outline-primary mx-2 pt-1 my-2">Toutes les formations</label>
-				{% if is_granted('ROLE_USER') %}
-					<label id="btnradio1" class=" btn btn-outline-info mx-2 pt-1 my-2">Formations en cours</label>
-					<label id="btnradio2" class="btn btn-outline-success mx-2 pt-1 my-2">Formations terminées</label>
-				{% endif %}
-			</form>
-		</div>
-	</nav>
+	{% if particuliere is not defined %}
+		<nav class="navbar navbar-expand-lg navbar-light bg-black">
+			<div class="container mx-auto d-flex flex-wrap justify-content-center">
+				<form class="d-flex flex-wrap justify-content-center mx-auto">
+					<input id="searchInput" type="search" class="form-control my-auto text-center" placeholder="Rechercher une formation" aria-label="Chercher une formation">
+					<label id="btnradio" class="btn btn-outline-primary mx-2 pt-1 my-2">Toutes les formations</label>
+					{% if is_granted('ROLE_USER') %}
+						<label id="btnradio1" class=" btn btn-outline-info mx-2 pt-1 my-2">Formations en cours</label>
+						<label id="btnradio2" class="btn btn-outline-success mx-2 pt-1 my-2">Formations terminées</label>
+					{% endif %}
+				</form>
+			</div>
+		</nav>
+	{% endif %}
 	{% if is_granted('ROLE_USER') %}
 		<Progression class="fs-5">{{ app.user.pseudo ? app.user.pseudo : app.user.prenom ~ " " ~ app.user.nom }}
-			- Progression générale :
+			- Progression
+			{% if particuliere is not defined %}
+				{% set p = 'générale' %}
+			{% else %}
+				{% set p = 'de la formation' %}
+				{{ p }}
+			{% endif %}
 		</p>
 		<div class="progress" style="height: 2em;">
 
-			<div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: {{ progression }}%; " aria-valuenow="{{ progression }}" aria-valuemin="0" aria-valuemax="100">{{ progression }}%</div>
+			<div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: {{ progression }}%; " aria-valuenow="{{ progression }}" aria-valuemin="0" aria-valuemax="100">{{ progression|round }}
+				%</div>
 		</div>
 	{% endif %}
 	<hr>
