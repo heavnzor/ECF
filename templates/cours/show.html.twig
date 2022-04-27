@@ -28,14 +28,14 @@
 				<p>Leçon terminée ?<br>
 					{% if progress.coursFinished is defined  and progress.coursFinished is same as(true) %}
 						Oui
-					{% elseif  progress.coursFinished is defined  and progress.coursFinished is same as(false) or progress is same as(null)  %}
+					{% else  %}
 						<a href='/cours/{{ cours.id }}?f=1'>Oui</a>
 					{% endif %}
 
 				</p>
 			</tr>
 			<tr>
-				<a href='{{ path('app_section_show', {'id': cours.section.id}) }}'>Retour</a>
+				<a href='{{ path('app_formation_show', {'id': cours.section.formation.id}) }}'>Retour à la formation</a>
 			</tr>
 		</tbody>
 	</table>

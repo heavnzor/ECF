@@ -107,7 +107,7 @@ class AppFixtures extends Fixture
             for ($s = 0; $s < 2; $s++) {
                 $section = new Section();
                 $section->setFormation($formation);
-                $section->setTitre("Section numéro #" . $s);
+                $section->setTitre("#F" . $f . " - Section numéro #" . $s);
                 $section->addAuteur($instructeur);
                 $manager->persist($section);
                 $user->addSection($section);
@@ -133,7 +133,7 @@ class AppFixtures extends Fixture
 
                 for ($l = 0; $l < 3; $l++) {
                     $cours = new cours();
-                    $cours->setTitre("Titre du cours #" . $l);
+                    $cours->setTitre("F#" . $f . "S#" . $s . " - Titre du cours #" . $l);
                     $cours->setSection($section);
                     $cours->setCours($faker->text(1500));
                     $cours->setImage('greencomputer.png');
