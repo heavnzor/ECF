@@ -288,8 +288,8 @@ class IndexController extends AbstractController
     public function showFormation(ProgressRepository $progressRepository, FormationRepository $formationRepository, imgAndSlogan $imgAndSlogan, Int $id): Response
     {
         $this->getUser() ? $user = $this->getUser() : $user = new User();
-        if ($this->isGranted('ROLE_USER')) {
-            $coursNb = count($progressRepository->findBy(['formation' => $formationRepository->find($id), 'user' => $user]));
+        if ($this->isGranted('ROLE_USER') && $progressRepository->findBy(['formation' => $formationRepository->find($id), 'user' => $user, 'coursFinished' => 1])) {
+            $coursNb = count($formationRepository->find($id)->getCours());
             $coursNbFinished = count($progressRepository->findBy(['coursFinished' => 1, 'user' => $user, 'formation' => $formationRepository->find($id)]));
             $progression = ($coursNbFinished * 100) / $coursNb;
         } else {
