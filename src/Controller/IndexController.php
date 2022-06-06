@@ -462,7 +462,10 @@ class IndexController extends AbstractController
     {
         $this->getUser() ? $user = $this->getUser() : $user = new User();
         $cours = $coursRepository->find($id);
-        $progressRepository->findOneBy(['user' => $user, 'cours' => $cours]) ? $progress = $progressRepository->findOneBy(['user' => $user, 'cours' => $cours]) : $progress = new Progress();
+        $progressRepository->findOneBy(['user' => $user, 'cours' => $cours]) ? $progress = $progressRepository->findOneBy([
+            'user' => $user,
+            'cours' => $cours
+        ]) : $progress = new Progress();
         if (isset($_GET['f']) && $_GET['f'] == 1 && $progress == $progressRepository->findOneBy(['user' => $user, 'cours' => $cours])) {
             $progress = $progressRepository->findOneBy(['user' => $user, 'cours' => $cours]);
             $progress->setUser($user);
@@ -483,7 +486,10 @@ class IndexController extends AbstractController
         $formation = $cours->getFormation();
         $allCoursFormation = $formation->getCours();
         $nbCours = count($allCoursFormation);
-        $allCoursFinishedFormation = $progressRepository->findBy(['formation' => $formation, 'user' => $user, 'cours' => $cours, 'coursFinished' => 1]);
+        $allCoursFinishedFormation = $progressRepository->findBy([
+            'formation' => $formation, 'user' => $user, 'cours' => $cours,
+            'coursFinished' => 1
+        ]);
         $allCoursFinishedFormationNb = count($allCoursFinishedFormation);
         for ($i = 0; $i < $nbCours; $i++) {
             $progress = $progressRepository->findBy(['user' => $user, 'formation' => $formation]);
