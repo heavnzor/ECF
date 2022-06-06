@@ -12,7 +12,7 @@
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[total]=999999" />
 
         <!-- ###+ symfony/framework-bundle ### -->
-        <env name="APP_ENV" value="dev"/>
+        <env name="APP_ENV" value="test" force="true"/>
         <env name="APP_SECRET" value="a346fa601ac0b3758f5c73aaeead280f"/>
         <!-- ###- symfony/framework-bundle ### -->
 
