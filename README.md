@@ -101,30 +101,6 @@ symfony server:start
 
  ***
 
-# Tester le projet
-
-Les identifiants pour tester le projet sont : 
-
-* Administrateur 
-```
-Email =  webmaster@waldganger.net
-Mdp = ecfjuin2022!
-```
-* Instructeur non validé
-```
-Email =  instructeur0@waldganger.net
-Mdp = ecfjuin2022
-```
-* Instructeur validé
-```
-Email =  instructeur@waldganger.net
-Mdp = ecfjuin2022
-```
-* Apprenant
-```
-Email =  user@waldganger.net
-Mdp = ecfjuin2022
-```
 
  
 
