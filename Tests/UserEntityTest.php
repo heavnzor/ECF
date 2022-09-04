@@ -8,14 +8,10 @@ use PHPUnit\Framework\TestCase;
 
 class UserTest extends TestCase
 {
-    // …
-
-    public function testNewUser()
+    public function testEmailUser()
     {
         $user = new User();
-        $user->setEmail("hpg@brazzers.com");
-        $user->setPassword('eEkdkSLKLZRJd430DSD04ds');
-        $user->setPseudo("hervé");
-        $this->assertSame("hpg@brazzers.com", $user->getEmail());
+        $user->setEmail("herve@waldganger.com");
+        $this->assertSame("herve@waldganger.net", $user->getEmail(), "l'email n'est pas celui attendu");
     }
 }

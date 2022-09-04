@@ -9,18 +9,18 @@ class IndexControllerTest extends WebTestCase
     public function testIndex()
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/');
+        $client->request('GET', '/');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSame(1, $crawler->filter('html:contains("Waldganger")')->count());
+        $this->assertSelectorExists('div:contains("Waldganger")');
     }
     public function testDons()
     {
         $client = static::createClient();
-        $crawler =  $client->request('GET', '/');
+        $client->request('GET', '/');
         $client->clickLink("Don");
         $this->assertResponseIsSuccessful();
-        $this->assertSame(1, $crawler->filter('html:contains("Don")')->count());
+        $this->assertSelectorExists('div:contains("Don")');
     }
     public function testLogin()
     {

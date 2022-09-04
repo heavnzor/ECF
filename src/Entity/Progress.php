@@ -14,7 +14,7 @@ class Progress
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'progress')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'progress', cascade: ["persist", "remove"])]
     #[ORM\JoinColumn(nullable: false)]
     private $user;
 

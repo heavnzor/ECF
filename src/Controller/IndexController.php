@@ -1028,6 +1028,38 @@ class IndexController extends AbstractController
         ]);
     }
 
+
+    #[Route('/quizz/{id}/edit', name: 'app_quizz_edit', methods: ['GET', 'POST'])]
+    public function quizzEdit(Request $request, Quizz $quizz, QuizzRepository $quizzRepository, SectionRepository $sectionRepository, imgAndSlogan $imgAndSlogan): Response
+    {
+        $this->getUser() ? $user = $this->getUser() : $user = new User();
+
+        $form = $this->createForm(QuizzType::class, $quizz);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $quizzRepository->add($quizz);
+            return $this->redirectToRoute('app_quizz_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('quizz/edit.html.twig', [
+            'quizz' => $quizz,
+            'form' => $form,
+            'sections' => $user->getSections(),
+            'img' => $imgAndSlogan->getImg(),
+            'slogan' => $imgAndSlogan->getSlogan(),
+        ]);
+    }
+
+    #[Route('/quizz/{id}', name: 'app_quizz_delete', methods: ['POST'])]
+    public function quizzDelete(Request $request, Quizz $quizz, QuizzRepository $quizzRepository): Response
+    {
+        if ($this->isCsrfTokenValid('delete' . $quizz->getId(), $request->request->get('_token'))) {
+            $quizzRepository->remove($quizz);
+        }
+
+        return $this->redirectToRoute('app_quizz_index', [], Response::HTTP_SEE_OTHER);
+    }
     #[Route('/quizz/{id}', name: 'app_quizz_show', methods: ['GET', 'POST'])]
     public function showQuizz(Request $request, QuizzRepository $quizzRepository, Quizz $quizz, imgAndSlogan $imgAndSlogan, SectionRepository $sectionRepository): Response
     {
@@ -1062,38 +1094,6 @@ class IndexController extends AbstractController
             'slogan' => $imgAndSlogan->getSlogan(),
             'sections' => $user->getSections(),
         ]);
-    }
-
-    #[Route('/quizz/{id}/edit', name: 'app_quizz_edit', methods: ['GET', 'POST'])]
-    public function quizzEdit(Request $request, Quizz $quizz, QuizzRepository $quizzRepository, SectionRepository $sectionRepository, imgAndSlogan $imgAndSlogan): Response
-    {
-        $this->getUser() ? $user = $this->getUser() : $user = new User();
-
-        $form = $this->createForm(QuizzType::class, $quizz);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $quizzRepository->add($quizz);
-            return $this->redirectToRoute('app_quizz_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('quizz/edit.html.twig', [
-            'quizz' => $quizz,
-            'form' => $form,
-            'sections' => $user->getSections(),
-            'img' => $imgAndSlogan->getImg(),
-            'slogan' => $imgAndSlogan->getSlogan(),
-        ]);
-    }
-
-    #[Route('/quizz/{id}', name: 'app_quizz_delete', methods: ['POST'])]
-    public function quizzDelete(Request $request, Quizz $quizz, QuizzRepository $quizzRepository): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $quizz->getId(), $request->request->get('_token'))) {
-            $quizzRepository->remove($quizz);
-        }
-
-        return $this->redirectToRoute('app_quizz_index', [], Response::HTTP_SEE_OTHER);
     }
 
     #[Route(path: '/login', name: 'app_login')]
