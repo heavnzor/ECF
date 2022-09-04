@@ -102,7 +102,7 @@ symfony server:start
  ***
 ***
 
-# Login 
+# Tester le projet 
 
 Pour obtenir des liens de connexions :
 
